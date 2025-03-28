@@ -60,7 +60,7 @@ def draw_debug_info(ship):
 player = Ship(400, 300)
 
 asteroids = [Asteroid(random.randint(100, ScreenSize[0]), 0,
-                      random.randint(20, 50), random.randint(0, 360)) for _ in range(10)]
+                      random.randint(20, 50), random.randint(0, 360)) for _ in range(5)]
 bullets = []
 
 
@@ -88,16 +88,39 @@ while running:
         running = False
 
     ship_points = calculate_ship_points(player)
-    # Обновление координта
+    # Обновление координат
     player.update_position(ScreenSize)
+#######
     remaining_bullets = []
+    hit_asteroids = []
+    new_asteroids = []
+
     for bullet in bullets:
         bullet.fly(ScreenSize)
-        if bullet.distance <= 50:
+        bullet_hit = False
+
+        for asteroid in asteroids:
+            distance = ((bullet.x_coordinate - asteroid.x_coordinate) ** 2 + (bullet.y_coordinate - asteroid.y_coordinate) ** 2) ** 0.5
+
+            if distance <= asteroid.size:
+                bullet_hit = True
+                hit_asteroids.append(asteroid)
+                if asteroid.size >= 19:
+                    for _ in range(2):
+                        new_asteroid = Asteroid(
+                            x=asteroid.x_coordinate + random.randint(-10, 10),
+                            y=asteroid.y_coordinate + random.randint(-10, 10),
+                            size=asteroid.size//2,
+                            angle=random.randint(0, 360)
+                        )
+                        new_asteroids.append(new_asteroid)
+
+        if not bullet_hit and bullet.distance <= 50:
             remaining_bullets.append(bullet)
+
     bullets = remaining_bullets
-
-
+    asteroids = [a for a in asteroids if a not in hit_asteroids] + new_asteroids
+########
     for asteroid in asteroids:
         asteroid.fly(ScreenSize)
 
@@ -105,7 +128,7 @@ while running:
         for point in ship_points:
             if check_collision(point, asteroid, asteroid.size):
                 print("Asteroid crash!")
-                # running = False
+                running = False
 
     # Отрисовка
     screen.fill((20, 20, 20))

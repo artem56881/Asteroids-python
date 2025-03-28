@@ -4,7 +4,7 @@ class Shot:
     def __init__(self, x, y, angle):
         self.x_coordinate = x
         self.y_coordinate = y
-        self.size = 6
+        self.size = 4
         self.angle = angle
         self.speed = 10
         self.distance = 0
