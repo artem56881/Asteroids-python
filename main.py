@@ -14,7 +14,7 @@ clock = pygame.time.Clock()
 
 font = pygame.font.Font(None, 36)
 
-DEBUG = True
+DEBUG = False
 
 def check_collision(point, obj, threshold):
     """ Check if two objects are colliding using squared distance (optimized). """
@@ -33,6 +33,40 @@ def draw_bullets(bullets):
 def perform_shot(player):
     shot = Shot(player.x, player.y, player.angle)
     return shot
+
+def update_bullets_and_asteroids(bullets, asteroids):
+    remaining_bullets = []
+    hit_asteroids = []
+    new_asteroids = []
+
+    for bullet in bullets:
+        bullet.fly(ScreenSize)
+        bullet_hit = False
+
+        for asteroid in asteroids:
+            distance = ((bullet.x_coordinate - asteroid.x_coordinate) ** 2 + (
+                        bullet.y_coordinate - asteroid.y_coordinate) ** 2) ** 0.5
+
+            if distance <= asteroid.size:
+                bullet_hit = True
+                hit_asteroids.append(asteroid)
+                if asteroid.size >= 19:
+                    for _ in range(2):
+                        new_asteroid = Asteroid(
+                            x=asteroid.x_coordinate + random.randint(-10, 10),
+                            y=asteroid.y_coordinate + random.randint(-10, 10),
+                            size=asteroid.size // 2,
+                            angle=random.randint(0, 360)
+                        )
+                        new_asteroids.append(new_asteroid)
+
+        if not bullet_hit and bullet.distance <= 50:
+            remaining_bullets.append(bullet)
+
+    bullets = remaining_bullets
+    asteroids = [a for a in asteroids if a not in hit_asteroids] + new_asteroids
+    return bullets, asteroids
+
 
 def calculate_ship_points(ship):
     back_angle = 100
@@ -91,35 +125,7 @@ while running:
     # Обновление координат
     player.update_position(ScreenSize)
 #######
-    remaining_bullets = []
-    hit_asteroids = []
-    new_asteroids = []
-
-    for bullet in bullets:
-        bullet.fly(ScreenSize)
-        bullet_hit = False
-
-        for asteroid in asteroids:
-            distance = ((bullet.x_coordinate - asteroid.x_coordinate) ** 2 + (bullet.y_coordinate - asteroid.y_coordinate) ** 2) ** 0.5
-
-            if distance <= asteroid.size:
-                bullet_hit = True
-                hit_asteroids.append(asteroid)
-                if asteroid.size >= 19:
-                    for _ in range(2):
-                        new_asteroid = Asteroid(
-                            x=asteroid.x_coordinate + random.randint(-10, 10),
-                            y=asteroid.y_coordinate + random.randint(-10, 10),
-                            size=asteroid.size//2,
-                            angle=random.randint(0, 360)
-                        )
-                        new_asteroids.append(new_asteroid)
-
-        if not bullet_hit and bullet.distance <= 50:
-            remaining_bullets.append(bullet)
-
-    bullets = remaining_bullets
-    asteroids = [a for a in asteroids if a not in hit_asteroids] + new_asteroids
+    bullets, asteroids = update_bullets_and_asteroids(bullets, asteroids)
 ########
     for asteroid in asteroids:
         asteroid.fly(ScreenSize)
