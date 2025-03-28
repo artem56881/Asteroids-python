@@ -1,21 +1,19 @@
 import pygame
-import math
 import random
 
 from ship import Ship
-from asterid import Asteroid
+from asteroid import Asteroid
+from shot import Shot
+
 from utils import angle_to_cords
 pygame.init()
 
-# Screen setup
 ScreenSize = [800, 600]
 screen = pygame.display.set_mode(ScreenSize)
 clock = pygame.time.Clock()
 
-# Font setup
 font = pygame.font.Font(None, 36)
 
-# Debugging toggle
 DEBUG = True
 
 def check_collision(point, obj, threshold):
@@ -25,7 +23,16 @@ def check_collision(point, obj, threshold):
 def draw_asteroids(asteroids):
     """ Draw all asteroids. """
     for a in asteroids:
-        pygame.draw.circle(screen, (182, 177, 126), (int(a.x_coordinate), int(a.y_coordinate)), a.size)
+        pygame.draw.circle(screen, (148, 143, 110), (int(a.x_coordinate), int(a.y_coordinate)), a.size)
+
+def draw_bullets(bullets):
+    for bullet in bullets:
+        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet .size)
+
+
+def perform_shot(player):
+    shot = Shot(player.x, player.y, player.angle)
+    return shot
 
 def calculate_ship_points(ship):
     back_angle = 100
@@ -52,9 +59,12 @@ def draw_debug_info(ship):
 
 player = Ship(400, 300)
 
-asteroids = [Asteroid(random.randint(100, ScreenSize[0]), random.randint(100, ScreenSize[1]),
-                      random.randint(20, 50), random.randint(0, 360)) for _ in range(3)]
+asteroids = [Asteroid(random.randint(100, ScreenSize[0]), 0,
+                      random.randint(20, 50), random.randint(0, 360)) for _ in range(10)]
+bullets = []
 
+
+shooting_timeout = 0
 running = True
 while running:
     for event in pygame.event.get():
@@ -69,6 +79,10 @@ while running:
         player.rotate(-player.turn_speed)
     if keys[pygame.K_RIGHT]:
         player.rotate(player.turn_speed)
+    if keys[pygame.K_SPACE]:
+        if shooting_timeout <= 0:
+            bullets.append(perform_shot(player))
+            shooting_timeout = 20
     if keys[pygame.K_q]:
         print("Q pressed")
         running = False
@@ -76,6 +90,14 @@ while running:
     ship_points = calculate_ship_points(player)
     # Обновление координта
     player.update_position(ScreenSize)
+    remaining_bullets = []
+    for bullet in bullets:
+        bullet.fly(ScreenSize)
+        if bullet.distance <= 50:
+            remaining_bullets.append(bullet)
+    bullets = remaining_bullets
+
+
     for asteroid in asteroids:
         asteroid.fly(ScreenSize)
 
@@ -83,11 +105,12 @@ while running:
         for point in ship_points:
             if check_collision(point, asteroid, asteroid.size):
                 print("Asteroid crash!")
-                running = False
+                # running = False
 
     # Отрисовка
     screen.fill((20, 20, 20))
     draw_asteroids(asteroids)
+    draw_bullets(bullets)
     ship_color = (124, 110, 148)
     pygame.draw.polygon(screen, ship_color, ship_points)
 
@@ -96,6 +119,8 @@ while running:
         draw_debug_info(player)
 
     pygame.display.flip()
+    if shooting_timeout > 0:
+        shooting_timeout -= 1
     clock.tick(60)
 
 pygame.quit()
