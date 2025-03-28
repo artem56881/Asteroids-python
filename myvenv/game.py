@@ -62,45 +62,6 @@ asteroid3 = Asteroid(random.randint(100, ScreenSize[0]), random.randint(100, Scr
 asteroids = [asteroid1, asteroid2, asteroid3]
 
 
-import os
-
-def update_console(playerX, playerY, vector, asteroids):
-    console_width = 100
-    console_height = 100
-
-    grid = [[' ' for _ in range(console_width)] for _ in range(console_height)]
-
-    def map_to_console(x, y):
-        console_x = int((x / ScreenSize[0]) * console_width)
-        console_y = int((y / ScreenSize[1]) * console_height)
-        return console_x, console_y
-
-    console_playerX, console_playerY = map_to_console(playerX, playerY)
-    grid[console_playerY][console_playerX] = 'A'
-
-    vector_endX, vector_endY = map_to_console(playerX + vector[0] * 20, playerY + vector[1] * 20)
-    if 0 <= vector_endX < console_width and 0 <= vector_endY < console_height:
-        grid[vector_endY][vector_endX] = 'x'
-
-    for asteroid in asteroids:
-        console_asteroidX, console_asteroidY = map_to_console(asteroid.x_coordinate, asteroid.y_coordinate)
-        radius = asteroid.type//7
-
-        for y in range(-radius, radius + 1):
-            for x in range(-radius, radius + 1):
-                if x**2 + y**2 <= radius**2:
-                    grid_x = console_asteroidX + x
-                    grid_y = console_asteroidY + y
-                    if 0 <= grid_x < console_width and 0 <= grid_y < console_height:
-                        grid[grid_y][grid_x] = 'O'
-
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-    for row in grid:
-        print('.'.join(row))
-    print("[Q]quit")
-
-
 def draw_asteroids(asteroids):
     for a in asteroids:
         pygame.draw.circle(screen, (100, 110, 100), (a.x_coordinate, a.y_coordinate), radius=a.type)
@@ -117,7 +78,7 @@ def draw_pygame(player_cords, dir_vector, player_angle, speed, asteroids, debug)
 
     vector_l = angle_to_cords(playerAngle - back_angle)
     vector_r = angle_to_cords(playerAngle + back_angle)
-
+    # ne DOLZHNO ETOHOG ZDEC' BBIT'
     player_cords = (player_cords[0] - dir_vector[0] * ship_offset, player_cords[1] - dir_vector[1] * ship_offset)
     head_cords = (player_cords[0] + dir_vector[0] * ship_length, player_cords[1] + dir_vector[1] * ship_length)
 
@@ -134,9 +95,9 @@ def draw_pygame(player_cords, dir_vector, player_angle, speed, asteroids, debug)
 
     if debug:
         text = font.render(f"{player_angle}, {velX:.3f}, {velY:.3f}, bAngle: {back_angle:.3f}", True, (255, 255, 255))
-        screen.blit(text, (10, 10))  # draw text
-    # pygame.display.flip()
+        screen.blit(text, (10, 10))
 
+# ship = Ship() # Сделать класс ship
 
 running = True
 while running:
@@ -158,6 +119,7 @@ while running:
     if keys[pygame.K_q]:
         print("Q pressed")
         running = False
+
 
     if playerAngle >= 360:
         playerAngle -= 360
@@ -197,10 +159,8 @@ while running:
 
         # Проверка на столкновение с астероидом
         if (((playerX - a.x_coordinate) ** 2 + (playerY - a.y_coordinate) ** 2) ** 0.5) <= a.type:
-            print("Asteroid")
+            print("Asteroid crash")
             running = False
-        # if a.type == 10:
-        #     print(((playerX-a.x_coordinate)**2 + (playerY-a.y_coordinate)**2)**0.5, a.type)
 
     # if timer >= 10:
     draw_pygame(player_coords, vector, playerAngle, abs((velX + velY) / 2), asteroids, debug=True)
@@ -208,8 +168,6 @@ while running:
     # timer += 1
     pygame.display.flip()
     # Отрисовка в консоли
-
-    # update_console(playerX, playerY, vector, asteroids)
 
     velX *= friction
     velY *= friction
