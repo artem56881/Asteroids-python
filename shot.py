@@ -10,7 +10,6 @@ class Shot:
         self.distance = 0
 
     def fly(self, screen_size):
-        """ Move the asteroid in its trajectory. """
         dir_vector = angle_to_cords(self.angle)
         self.x_coordinate += dir_vector[0] * self.speed
         self.y_coordinate += dir_vector[1] * self.speed

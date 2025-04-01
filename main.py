@@ -4,35 +4,33 @@ import random
 from ship import Ship
 from asteroid import Asteroid
 from shot import Shot
+from utils import *
 
-from utils import angle_to_cords
 pygame.init()
 
-ScreenSize = [800, 600]
+ScreenSize = [300, 300]
 screen = pygame.display.set_mode(ScreenSize)
 clock = pygame.time.Clock()
-
 font = pygame.font.Font(None, 36)
 
-DEBUG = False
+DEBUG = True
+
+# очки, таблица лидеров, интерфейс запуска,
 
 def check_collision(point, obj, threshold):
-    """ Check if two objects are colliding using squared distance (optimized). """
     return (point[0] - obj.x_coordinate) ** 2 + (point[1] - obj.y_coordinate) ** 2 <= threshold ** 2
 
 def draw_asteroids(asteroids):
-    """ Draw all asteroids. """
     for a in asteroids:
         pygame.draw.circle(screen, (148, 143, 110), (int(a.x_coordinate), int(a.y_coordinate)), a.size)
+        pygame.draw.circle(screen, (100, 100, 10), (int(a.x_coordinate), int(a.y_coordinate)), a.size, width=1)
 
 def draw_bullets(bullets):
     for bullet in bullets:
-        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet .size)
-
+        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet.size)
 
 def perform_shot(player):
-    shot = Shot(player.x, player.y, player.angle)
-    return shot
+    return Shot(player.x, player.y, player.angle)
 
 def update_bullets_and_asteroids(bullets, asteroids):
     remaining_bullets = []
@@ -44,12 +42,13 @@ def update_bullets_and_asteroids(bullets, asteroids):
         bullet_hit = False
 
         for asteroid in asteroids:
-            distance = ((bullet.x_coordinate - asteroid.x_coordinate) ** 2 + (
-                        bullet.y_coordinate - asteroid.y_coordinate) ** 2) ** 0.5
+            distance = ((bullet.x_coordinate - asteroid.x_coordinate) ** 2 +
+                        (bullet.y_coordinate - asteroid.y_coordinate) ** 2) ** 0.5
 
             if distance <= asteroid.size:
                 bullet_hit = True
                 hit_asteroids.append(asteroid)
+
                 if asteroid.size >= 19:
                     for _ in range(2):
                         new_asteroid = Asteroid(
@@ -63,10 +62,7 @@ def update_bullets_and_asteroids(bullets, asteroids):
         if not bullet_hit and bullet.distance <= 50:
             remaining_bullets.append(bullet)
 
-    bullets = remaining_bullets
-    asteroids = [a for a in asteroids if a not in hit_asteroids] + new_asteroids
-    return bullets, asteroids
-
+    return remaining_bullets, [a for a in asteroids if a not in hit_asteroids] + new_asteroids
 
 def calculate_ship_points(ship):
     back_angle = 100
@@ -85,21 +81,45 @@ def calculate_ship_points(ship):
 
     return [base_cords, left_point_cords, head_cords, right_point_cords]
 
-
 def draw_debug_info(ship):
-    """ Display debug information. """
-    text = font.render(f"Angle: {ship.angle}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f}", True, (255, 255, 255))
+    text = font.render(f"Angle: {ship.angle}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f} asteroids: {len(asteroids)}", True, (255, 255, 255))
     screen.blit(text, (10, 10))
 
+def game_over_screen():
+    screen.fill((0, 0, 0))
+    text = font.render("Game Over! Press R to Restart, Q to Quit.", True, (115, 148, 110))
+    screen.blit(text, (ScreenSize[0] // 2 - 180, ScreenSize[1] // 2 - 20))
+    pygame.display.flip()
+
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return False
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_q]:
+                pygame.quit()
+                return False
+            if keys[pygame.K_r]:
+                return True
+
+def restart_game():
+    global asteroids, bullets, shooting_timeout
+
+    asteroids = [Asteroid(random.randint(100, ScreenSize[0]), 0,
+                          random.randint(20, 50), random.randint(0, 360)) for _ in range(10)]
+    bullets = []
+    shooting_timeout = 0
+    return True
+
 player = Ship(400, 300)
-
 asteroids = [Asteroid(random.randint(100, ScreenSize[0]), 0,
-                      random.randint(20, 50), random.randint(0, 360)) for _ in range(5)]
+                      random.randint(20, 50), random.randint(0, 360)) for _ in range(2)]
 bullets = []
-
-
 shooting_timeout = 0
 running = True
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -113,36 +133,37 @@ while running:
         player.rotate(-player.turn_speed)
     if keys[pygame.K_RIGHT]:
         player.rotate(player.turn_speed)
-    if keys[pygame.K_SPACE]:
-        if shooting_timeout <= 0:
-            bullets.append(perform_shot(player))
-            shooting_timeout = 20
+    if keys[pygame.K_SPACE] and shooting_timeout <= 0:
+        bullets.append(perform_shot(player))
+        shooting_timeout = 1
     if keys[pygame.K_q]:
         print("Q pressed")
         running = False
 
-    ship_points = calculate_ship_points(player)
-    # Обновление координат
     player.update_position(ScreenSize)
-#######
+
     bullets, asteroids = update_bullets_and_asteroids(bullets, asteroids)
-########
+
     for asteroid in asteroids:
         asteroid.fly(ScreenSize)
 
-        # Проверка коллизий
+    ship_points = calculate_ship_points(player)
+    if len(asteroids) == 0:
+        restart_game()
+    for asteroid in asteroids:
         for point in ship_points:
             if check_collision(point, asteroid, asteroid.size):
                 print("Asteroid crash!")
-                running = False
+                if game_over_screen():
+                    running = restart_game()
+                else:
+                    running = False
 
     # Отрисовка
     screen.fill((20, 20, 20))
     draw_asteroids(asteroids)
     draw_bullets(bullets)
-    ship_color = (124, 110, 148)
-    pygame.draw.polygon(screen, ship_color, ship_points)
-
+    pygame.draw.polygon(screen, (124, 110, 148), ship_points)
 
     if DEBUG:
         draw_debug_info(player)
