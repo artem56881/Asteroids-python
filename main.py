@@ -5,17 +5,18 @@ from ship import Ship
 from asteroid import Asteroid
 from shot import Shot
 from utils import *
+from settings import *
 
 pygame.init()
 
-ScreenSize = [300, 300]
+
 screen = pygame.display.set_mode(ScreenSize)
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 36)
 
-DEBUG = True
 
 # очки, таблица лидеров, интерфейс запуска,
+# Строгая типизация!!!!!!
 
 def check_collision(point, obj, threshold):
     return (point[0] - obj.x_coordinate) ** 2 + (point[1] - obj.y_coordinate) ** 2 <= threshold ** 2
@@ -63,23 +64,6 @@ def update_bullets_and_asteroids(bullets, asteroids):
             remaining_bullets.append(bullet)
 
     return remaining_bullets, [a for a in asteroids if a not in hit_asteroids] + new_asteroids
-
-def calculate_ship_points(ship):
-    back_angle = 100
-    ship_offset = 15
-    ship_width = 15
-    ship_length = 35
-
-    dir_vector = angle_to_cords(ship.angle)
-    vector_l = angle_to_cords(ship.angle - back_angle)
-    vector_r = angle_to_cords(ship.angle + back_angle)
-
-    base_cords = (ship.x - dir_vector[0] * ship_offset, ship.y - dir_vector[1] * ship_offset)
-    head_cords = (base_cords[0] + dir_vector[0] * ship_length, base_cords[1] + dir_vector[1] * ship_length)
-    left_point_cords = (base_cords[0] + vector_l[0] * ship_width, base_cords[1] + vector_l[1] * ship_width)
-    right_point_cords = (base_cords[0] + vector_r[0] * ship_width, base_cords[1] + vector_r[1] * ship_width)
-
-    return [base_cords, left_point_cords, head_cords, right_point_cords]
 
 def draw_debug_info(ship):
     text = font.render(f"Angle: {ship.angle}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f} asteroids: {len(asteroids)}", True, (255, 255, 255))
@@ -135,7 +119,7 @@ while running:
         player.rotate(player.turn_speed)
     if keys[pygame.K_SPACE] and shooting_timeout <= 0:
         bullets.append(perform_shot(player))
-        shooting_timeout = 1
+        shooting_timeout = shooting_rate
     if keys[pygame.K_q]:
         print("Q pressed")
         running = False
@@ -174,3 +158,5 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+
+# Создать класс для логики
