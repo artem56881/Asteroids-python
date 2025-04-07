@@ -136,9 +136,10 @@ class GameController:
                         if self.invincibility_timeout == 0:
                             self.ship.knockback()
                             self.invincibility_timeout = invincibility_window
-                        if self.invincibility_timeout > 0:
-                            self.invincibility_timeout -= 1
                         return
 
         if self.shooting_timeout > 0:
             self.shooting_timeout -= 1
+
+        if self.invincibility_timeout > 0:
+            self.invincibility_timeout -= 1

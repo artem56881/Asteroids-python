@@ -3,7 +3,7 @@ DEBUG = True
 
 shooting_rate = 20
 invincible = False
-invincibility_window = 2
+invincibility_window = 20
 
 max_shot_distance = 50
 
