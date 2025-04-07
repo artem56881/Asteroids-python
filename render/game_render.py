@@ -31,6 +31,24 @@ class GameView:
         self.screen.blit(leaderboard_text, (self.leaderboard_button.x + 25, self.leaderboard_button.y + 10))
         self.screen.blit(exit_text, (self.exit_button.x + 60, self.exit_button.y + 10))
 
+    def draw_leaderboard_screen(self):
+        self.screen.fill((20, 20, 20))
+
+        splash_text = self.splash_font.render("Asteroids", False, (255, 255, 255))
+        self.screen.blit(splash_text, (240,80))
+
+        pygame.draw.rect(self.screen, (115, 148, 110), self.start_button)
+        pygame.draw.rect(self.screen, (115, 148, 110), self.leaderboard_button)
+        pygame.draw.rect(self.screen, (115, 148, 110), self.exit_button)
+
+        start_text = self.font.render("Начать игру", True, (0, 0, 0))
+        leaderboard_text = self.font.render("Лидер борд", True, (0, 0, 0))
+        exit_text = self.font.render("Выйти", True, (0, 0, 0))
+
+        self.screen.blit(start_text, (self.start_button.x + 35, self.start_button.y + 10))
+        self.screen.blit(leaderboard_text, (self.leaderboard_button.x + 25, self.leaderboard_button.y + 10))
+        self.screen.blit(exit_text, (self.exit_button.x + 60, self.exit_button.y + 10))
+
     def draw_statistics(self, score, screen_size):
         text_1 = self.font.render(f"Вы проиграли. Очки: {score}", False, (255, 255, 255))
         text_2 = self.font.render(f"Нажмите R чтобы начать заново", False, (255, 255, 255))

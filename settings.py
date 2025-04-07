@@ -1,5 +1,5 @@
 ScreenSize = [800, 600]
-DEBUG = True
+DEBUG = False
 
 shooting_rate = 20
 invincible = False

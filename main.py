@@ -1,6 +1,6 @@
-from logic.game_logic import GameController
-from render.game_render import GameView
 import pygame
+
+from logic.game_logic import GameController
 
 
 def main():
