@@ -25,3 +25,7 @@ class Ship:
         dx, dy = angle_to_cords(self.angle)
         self.vel_x += dx * self.acceleration
         self.vel_y += dy * self.acceleration
+
+    def knockback(self):
+        self.vel_x += 0
+        self.vel_y += -5
