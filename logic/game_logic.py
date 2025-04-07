@@ -8,8 +8,6 @@ from entities.shot import Shot
 from render.game_render import GameView
 from utils.math_utils import calculate_ship_points
 
-
-
 class GameController:
     def __init__(self, screen):
         self.screen = screen
@@ -21,6 +19,7 @@ class GameController:
         self.asteroids = []
         self.bullets = []
         self.shooting_timeout = 0
+        self.invincibility_timeout = 0
 
     def restart_game(self, score=0, asteroids_amount=5):
         self.ship = Ship(400, 300, score)
@@ -56,8 +55,10 @@ class GameController:
                 self.handle_input(keys)
                 self.update_game()
                 self.view.draw_game(self.ship, self.asteroids, self.bullets, self.ship.score)
+
             elif self.state == 'START':
                 self.view.draw_start_screen()
+
             elif self.state == 'STATISTICS':
                 self.handle_q_input(keys)
                 self.handle_r_input(keys)
@@ -124,15 +125,17 @@ class GameController:
         self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
 
         if len(self.asteroids) == 0:
-            self.restart_game(self.ship.score)
+            self.restart_game(self.ship.score) # перезапуск уровня с сохранением текущего счета
 
         ship_points = calculate_ship_points(self.ship)
         for asteroid in self.asteroids:
             for point in ship_points:
-                if not(invincible):
+                if not invincible:
                     if ((point[0] - asteroid.x_coordinate) ** 2 + (point[1] - asteroid.y_coordinate) ** 2) <= asteroid.size ** 2:
                         self.state = 'STATISTICS'
                         return
 
         if self.shooting_timeout > 0:
             self.shooting_timeout -= 1
+        if self.invincibility_timeout > 0:
+            self.invincibility_timeout -= 1

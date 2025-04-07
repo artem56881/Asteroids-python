@@ -8,12 +8,17 @@ class GameView:
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
+        self.splash_font = pygame.font.Font(None, 100)
         self.start_button = pygame.Rect(300, 250, 200, 50)
         self.leaderboard_button = pygame.Rect(300, 320, 200, 50)
         self.exit_button = pygame.Rect(300, 390, 200, 50)
 
     def draw_start_screen(self):
         self.screen.fill((20, 20, 20))
+
+        splash_text = self.splash_font.render("Asteroids", False, (255, 255, 255))
+        self.screen.blit(splash_text, (240,80))
+
         pygame.draw.rect(self.screen, (115, 148, 110), self.start_button)
         pygame.draw.rect(self.screen, (115, 148, 110), self.leaderboard_button)
         pygame.draw.rect(self.screen, (115, 148, 110), self.exit_button)
