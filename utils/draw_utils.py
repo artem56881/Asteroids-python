@@ -18,10 +18,15 @@ def draw_bullets(screen, bullets):
 def draw_ship(screen, ship):
     pygame.draw.polygon(screen, (124, 110, 148), calculate_ship_points(ship))
 
-def draw_osd(screen, font, score):
+def draw_osd(screen, font, score, lives_amount):
     text = font.render(f"Очки: {score}", True, (255, 255, 255))
-    screen.blit(text, (10, 10))
+    lives_symbols = ""
 
+    for i in range(lives_amount):
+        lives_symbols += "A"
+    lives = font.render(lives_symbols, True, (255, 255, 255))
+    screen.blit(text, (10, 10))
+    screen.blit(lives, (10, 35))
 
 def draw_statistics(screen, font, score, screen_size):
     text_1 = font.render(f"Вы проиграли. Очки: {score}", False, (255, 255, 255))
@@ -33,5 +38,5 @@ def draw_statistics(screen, font, score, screen_size):
     screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
 
 def draw_debug_info(screen, font, ship, asteroids):
-    text = font.render(f"Angle: {ship.angle}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f}, asteroids: {len(asteroids)}", True, (255, 255, 255))
+    text = font.render(f"lives: {ship.lives}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f}, asteroids: {len(asteroids)}", True, (255, 255, 255))
     screen.blit(text, (10, 30))

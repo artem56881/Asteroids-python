@@ -1,7 +1,7 @@
 from utils.math_utils import angle_to_cords
 
 class Ship:
-    def __init__(self, x: float, y: float, score: int=0):
+    def __init__(self, x: float, y: float, score: int=0, lives: int=3):
         self.x = x
         self.y = y
         self.angle = 45
@@ -11,6 +11,7 @@ class Ship:
         self.friction = 0.99
         self.turn_speed = 5
         self.score = score
+        self.lives = lives
 
     def update_position(self, screen_size):
         self.x = (self.x + self.vel_x) % screen_size[0]
@@ -27,5 +28,5 @@ class Ship:
         self.vel_y += dy * self.acceleration
 
     def knockback(self):
-        self.vel_x += 0
-        self.vel_y += -5
+        self.vel_x = 0
+        self.vel_y = 0

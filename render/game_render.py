@@ -49,7 +49,7 @@ class GameView:
 
         draw_ship(self.screen, ship)
 
-        draw_osd(self.screen, self.font, score)
+        draw_osd(self.screen, self.font, score, ship.lives)
 
         if DEBUG:
             draw_debug_info(self.screen, self.font, ship, asteroids)
