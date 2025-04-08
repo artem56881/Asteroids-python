@@ -1,7 +1,7 @@
 import pygame
 import json
 
-from settings import DEBUG
+from settings import DEBUG, leaderboard_file_path
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info
 
 
@@ -40,7 +40,7 @@ class GameView:
         splash_text = self.forty_font.render("Таблица лидеров", False, (255, 255, 255))
         self.screen.blit(splash_text, (280,30))
 
-        with open('../leaderboard.json', 'r') as json_file:
+        with open(leaderboard_file_path, 'r') as json_file:
             leaderboard = json.load(json_file)
 
         name_score_pairs = [(player['name'], player['score']) for player in leaderboard['leaderboard']]
