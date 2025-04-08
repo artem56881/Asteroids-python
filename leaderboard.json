@@ -1,16 +1,56 @@
 {
-  "leaderboard": [
-    {
-      "name": "Alice",
-      "score": 150
-    },
-    {
-      "name": "Bob",
-      "score": 200
-    },
-    {
-      "name": "Charlie",
-      "score": 120
-    }
-  ]
+    "leaderboard": [
+        {
+            "name": "artem1",
+            "score": 10000
+        },
+        {
+            "name": "artem1",
+            "score": 247
+        },
+        {
+            "name": "krab73",
+            "score": 80
+        },
+        {
+            "name": "kek1",
+            "score": 76
+        },
+        {
+            "name": "",
+            "score": 67
+        },
+        {
+            "name": "\u0439\u0439\u0439\u0439",
+            "score": 34
+        },
+        {
+            "name": "ididot",
+            "score": 10
+        },
+        {
+            "name": "artem2",
+            "score": 10
+        },
+        {
+            "name": "\u0434\u043b\u0434\u043blklk\u0414\u043b\u0434\u041b\u041a \u041a\u0415\u041a123!\"\u2116;%:?*()_+",
+            "score": 5
+        },
+        {
+            "name": "qweqweqweasd",
+            "score": 3
+        },
+        {
+            "name": "11111111qwe",
+            "score": 0
+        },
+        {
+            "name": "l",
+            "score": 0
+        },
+        {
+            "name": "eto prikolchik",
+            "score": 0
+        }
+    ]
 }
