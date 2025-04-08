@@ -1,4 +1,5 @@
 import pygame
+import json
 
 from settings import DEBUG
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info
@@ -9,9 +10,11 @@ class GameView:
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
         self.splash_font = pygame.font.Font(None, 100)
+        self.forty_font = pygame.font.Font(None, 40)
         self.start_button = pygame.Rect(300, 250, 200, 50)
         self.leaderboard_button = pygame.Rect(300, 320, 200, 50)
         self.exit_button = pygame.Rect(300, 390, 200, 50)
+        self.menu_button = pygame.Rect(300, 500, 200, 50)
 
     def draw_start_screen(self):
         self.screen.fill((20, 20, 20))
@@ -34,20 +37,24 @@ class GameView:
     def draw_leaderboard_screen(self):
         self.screen.fill((20, 20, 20))
 
-        splash_text = self.splash_font.render("Asteroids", False, (255, 255, 255))
-        self.screen.blit(splash_text, (240,80))
+        splash_text = self.forty_font.render("Таблица лидеров", False, (255, 255, 255))
+        self.screen.blit(splash_text, (280,30))
 
-        pygame.draw.rect(self.screen, (115, 148, 110), self.start_button)
-        pygame.draw.rect(self.screen, (115, 148, 110), self.leaderboard_button)
-        pygame.draw.rect(self.screen, (115, 148, 110), self.exit_button)
+        with open('../leaderboard.json', 'r') as json_file:
+            leaderboard = json.load(json_file)
 
-        start_text = self.font.render("Начать игру", True, (0, 0, 0))
-        leaderboard_text = self.font.render("Лидер борд", True, (0, 0, 0))
-        exit_text = self.font.render("Выйти", True, (0, 0, 0))
+        name_score_pairs = [(player['name'], player['score']) for player in leaderboard['leaderboard']]
+        i = 0
+        for name, score in name_score_pairs:
+            line = self.font.render(f"{name} {score}", True, (255, 255, 255))
+            self.screen.blit(line, (300, 100+i*40))
+            i += 1
 
-        self.screen.blit(start_text, (self.start_button.x + 35, self.start_button.y + 10))
-        self.screen.blit(leaderboard_text, (self.leaderboard_button.x + 25, self.leaderboard_button.y + 10))
-        self.screen.blit(exit_text, (self.exit_button.x + 60, self.exit_button.y + 10))
+        pygame.draw.rect(self.screen, (115, 148, 110), self.menu_button)
+
+        exit_text = self.font.render("Назад", True, (0, 0, 0))
+
+        self.screen.blit(exit_text, (self.menu_button.x + 60, self.menu_button.y + 10))
 
     def draw_statistics(self, score, screen_size):
         text_1 = self.font.render(f"Вы проиграли. Очки: {score}", False, (255, 255, 255))

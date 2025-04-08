@@ -48,7 +48,11 @@ class GameController:
                         elif self.view.exit_button.collidepoint(event.pos):
                             pygame.quit()
                         elif self.view.leaderboard_button.collidepoint(event.pos):
-                            print("Leaderboard clicked")
+                            self.show_leaderboard()
+                elif self.state == 'LEADERBOARD':
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.view.menu_button.collidepoint(event.pos):
+                            self.state = 'START'
 
             keys = pygame.key.get_pressed()
             if self.state == 'RUNNING':
@@ -63,6 +67,9 @@ class GameController:
                 self.handle_q_input(keys)
                 self.handle_r_input(keys)
                 self.view.draw_statistics(self.ship.score, ScreenSize)
+
+            elif self.state == 'LEADERBOARD':
+                self.view.draw_leaderboard_screen()
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -79,12 +86,10 @@ class GameController:
             self.shooting_timeout = shooting_rate
 
     def handle_q_input(self, keys):
-        # Обработка quit
         if keys[pygame.K_q]:
             self.state = 'START'
 
     def handle_r_input(self, keys):
-        # Обработка restart
         if keys[pygame.K_r]:
             self.restart_game()
 

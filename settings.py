@@ -3,6 +3,7 @@ DEBUG = False
 
 shooting_rate = 20
 invincible = False
+friction = 0.99
 
 max_shot_distance = 50
 
