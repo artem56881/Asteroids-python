@@ -22,7 +22,7 @@ class GameController:
         self.invincibility_timeout = 0
 
     def restart_game(self, score=0, asteroids_amount=5):
-        self.ship = Ship(400, 300, score)
+        self.ship = Ship(400, 300, score, self.ship.lives)
         self.asteroids = [Asteroid(random.randint(100, 800), 0, random.randint(20, 50), random.randint(0, 360)) for _ in range(asteroids_amount)]
         self.bullets = []
         self.shooting_timeout = 0
