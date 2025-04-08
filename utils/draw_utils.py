@@ -1,11 +1,11 @@
 import pygame
 
-from settings import DEBUG
+from settings import DEBUG, primary_color, secondary_color
 from utils.math_utils import calculate_ship_points
 
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
-        pygame.draw.circle(screen, (148, 143, 110), (int(a.x_coordinate), int(a.y_coordinate)), a.size)
+        pygame.draw.circle(screen, primary_color, (int(a.x_coordinate), int(a.y_coordinate)), a.size)
         pygame.draw.circle(screen, (100, 100, 10), (int(a.x_coordinate), int(a.y_coordinate)), a.size, width=1)
         if DEBUG:
             text_size = font.render(f"{a.size}", False, (255, 255, 255))
@@ -16,7 +16,7 @@ def draw_bullets(screen, bullets):
         pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet.size)
 
 def draw_ship(screen, ship):
-    pygame.draw.polygon(screen, (124, 110, 148), calculate_ship_points(ship))
+    pygame.draw.polygon(screen, secondary_color, calculate_ship_points(ship))
 
 def draw_osd(screen, font, score, lives_amount):
     text = font.render(f"Очки: {score}", True, (255, 255, 255))

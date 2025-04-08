@@ -1,7 +1,7 @@
 import pygame
 import json
 
-from settings import DEBUG, leaderboard_file_path
+from settings import DEBUG, leaderboard_file_path, button_color
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info
 
 
@@ -22,9 +22,9 @@ class GameView:
         splash_text = self.splash_font.render("Asteroids", False, (255, 255, 255))
         self.screen.blit(splash_text, (240,80))
 
-        pygame.draw.rect(self.screen, (115, 148, 110), self.start_button)
-        pygame.draw.rect(self.screen, (115, 148, 110), self.leaderboard_button)
-        pygame.draw.rect(self.screen, (115, 148, 110), self.exit_button)
+        pygame.draw.rect(self.screen, button_color, self.start_button)
+        pygame.draw.rect(self.screen, button_color, self.leaderboard_button)
+        pygame.draw.rect(self.screen, button_color, self.exit_button)
 
         start_text = self.font.render("Начать игру", True, (0, 0, 0))
         leaderboard_text = self.font.render("Лидер борд", True, (0, 0, 0))
@@ -50,7 +50,7 @@ class GameView:
             self.screen.blit(line, (300, 100+i*40))
             i += 1
 
-        pygame.draw.rect(self.screen, (115, 148, 110), self.menu_button)
+        pygame.draw.rect(self.screen, button_color, self.menu_button)
 
         exit_text = self.font.render("Назад", True, (0, 0, 0))
 
