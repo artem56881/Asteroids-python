@@ -2,7 +2,7 @@ import pygame
 import json
 
 from settings import DEBUG, leaderboard_file_path, button_color
-from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info
+from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info, draw_booster
 
 class GameView:
     def __init__(self, screen):
@@ -80,7 +80,7 @@ class GameView:
         self.screen.blit(text_2, (screen_size[0] // 2 - 180, screen_size[1] // 2 + 35))
         self.screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
 
-    def draw_game(self, ship, asteroids, bullets, score):
+    def draw_game(self, ship, asteroids, bullets, booster, score):
         self.screen.fill((20, 20, 20))
 
         draw_asteroids(self.screen, self.font, asteroids)
@@ -88,6 +88,8 @@ class GameView:
         draw_bullets(self.screen, bullets)
 
         draw_ship(self.screen, ship)
+
+        draw_booster(self.screen, booster)
 
         draw_osd(self.screen, self.font, score, ship.lives)
 

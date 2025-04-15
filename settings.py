@@ -17,3 +17,4 @@ leaderboard_file_path = '../leaderboard.json'
 primary_color = (148, 143, 110)
 secondary_color = (124, 110, 148)
 button_color = (115, 148, 110)
+booster_color = (0, 140, 30)

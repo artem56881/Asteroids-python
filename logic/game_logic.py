@@ -3,6 +3,7 @@ import random
 import json
 
 from settings import *
+from entities.booster import Booster
 from entities.ship import Ship
 from entities.asteroid import Asteroid
 from entities.shot import Shot
@@ -11,6 +12,7 @@ from utils.math_utils import calculate_ship_points, collision
 
 class GameController:
     def __init__(self, screen):
+        self.booster = None
         self.screen = screen
         self.view = GameView(screen)
         self.clock = pygame.time.Clock()
@@ -29,6 +31,7 @@ class GameController:
         self.bullets = []
         self.shooting_timeout = 0
         self.state = 'RUNNING'
+        self.booster = Booster(random.randint(1,200), random.randint(1,200), 1)
 
     def show_leaderboard(self):
         self.state = 'LEADERBOARD'
@@ -72,7 +75,7 @@ class GameController:
             if self.state == 'RUNNING':
                 self.handle_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.ship.score)
+                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.booster, self.ship.score)
 
             elif self.state == 'START':
                 self.view.draw_start_screen()
