@@ -6,14 +6,12 @@ class Booster:
         self.x_coordinate = x
         self.y_coordinate = y
         self.type = asteroid_type
+        self.time = 0
 
-        # Create the image surface
         self.size = 12
         diameter = self.size * 2
         self.image = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
         pygame.draw.circle(self.image, booster_color, (self.size, self.size), self.size)
-
-        # Set the rect (for drawing and collision)
         self.rect = self.image.get_rect(center=(x, y))
 
     def draw(self, screen):

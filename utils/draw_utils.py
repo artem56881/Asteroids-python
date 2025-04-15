@@ -13,7 +13,6 @@ def draw_asteroids(screen, font, asteroids):
 def draw_booster(screen, booster):
     booster.draw(screen)
 
-
 def draw_bullets(screen, bullets):
     for bullet in bullets:
         pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet.size)

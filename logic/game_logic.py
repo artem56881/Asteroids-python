@@ -23,7 +23,9 @@ class GameController:
         self.bullets = []
         self.shooting_timeout = 0
         self.invincibility_timeout = 0
+        self.booster_timeout = 0
         self.player_name = ""
+        self.shooting_window = 20
 
     def restart_game(self, score=0, asteroids_amount=5):
         self.ship = Ship(400, 300, score, self.ship.lives)
@@ -31,7 +33,7 @@ class GameController:
         self.bullets = []
         self.shooting_timeout = 0
         self.state = 'RUNNING'
-        self.booster = Booster(random.randint(1,200), random.randint(1,200), 1)
+        self.booster = Booster(random.randint(100,200), random.randint(100  ,200), 1)
 
     def show_leaderboard(self):
         self.state = 'LEADERBOARD'
@@ -103,7 +105,7 @@ class GameController:
             self.ship.rotate(self.ship.turn_speed)
         if keys[pygame.K_SPACE] and self.shooting_timeout <= 0:
             self.bullets.append(Shot(self.ship.x, self.ship.y, self.ship.angle))
-            self.shooting_timeout = shooting_rate
+            self.shooting_timeout = self.shooting_window
 
     def handle_q_input(self, keys):
         if keys[pygame.K_q]:
@@ -148,9 +150,15 @@ class GameController:
         self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
 
         if len(self.asteroids) == 0:
-            self.restart_game(self.ship.score)  # перезапуск уровня с сохранением текущего счета
+            self.restart_game(self.ship.score)
 
         ship_points = calculate_ship_points(self.ship)
+
+        if self.booster.collides_with_point(ship_points[0]) and self.booster_timeout == 0:
+            self.booster_timeout = self.booster.time
+            self.shooting_window = 1
+
+
         for asteroid in self.asteroids:
             for point in ship_points:
                 if not invincible and asteroid.collides_with_point(point):

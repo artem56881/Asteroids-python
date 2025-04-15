@@ -11,12 +11,9 @@ class Asteroid:
         self.angle = angle
         self.speed = random.uniform(0.5, 2)
 
-        # Create the image surface
         diameter = size * 2
         self.image = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
         pygame.draw.circle(self.image, primary_color, (size, size), size)
-
-        # Set the rect (for drawing and collision)
         self.rect = self.image.get_rect(center=(x, y))
 
     def fly(self, screen_size):
