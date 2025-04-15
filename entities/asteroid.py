@@ -31,7 +31,6 @@ class Asteroid:
         screen.blit(self.image, self.rect)
 
     def collides_with_point(self, point):
-        # Check circle collision
         dx = point[0] - self.x_coordinate
         dy = point[1] - self.y_coordinate
         return dx * dx + dy * dy <= self.size * self.size
