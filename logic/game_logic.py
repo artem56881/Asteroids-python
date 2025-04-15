@@ -125,7 +125,7 @@ class GameController:
             bullet_hit = False
 
             for asteroid in self.asteroids:
-                if bullet.rect.colliderect(asteroid.rect):
+                if asteroid.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
                     # Add score
                     self.ship.score += int(10 - asteroid.size % 10)
                     bullet_hit = True
@@ -147,15 +147,17 @@ class GameController:
         if len(self.asteroids) == 0:
             self.restart_game(self.ship.score)  # перезапуск уровня с сохранением текущего счета
 
-        if self.ship.rect.collidelist([asteroid.rect for asteroid in self.asteroids]) != -1 and not invincible:
-            if self.invincibility_timeout == 0:
-                self.ship.lives -= 1
-                asteroid = self.asteroids[self.ship.rect.collidelist([asteroid.rect for asteroid in self.asteroids])]
-                self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
-                self.invincibility_timeout = invincibility_window
-            if self.ship.lives <= 0:
-                self.enter_name_state()
-            return
+        ship_points = calculate_ship_points(self.ship)
+        for asteroid in self.asteroids:
+            for point in ship_points:
+                if not invincible and asteroid.collides_with_point(point):
+                    if self.invincibility_timeout == 0:
+                        self.ship.lives -= 1
+                        self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
+                        self.invincibility_timeout = invincibility_window
+                    if self.ship.lives <= 0:
+                        self.enter_name_state()
+                    return
 
         if self.shooting_timeout > 0:
             self.shooting_timeout -= 1

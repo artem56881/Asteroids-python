@@ -5,8 +5,7 @@ from utils.math_utils import calculate_ship_points
 
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
-        pygame.draw.circle(screen, primary_color, (int(a.x_coordinate), int(a.y_coordinate)), a.size)
-        pygame.draw.circle(screen, (100, 100, 10), (int(a.x_coordinate), int(a.y_coordinate)), a.size, width=1)
+        a.draw(screen)
         if DEBUG:
             text_size = font.render(f"{a.size}", False, (255, 255, 255))
             screen.blit(text_size, (a.x_coordinate, a.y_coordinate))
