@@ -27,6 +27,15 @@ class Ship:
         self.vel_x += dx * self.acceleration
         self.vel_y += dy * self.acceleration
 
-    def knockback(self):
-        self.vel_x = 0
-        self.vel_y = 0
+    def knockback(self, asteroid_x, asteroid_y, asteroid_size):
+        dx = asteroid_x - self.x
+        dy = asteroid_y - self.y
+
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+        if distance != 0:
+            dx /= distance
+            dy /= distance
+
+        knockback_strength = asteroid_size//10
+        self.vel_x -= dx * knockback_strength
+        self.vel_y -= dy * knockback_strength
