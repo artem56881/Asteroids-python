@@ -28,6 +28,5 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
     return [base, left, head, right]
 
 
-def check_collision(point: Tuple[float, float], obj, threshold: float) -> bool:
-    return (point[0] - obj.x_coordinate) ** 2 + (point[1] - obj.y_coordinate) ** 2 <= threshold ** 2
-
+def collision(point_x, point_y, asteroid_x, asteroid_y, asteroid_size):
+    return ((point_x - asteroid_x) ** 2 + (point_y - asteroid_y) ** 2) <= asteroid_size ** 2

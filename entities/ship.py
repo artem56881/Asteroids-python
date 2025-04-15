@@ -1,8 +1,9 @@
+import pygame
 from utils.math_utils import angle_to_cords
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, score: int=0, lives: int=1):
+    def __init__(self, x: float, y: float, score: int=0, lives: int=40):
         self.x = x
         self.y = y
         self.angle = 45
@@ -12,12 +13,14 @@ class Ship:
         self.turn_speed = 5
         self.score = score
         self.lives = lives
+        self.rect = pygame.Rect(x, y, 20, 20)  # Assuming the ship is 20x20 pixels
 
     def update_position(self, screen_size):
         self.x = (self.x + self.vel_x) % screen_size[0]
         self.y = (self.y + self.vel_y) % screen_size[1]
         self.vel_x *= friction
         self.vel_y *= friction
+        self.rect.topleft = (self.x, self.y)
 
     def rotate(self, angle_delta):
         self.angle = (self.angle + angle_delta) % 360
@@ -36,6 +39,6 @@ class Ship:
             dx /= distance
             dy /= distance
 
-        knockback_strength = asteroid_size//10
+        knockback_strength = asteroid_size // 10
         self.vel_x -= dx * knockback_strength
         self.vel_y -= dy * knockback_strength

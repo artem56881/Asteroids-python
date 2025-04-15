@@ -7,7 +7,7 @@ from entities.ship import Ship
 from entities.asteroid import Asteroid
 from entities.shot import Shot
 from render.game_render import GameView
-from utils.math_utils import calculate_ship_points
+from utils.math_utils import calculate_ship_points, collision
 
 class GameController:
     def __init__(self, screen):
@@ -125,10 +125,8 @@ class GameController:
             bullet_hit = False
 
             for asteroid in self.asteroids:
-                distance = ((bullet.x_coordinate - asteroid.x_coordinate) ** 2 +
-                            (bullet.y_coordinate - asteroid.y_coordinate) ** 2) ** 0.5
-                if distance <= asteroid.size:
-                    #add score
+                if bullet.rect.colliderect(asteroid.rect):
+                    # Add score
                     self.ship.score += int(10 - asteroid.size % 10)
                     bullet_hit = True
                     hit_asteroids.append(asteroid)
@@ -147,22 +145,17 @@ class GameController:
         self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
 
         if len(self.asteroids) == 0:
-            self.restart_game(self.ship.score) # перезапуск уровня с сохранением текущего счета
+            self.restart_game(self.ship.score)  # перезапуск уровня с сохранением текущего счета
 
-        ship_points = calculate_ship_points(self.ship)
-        for asteroid in self.asteroids:
-            for point in ship_points:
-                if not invincible:
-                    if ((point[0] - asteroid.x_coordinate) ** 2 + (point[1] - asteroid.y_coordinate) ** 2) <= asteroid.size ** 2:
-                        if self.invincibility_timeout == 0:
-                            self.ship.lives -= 1
-
-
-                            self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
-                            self.invincibility_timeout = invincibility_window
-                        if self.ship.lives <= 0:
-                            self.enter_name_state()
-                        return
+        if self.ship.rect.collidelist([asteroid.rect for asteroid in self.asteroids]) != -1 and not invincible:
+            if self.invincibility_timeout == 0:
+                self.ship.lives -= 1
+                asteroid = self.asteroids[self.ship.rect.collidelist([asteroid.rect for asteroid in self.asteroids])]
+                self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
+                self.invincibility_timeout = invincibility_window
+            if self.ship.lives <= 0:
+                self.enter_name_state()
+            return
 
         if self.shooting_timeout > 0:
             self.shooting_timeout -= 1
