@@ -2,7 +2,7 @@ from utils.math_utils import angle_to_cords
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, score: int=0, lives: int=3):
+    def __init__(self, x: float, y: float, score: int=0, lives: int=1):
         self.x = x
         self.y = y
         self.angle = 45

@@ -1,5 +1,6 @@
 import pygame
 import random
+import json
 
 from settings import *
 from entities.ship import Ship
@@ -20,6 +21,7 @@ class GameController:
         self.bullets = []
         self.shooting_timeout = 0
         self.invincibility_timeout = 0
+        self.player_name = ""
 
     def restart_game(self, score=0, asteroids_amount=5):
         self.ship = Ship(400, 300, score, self.ship.lives)
@@ -33,6 +35,9 @@ class GameController:
 
     def show_post_game_statistics(self):
         self.state = 'STATISTICS'
+
+    def enter_name_state(self):
+        self.state = 'ENTER_NAME'
 
     def run(self):
         running = True
@@ -53,6 +58,15 @@ class GameController:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.menu_button.collidepoint(event.pos):
                             self.state = 'START'
+                elif self.state == 'ENTER_NAME':
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            self.save_score_to_leaderboard()
+                            self.show_leaderboard()
+                        elif event.key == pygame.K_BACKSPACE:
+                            self.player_name = self.player_name[:-1]
+                        else:
+                            self.player_name += event.unicode
 
             keys = pygame.key.get_pressed()
             if self.state == 'RUNNING':
@@ -70,6 +84,9 @@ class GameController:
 
             elif self.state == 'LEADERBOARD':
                 self.view.draw_leaderboard_screen()
+
+            elif self.state == 'ENTER_NAME':
+                self.view.draw_enter_name_screen(ScreenSize, self.player_name, self.ship.score)
 
             pygame.display.flip()
             self.clock.tick(60)
@@ -144,7 +161,7 @@ class GameController:
                             self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
                             self.invincibility_timeout = invincibility_window
                         if self.ship.lives <= 0:
-                            self.state = 'STATISTICS'
+                            self.enter_name_state()
                         return
 
         if self.shooting_timeout > 0:
@@ -152,3 +169,12 @@ class GameController:
 
         if self.invincibility_timeout > 0:
             self.invincibility_timeout -= 1
+
+    def save_score_to_leaderboard(self):
+        with open('../leaderboard.json', 'r+') as json_file:
+            leaderboard = json.load(json_file)
+            leaderboard['leaderboard'].append({"name": self.player_name, "score": self.ship.score})
+            leaderboard['leaderboard'] = sorted(leaderboard['leaderboard'], key=lambda x: x['score'], reverse=True)
+            json_file.seek(0)
+            json.dump(leaderboard, json_file, indent=4)
+            json_file.truncate()

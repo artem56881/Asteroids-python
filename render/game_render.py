@@ -4,7 +4,6 @@ import json
 from settings import DEBUG, leaderboard_file_path, button_color
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info
 
-
 class GameView:
     def __init__(self, screen):
         self.screen = screen
@@ -55,6 +54,22 @@ class GameView:
         exit_text = self.font.render("Назад", True, (0, 0, 0))
 
         self.screen.blit(exit_text, (self.menu_button.x + 60, self.menu_button.y + 10))
+
+    def draw_enter_name_screen(self, screen_size, player_name, score):
+        pygame.draw.rect(self.screen, (10, 10, 10), (screen_size[0] // 2 - 180, 265, screen_size[0], 35))
+
+        text_1 = self.font.render(f"Вы проиграли. Очки: {score}", False, (255, 255, 255))
+
+        self.screen.blit(text_1, (screen_size[0] // 2 - 180, screen_size[1] // 2 - 100))
+
+        text = self.font.render("Ваше имя:", False, (255, 255, 255))
+        self.screen.blit(text, (screen_size[0] // 2 - 180, 240))
+
+        name_text = self.font.render(player_name, False, (255, 255, 255))
+        self.screen.blit(name_text, (screen_size[0] // 2 - 180, 265))
+
+        instruction_text = self.font.render("Нажмите Enter чтобы сохранить", False, (255, 255, 255))
+        self.screen.blit(instruction_text, (screen_size[0] // 2 - 180, 300))
 
     def draw_statistics(self, score, screen_size):
         text_1 = self.font.render(f"Вы проиграли. Очки: {score}", False, (255, 255, 255))
