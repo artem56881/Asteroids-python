@@ -137,10 +137,11 @@ class GameController:
             for point in ship_points:
                 if not invincible:
                     if ((point[0] - asteroid.x_coordinate) ** 2 + (point[1] - asteroid.y_coordinate) ** 2) <= asteroid.size ** 2:
-                        # self.state = 'STATISTICS'
                         if self.invincibility_timeout == 0:
                             self.ship.lives -= 1
-                            self.ship.knockback()
+
+
+                            self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
                             self.invincibility_timeout = invincibility_window
                         if self.ship.lives <= 0:
                             self.state = 'STATISTICS'
