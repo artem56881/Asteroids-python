@@ -1,7 +1,7 @@
 import pygame
 
-from settings import DEBUG, primary_color, secondary_color
-from utils.math_utils import calculate_ship_points
+from settings import DEBUG, primary_color, secondary_color, enemy_color
+from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
@@ -12,6 +12,10 @@ def draw_asteroids(screen, font, asteroids):
 
 def draw_booster(screen, booster):
     booster.draw(screen)
+
+def draw_saucers(screen, saucers):
+    for saucer in saucers:
+        pygame.draw.polygon(screen, enemy_color, calculate_saucer_points(saucer))
 
 def draw_bullets(screen, bullets):
     for bullet in bullets:

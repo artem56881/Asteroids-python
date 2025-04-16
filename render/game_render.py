@@ -2,9 +2,10 @@ import pygame
 import json
 
 from settings import DEBUG, leaderboard_file_path, button_color
-from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info, draw_booster
+from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info, draw_booster, draw_saucers
 
 class GameView:
+
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
@@ -14,6 +15,26 @@ class GameView:
         self.leaderboard_button = pygame.Rect(300, 320, 200, 50)
         self.exit_button = pygame.Rect(300, 390, 200, 50)
         self.menu_button = pygame.Rect(300, 500, 200, 50)
+
+
+    def draw_game(self, ship, asteroids, bullets, booster, score, saucers):
+        self.screen.fill((20, 20, 20))
+
+        draw_asteroids(self.screen, self.font, asteroids)
+
+        draw_saucers(self.screen, saucers)
+
+        draw_bullets(self.screen, bullets)
+
+        draw_ship(self.screen, ship)
+
+        draw_booster(self.screen, booster)
+
+        draw_osd(self.screen, self.font, score, ship.lives)
+
+        if DEBUG:
+            draw_debug_info(self.screen, self.font, ship, asteroids)
+
 
     def draw_start_screen(self):
         self.screen.fill((20, 20, 20))
@@ -79,19 +100,3 @@ class GameView:
         self.screen.blit(text_1, (screen_size[0] // 2 - 120, screen_size[1] // 2))
         self.screen.blit(text_2, (screen_size[0] // 2 - 180, screen_size[1] // 2 + 35))
         self.screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
-
-    def draw_game(self, ship, asteroids, bullets, booster, score):
-        self.screen.fill((20, 20, 20))
-
-        draw_asteroids(self.screen, self.font, asteroids)
-
-        draw_bullets(self.screen, bullets)
-
-        draw_ship(self.screen, ship)
-
-        draw_booster(self.screen, booster)
-
-        draw_osd(self.screen, self.font, score, ship.lives)
-
-        if DEBUG:
-            draw_debug_info(self.screen, self.font, ship, asteroids)

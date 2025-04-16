@@ -3,6 +3,7 @@ import random
 import json
 
 from settings import *
+from entities.saucer import Saucer
 from entities.booster import Booster
 from entities.ship import Ship
 from entities.asteroid import Asteroid
@@ -17,6 +18,9 @@ class GameController:
         self.view = GameView(screen)
         self.clock = pygame.time.Clock()
         self.state = 'START'
+
+        self.saucers = []
+        self.saucer_spawn_timer = random.randint(1, 2)
 
         self.ship = Ship(400, 300)
         self.asteroids = []
@@ -37,9 +41,6 @@ class GameController:
 
     def show_leaderboard(self):
         self.state = 'LEADERBOARD'
-
-    def show_post_game_statistics(self):
-        self.state = 'STATISTICS'
 
     def enter_name_state(self):
         self.state = 'ENTER_NAME'
@@ -77,15 +78,10 @@ class GameController:
             if self.state == 'RUNNING':
                 self.handle_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.booster, self.ship.score)
+                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.booster, self.ship.score, self.saucers)
 
             elif self.state == 'START':
                 self.view.draw_start_screen()
-
-            elif self.state == 'STATISTICS':
-                self.handle_q_input(keys)
-                self.handle_r_input(keys)
-                self.view.draw_statistics(self.ship.score, ScreenSize)
 
             elif self.state == 'LEADERBOARD':
                 self.view.draw_leaderboard_screen()
@@ -106,14 +102,6 @@ class GameController:
         if keys[pygame.K_SPACE] and self.shooting_timeout <= 0:
             self.bullets.append(Shot(self.ship.x, self.ship.y, self.ship.angle))
             self.shooting_timeout = self.shooting_window
-
-    def handle_q_input(self, keys):
-        if keys[pygame.K_q]:
-            self.state = 'START'
-
-    def handle_r_input(self, keys):
-        if keys[pygame.K_r]:
-            self.restart_game()
 
     def update_game(self):
         self.ship.update_position((800, 600))
@@ -175,6 +163,27 @@ class GameController:
 
         if self.invincibility_timeout > 0:
             self.invincibility_timeout -= 1
+        # Update saucer spawn
+        self.saucer_spawn_timer -= 1
+        if self.saucer_spawn_timer <= 0:
+            direction = random.choice([-1, 1])
+            x = 0 if direction == 1 else ScreenSize[0]
+            y = random.randint(50, ScreenSize[1] - 50)
+            self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
+            self.saucer_spawn_timer = random.randint(600, 1000)
+
+        # Update saucers
+
+        for saucer in self.saucers:
+            saucer.fly()
+
+            # Check collision with bullets
+            for bullet in self.bullets:
+                if saucer.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
+                    self.ship.score += 100
+                    self.bullets.remove(bullet)
+                    self.saucers.remove(saucer)
+                    break  # destroy saucer
 
     def save_score_to_leaderboard(self):
         with open('../leaderboard.json', 'r+') as json_file:

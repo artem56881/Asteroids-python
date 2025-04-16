@@ -27,6 +27,10 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
 
     return [base, left, head, right]
 
+def calculate_saucer_points(saucer, size=20):
+    return ((saucer.x - 1 * size, saucer.y), (saucer.x - 0.5 * size, saucer.y - 1 * size),
+            (saucer.x + 0.5 * size, saucer.y - 1 * size), (saucer.x + 1 * size, saucer.y),
+            (saucer.x, saucer.y + 1 * size))
 
 def collision(point_x, point_y, asteroid_x, asteroid_y, asteroid_size):
     return ((point_x - asteroid_x) ** 2 + (point_y - asteroid_y) ** 2) <= asteroid_size ** 2
