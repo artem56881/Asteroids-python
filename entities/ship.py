@@ -3,7 +3,7 @@ from utils.math_utils import angle_to_cords
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, score: int=0, lives: int=2):
+    def __init__(self, x: float, y: float, score: int=0, lives: int=200):
         self.x = x
         self.y = y
         self.angle = 45
@@ -37,6 +37,6 @@ class Ship:
             dx /= distance
             dy /= distance
 
-        knockback_strength = asteroid_size // 10
+        knockback_strength = asteroid_size // 8
         self.vel_x -= dx * knockback_strength
         self.vel_y -= dy * knockback_strength

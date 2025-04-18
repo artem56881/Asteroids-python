@@ -108,6 +108,8 @@ class GameController:
 
         for asteroid in self.asteroids:
             asteroid.fly((800, 600))
+            if asteroid.time_to_live == 0:
+                self.asteroids.remove(asteroid)
 
         remaining_bullets = []
         hit_asteroids = []
@@ -119,7 +121,7 @@ class GameController:
 
             for asteroid in self.asteroids:
                 if asteroid.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
-                    # Add score
+
                     self.ship.score += int(10 - asteroid.size % 10)
                     bullet_hit = True
                     hit_asteroids.append(asteroid)
@@ -165,7 +167,7 @@ class GameController:
 
         # Update saucer spawn
         self.saucer_spawn_timer -= 1
-        if self.saucer_spawn_timer <= 0:
+        if self.saucer_spawn_timer <= 0 and len(self.saucers) <= max_saucers-1:
             direction = random.choice([-1, 1])
             x = 0 if direction == 1 else ScreenSize[0]
             y = random.randint(50, ScreenSize[1] - 50)

@@ -7,7 +7,7 @@ def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
         a.draw(screen)
         if DEBUG:
-            text_size = font.render(f"{a.size}", False, (255, 255, 255))
+            text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
             screen.blit(text_size, (a.x_coordinate, a.y_coordinate))
 
 def draw_booster(screen, booster):

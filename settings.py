@@ -8,6 +8,7 @@ invincibility_window = 20
 
 max_shot_distance = 50
 
+max_saucers = 3
 min_asteroid_size = 22
 default_asteroids_amount = 3
 asteroid_division_coefficient = 1.6

@@ -33,4 +33,4 @@ class Saucer:
         # Calculate the direction towards the player
         angle = math.atan2(ship.y - self.y, ship.x - self.x)
         # Spawn an asteroid at the saucer's position, flying towards the player
-        return Asteroid(self.x, self.y, 5, math.degrees(angle), speed=10)
+        return Asteroid(self.x, self.y, 5, math.degrees(angle), speed=6, time_to_live=86)
