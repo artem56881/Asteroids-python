@@ -8,6 +8,9 @@ invincibility_window = 20
 
 max_shot_distance = (ScreenSize[0]+ScreenSize[1])//20
 
+asteroid_min_speed = 10
+asteroid_max_speed = 15
+
 max_saucers = 3
 min_asteroid_size = 22
 default_asteroids_amount = 3

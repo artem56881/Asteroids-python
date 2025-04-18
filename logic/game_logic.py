@@ -42,7 +42,7 @@ class GameController:
         else: # случай нового уровня
             self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, self.ship.lives, score=score)
 
-        self.asteroids = [Asteroid(random.randint(100, 800), 0, random.randint(20, 50), random.randint(0, 360)) for _ in range(asteroids_amount)]
+        self.asteroids = [Asteroid(random.randint(100, ScreenSize[1]-100), 0, random.randint(20, 50), random.randint(0, 360), speed=random.randint(asteroid_min_speed, asteroid_max_speed)) for _ in range(asteroids_amount)]
         self.bullets = []
         self.shooting_timeout = 0
         self.state = 'RUNNING'
