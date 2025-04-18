@@ -11,7 +11,8 @@ def draw_asteroids(screen, font, asteroids):
             screen.blit(text_size, (a.x_coordinate, a.y_coordinate))
 
 def draw_booster(screen, booster):
-    booster.draw(screen)
+    if booster.active:
+        booster.draw(screen)
 
 def draw_bullets(screen, bullets):
     for bullet in bullets:

@@ -1,14 +1,16 @@
-import pygame
-import random
 import json
+import random
 
-from settings import *
+import pygame
+
+from entities.asteroid import Asteroid
 from entities.booster import Booster
 from entities.ship import Ship
-from entities.asteroid import Asteroid
 from entities.shot import Shot
 from render.game_render import GameView
-from utils.math_utils import calculate_ship_points, collision
+from settings import *
+from utils.math_utils import calculate_ship_points
+
 
 class GameController:
     def __init__(self, screen):
@@ -18,22 +20,28 @@ class GameController:
         self.clock = pygame.time.Clock()
         self.state = 'START'
 
-        self.ship = Ship(400, 300)
+        self.ship = None
         self.asteroids = []
         self.bullets = []
         self.shooting_timeout = 0
         self.invincibility_timeout = 0
         self.booster_timeout = 0
         self.player_name = ""
-        self.shooting_window = 20
+        self.shooting_window = shooting_rate
 
-    def restart_game(self, score=0, asteroids_amount=5):
-        self.ship = Ship(400, 300, score, self.ship.lives)
+    def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
+        if self.ship is None:
+            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, 3)
+        elif self.ship.lives == 0:
+            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, ship_lives)
+        else:
+            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, self.ship.lives)
+
         self.asteroids = [Asteroid(random.randint(100, 800), 0, random.randint(20, 50), random.randint(0, 360)) for _ in range(asteroids_amount)]
         self.bullets = []
         self.shooting_timeout = 0
         self.state = 'RUNNING'
-        self.booster = Booster(random.randint(100,200), random.randint(100  ,200), 1)
+        self.booster = Booster(random.randint(50,ScreenSize[0]-50), random.randint(50,ScreenSize[1]-50), 1)
 
     def show_leaderboard(self):
         self.state = 'LEADERBOARD'
@@ -54,7 +62,7 @@ class GameController:
                 if self.state == 'START':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.start_button.collidepoint(event.pos):
-                            self.restart_game()
+                            self.restart_game(ship_lives=3)
                         elif self.view.exit_button.collidepoint(event.pos):
                             pygame.quit()
                         elif self.view.leaderboard_button.collidepoint(event.pos):
@@ -116,17 +124,17 @@ class GameController:
             self.restart_game()
 
     def update_game(self):
-        self.ship.update_position((800, 600))
+        self.ship.update_position(ScreenSize)
 
         for asteroid in self.asteroids:
-            asteroid.fly((800, 600))
+            asteroid.fly(ScreenSize)
 
         remaining_bullets = []
         hit_asteroids = []
         new_asteroids = []
 
         for bullet in self.bullets:
-            bullet.fly((800, 600))
+            bullet.fly(ScreenSize)
             bullet_hit = False
 
             for asteroid in self.asteroids:
@@ -154,10 +162,15 @@ class GameController:
 
         ship_points = calculate_ship_points(self.ship)
 
-        if self.booster.collides_with_point(ship_points[0]) and self.booster_timeout == 0:
-            self.booster_timeout = self.booster.time
-            self.shooting_window = 1
+        if self.booster.active:
+            for point in ship_points:
+                if self.booster.collides_with_point(point):
+                    self.booster.active = False
+                    self.booster_timeout = self.booster.time
+                    self.shooting_window = 5
 
+        if self.booster_timeout == 0:
+            self.shooting_window = shooting_rate
 
         for asteroid in self.asteroids:
             for point in ship_points:
@@ -176,8 +189,11 @@ class GameController:
         if self.invincibility_timeout > 0:
             self.invincibility_timeout -= 1
 
+        if self.booster_timeout > 0:
+            self.booster_timeout -= 1
+
     def save_score_to_leaderboard(self):
-        with open('../leaderboard.json', 'r+') as json_file:
+        with open(leaderboard_file_path, 'r+') as json_file:
             leaderboard = json.load(json_file)
             leaderboard['leaderboard'].append({"name": self.player_name, "score": self.ship.score})
             leaderboard['leaderboard'] = sorted(leaderboard['leaderboard'], key=lambda x: x['score'], reverse=True)

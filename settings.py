@@ -1,4 +1,4 @@
-ScreenSize = [800, 600]
+ScreenSize = [2000, 1000]
 DEBUG = False
 
 shooting_rate = 20
@@ -6,13 +6,13 @@ invincible = False
 friction = 0.99
 invincibility_window = 20
 
-max_shot_distance = 50
+max_shot_distance = (ScreenSize[0]+ScreenSize[1])//20
 
 min_asteroid_size = 22
 default_asteroids_amount = 3
 asteroid_division_coefficient = 1.6
 
-leaderboard_file_path = '../leaderboard.json'
+leaderboard_file_path = 'C:/Users/artem/PycharmProjects/Asteroids-python/leaderboard.json'
 
 primary_color = (148, 143, 110)
 secondary_color = (124, 110, 148)

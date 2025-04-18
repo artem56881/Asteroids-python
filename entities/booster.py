@@ -6,7 +6,8 @@ class Booster:
         self.x_coordinate = x
         self.y_coordinate = y
         self.type = asteroid_type
-        self.time = 0
+        self.time = 300
+        self.active = True
 
         self.size = 12
         diameter = self.size * 2
