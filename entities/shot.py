@@ -7,7 +7,7 @@ class Shot:
         self.y_coordinate = y
         self.angle = angle
         self.size = 4
-        self.speed = 10
+        self.speed = 30
         self.distance = 0
         self.rect = pygame.Rect(x, y, self.size, self.size)
 
@@ -16,4 +16,4 @@ class Shot:
         self.x_coordinate = (self.x_coordinate + dx * self.speed) % screen_size[0]
         self.y_coordinate = (self.y_coordinate + dy * self.speed) % screen_size[1]
         self.rect.topleft = (self.x_coordinate, self.y_coordinate)
-        self.distance += 1
+        self.distance += self.speed//10
