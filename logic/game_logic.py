@@ -26,7 +26,6 @@ class GameController:
         self.saucers = []
         self.saucer_spawn_timer = random.randint(1, 2)
 
-        self.ship = Ship(400, 300)
         self.asteroids = []
         self.bullets = []
         self.shooting_timeout = 0
