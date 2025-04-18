@@ -1,4 +1,4 @@
-ScreenSize = [2000, 1000]
+ScreenSize = [800, 600]
 DEBUG = False
 
 shooting_rate = 20

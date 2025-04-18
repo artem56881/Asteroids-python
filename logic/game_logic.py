@@ -30,12 +30,12 @@ class GameController:
         self.shooting_window = shooting_rate
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
-        if self.ship is None:
+        if self.ship is None: # случай первого запуска
             self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, 3)
-        elif self.ship.lives == 0:
+        elif self.ship.lives == 0: # случай не первого запуска(за период запуска программы)
             self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, ship_lives)
-        else:
-            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, self.ship.lives)
+        else: # случай нового уровня
+            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, self.ship.lives, score=score)
 
         self.asteroids = [Asteroid(random.randint(100, 800), 0, random.randint(20, 50), random.randint(0, 360)) for _ in range(asteroids_amount)]
         self.bullets = []
