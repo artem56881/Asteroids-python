@@ -146,7 +146,6 @@ class GameController:
             self.booster_timeout = self.booster.time
             self.shooting_window = 1
 
-
         for asteroid in self.asteroids:
             for point in ship_points:
                 if not invincible and asteroid.collides_with_point(point):
@@ -163,6 +162,7 @@ class GameController:
 
         if self.invincibility_timeout > 0:
             self.invincibility_timeout -= 1
+
         # Update saucer spawn
         self.saucer_spawn_timer -= 1
         if self.saucer_spawn_timer <= 0:
@@ -173,10 +173,12 @@ class GameController:
             self.saucer_spawn_timer = random.randint(600, 1000)
 
         # Update saucers
-
         for saucer in self.saucers:
-            saucer.fly()
+        #     if saucer.shoot_timer <= 0:
+        #         saucer.shoot()
+        #         saucer.shoot_timer = 30
 
+            saucer.fly()
             # Check collision with bullets
             for bullet in self.bullets:
                 if saucer.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
@@ -184,6 +186,14 @@ class GameController:
                     self.bullets.remove(bullet)
                     self.saucers.remove(saucer)
                     break  # destroy saucer
+
+            # Spawn asteroids
+            saucer.asteroid_spawn_timer -= 1
+            if saucer.asteroid_spawn_timer <= 0:
+                self.asteroids.append(saucer.spawn_asteroid(self.ship))
+                saucer.asteroid_spawn_timer = random.randint(100, 200)
+
+        # saucer.shoot_timer -= 1
 
     def save_score_to_leaderboard(self):
         with open('../leaderboard.json', 'r+') as json_file:
