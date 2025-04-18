@@ -4,12 +4,13 @@ from utils.math_utils import angle_to_cords
 from settings import primary_color
 
 class Asteroid:
-    def __init__(self, x, y, size, angle):
+    def __init__(self, x, y, size, angle, speed=0, time_to_live=-1):
         self.x_coordinate = x
         self.y_coordinate = y
         self.size = size  # radius
         self.angle = angle
-        self.speed = random.uniform(0.5, 2)
+        self.speed = random.uniform(0.5, 2) if speed == 0 else speed
+        self.time_to_live = time_to_live
 
         diameter = size * 2
         self.image = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
@@ -23,6 +24,8 @@ class Asteroid:
 
         # Update the rect to follow the position
         self.rect.center = (self.x_coordinate, self.y_coordinate)
+        if self.time_to_live != -1:
+            self.time_to_live -= 1
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)

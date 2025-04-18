@@ -1,18 +1,22 @@
 import pygame
 
-from settings import DEBUG, primary_color, secondary_color
-from utils.math_utils import calculate_ship_points
+from settings import DEBUG, primary_color, secondary_color, enemy_color
+from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
         a.draw(screen)
         if DEBUG:
-            text_size = font.render(f"{a.size}", False, (255, 255, 255))
+            text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
             screen.blit(text_size, (a.x_coordinate, a.y_coordinate))
 
 def draw_booster(screen, booster):
     if booster.active:
         booster.draw(screen)
+
+def draw_saucers(screen, saucers):
+    for saucer in saucers:
+        pygame.draw.polygon(screen, enemy_color, calculate_saucer_points(saucer))
 
 def draw_bullets(screen, bullets):
     for bullet in bullets:
