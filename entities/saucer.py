@@ -13,10 +13,10 @@ class Saucer:
         self.speed = speed
         self.angle = 0
         self.zigzag_counter = 0
-        self.direction = 1  # left-to-right or right-to-left
-        self.zigzag_amplitude = 2  # how much it moves vertically
-        self.zigzag_period = 60  # how often to switch direction
-        self.asteroid_spawn_timer = random.randint(100, 200)  # Timer for spawning asteroids
+        self.direction = 1
+        self.zigzag_amplitude = 2
+        self.zigzag_period = 60
+        self.shot_timer = 150
 
     def fly(self):
         self.x += self.speed * self.direction
@@ -33,4 +33,4 @@ class Saucer:
         # Calculate the direction towards the player
         angle = math.atan2(ship.y - self.y, ship.x - self.x)
         # Spawn an asteroid at the saucer's position, flying towards the player
-        return Asteroid(self.x, self.y, 5, math.degrees(angle), speed=10)
+        return Asteroid(self.x, self.y, 5, math.degrees(angle), speed=10, time_to_live=500)

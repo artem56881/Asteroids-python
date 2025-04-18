@@ -106,8 +106,7 @@ class GameController:
     def update_game(self):
         self.ship.update_position((800, 600))
 
-        for asteroid in self.asteroids:
-            asteroid.fly((800, 600))
+        # for asteroid in self.asteroids:
 
         remaining_bullets = []
         hit_asteroids = []
@@ -118,11 +117,14 @@ class GameController:
             bullet_hit = False
 
             for asteroid in self.asteroids:
+                asteroid.fly((800, 600))
                 if asteroid.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
                     # Add score
                     self.ship.score += int(10 - asteroid.size % 10)
                     bullet_hit = True
                     hit_asteroids.append(asteroid)
+                    if asteroid.time_to_live <= 0:  # these lines of code
+                        hit_asteroids.append(asteroid)  # these lines of code
                     if asteroid.size >= min_asteroid_size:
                         for _ in range(2):
                             new_asteroids.append(Asteroid(
@@ -144,7 +146,7 @@ class GameController:
 
         if self.booster.collides_with_point(ship_points[0]) and self.booster_timeout == 0:
             self.booster_timeout = self.booster.time
-            self.shooting_window = 1
+            self.shooting_window = 5
 
         for asteroid in self.asteroids:
             for point in ship_points:
@@ -167,16 +169,13 @@ class GameController:
         self.saucer_spawn_timer -= 1
         if self.saucer_spawn_timer <= 0:
             direction = random.choice([-1, 1])
-            x = 0 if direction == 1 else ScreenSize[0]
+            x = 0
             y = random.randint(50, ScreenSize[1] - 50)
             self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
             self.saucer_spawn_timer = random.randint(600, 1000)
 
         # Update saucers
         for saucer in self.saucers:
-        #     if saucer.shoot_timer <= 0:
-        #         saucer.shoot()
-        #         saucer.shoot_timer = 30
 
             saucer.fly()
             # Check collision with bullets
@@ -185,15 +184,14 @@ class GameController:
                     self.ship.score += 100
                     self.bullets.remove(bullet)
                     self.saucers.remove(saucer)
-                    break  # destroy saucer
+                    break
 
             # Spawn asteroids
-            saucer.asteroid_spawn_timer -= 1
-            if saucer.asteroid_spawn_timer <= 0:
+            saucer.shot_timer -= 1
+            if saucer.shot_timer <= 0:
                 self.asteroids.append(saucer.spawn_asteroid(self.ship))
-                saucer.asteroid_spawn_timer = random.randint(100, 200)
+                saucer.shot_timer = random.randint(100, 200)
 
-        # saucer.shoot_timer -= 1
 
     def save_score_to_leaderboard(self):
         with open('../leaderboard.json', 'r+') as json_file:

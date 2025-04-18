@@ -18,14 +18,14 @@ class Asteroid:
         self.rect = self.image.get_rect(center=(x, y))
 
     def fly(self, screen_size):
+        if self.time_to_live != -1:
+            self.time_to_live -= 1
+
         dx, dy = angle_to_cords(self.angle)
         self.x_coordinate = (self.x_coordinate + dx * self.speed) % screen_size[0]
         self.y_coordinate = (self.y_coordinate + dy * self.speed) % screen_size[1]
 
-        # Update the rect to follow the position
         self.rect.center = (self.x_coordinate, self.y_coordinate)
-        if self.time_to_live != -1:
-            self.time_to_live -= 1
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
