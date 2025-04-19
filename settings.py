@@ -2,14 +2,14 @@ ScreenSize = [800, 600]
 DEBUG = False
 
 shooting_rate = 20
-invincible = True
+invincible = False
 friction = 0.99
 invincibility_window = 20
 
 max_shot_distance = (ScreenSize[0]+ScreenSize[1])//20
 
-asteroid_min_speed = 1
-asteroid_max_speed = 10
+asteroid_min_speed = 4
+asteroid_max_speed = 30
 
 max_saucers = 3
 min_asteroid_size = 22

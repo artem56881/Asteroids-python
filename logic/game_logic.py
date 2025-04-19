@@ -134,7 +134,7 @@ class GameController:
 
         for asteroid in self.asteroids:
             asteroid.fly(ScreenSize)
-            asteroid.fly((800, 600))
+            # asteroid.fly((800, 600))
             if asteroid.time_to_live == 0:
                 self.asteroids.remove(asteroid)
 
@@ -178,7 +178,7 @@ class GameController:
                     self.booster_timeout = self.booster.time
                     self.shooting_window = 5
 
-        if self.booster_timeout == 0:
+        if self.booster_timeout <= 0:
             self.shooting_window = shooting_rate
 
         for asteroid in self.asteroids:
