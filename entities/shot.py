@@ -7,7 +7,7 @@ class Shot:
         self.y_coordinate = y
         self.angle = angle
         self.size = 4
-        self.speed = 30
+        self.speed = 10
         self.distance = 0
         self.rect = pygame.Rect(x, y, self.size, self.size)
 

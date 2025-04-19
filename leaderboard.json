@@ -1,64 +1,19 @@
 {
     "leaderboard": [
         {
-            "name": "ez_game",
-            "score": 892
+            "name": "a",
+            "score": 115,
+            "difficulty": "EASY"
         },
         {
-            "name": "prikol",
-            "score": 189
+            "name": "zzz",
+            "score": 11,
+            "difficulty": "NORMAL"
         },
         {
-            "name": "",
-            "score": 94
-        },
-        {
-            "name": "\u001b\u001b\u001b\u001b\u001b",
-            "score": 27
-        },
-        {
-            "name": "qqqqqqqqqqqq",
-            "score": 20
-        },
-        {
-            "name": "aaaa",
-            "score": 9
-        },
-        {
-            "name": "aaa",
-            "score": 1
-        },
-        {
-            "name": "jopa",
-            "score": 0
-        },
-        {
-            "name": "qewwe",
-            "score": 0
-        },
-        {
-            "name": "\u0439\u0439\u0439\u0439\u0439\u0446\u0439\u0446\u0439\u0446",
-            "score": 0
-        },
-        {
-            "name": "asdasd",
-            "score": 0
-        },
-        {
-            "name": "qq",
-            "score": 0
-        },
-        {
-            "name": "aasdfasdf",
-            "score": 0
-        },
-        {
-            "name": "aasdfasdf",
-            "score": 0
-        },
-        {
-            "name": "",
-            "score": 0
+            "name": "kek",
+            "score": 9,
+            "difficulty": "HARD"
         }
     ]
 }

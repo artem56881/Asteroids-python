@@ -24,7 +24,8 @@ class GameController:
 
         self.ship = None
         self.saucers = []
-        self.saucer_spawn_timer = random.randint(1, 2)
+        self.saucer_spawn_timer = 100
+        self.saucer_spawn_rate = 2000
 
         self.asteroids = []
         self.bullets = []
@@ -33,10 +34,11 @@ class GameController:
         self.booster_timeout = 0
         self.player_name = ""
         self.shooting_window = shooting_rate
+        self.difficulty = None
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None: # случай первого запуска
-            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, 3)
+            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, ship_lives)
         elif self.ship.lives == 0: # случай не первого запуска(за период запуска программы)
             self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, ship_lives)
         else: # случай нового уровня
@@ -48,11 +50,6 @@ class GameController:
         self.state = 'RUNNING'
         self.booster = Booster(random.randint(50,ScreenSize[0]-50), random.randint(50,ScreenSize[1]-50), 1)
 
-    def show_leaderboard(self):
-        self.state = 'LEADERBOARD'
-
-    def enter_name_state(self):
-        self.state = 'ENTER_NAME'
 
     def run(self):
         running = True
@@ -61,23 +58,41 @@ class GameController:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+
                 if self.state == 'START':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.start_button.collidepoint(event.pos):
-                            self.restart_game(ship_lives=3)
+                            self.state = 'CHOOSE_DIFFICULTY'
                         elif self.view.exit_button.collidepoint(event.pos):
                             pygame.quit()
                         elif self.view.leaderboard_button.collidepoint(event.pos):
-                            self.show_leaderboard()
+                            self.state = 'LEADERBOARD'
+
                 elif self.state == 'LEADERBOARD':
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.menu_button.collidepoint(event.pos):
                             self.state = 'START'
+
+                elif self.state == 'CHOOSE_DIFFICULTY':
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if self.view.dif_easy_button.collidepoint(event.pos):
+                            self.difficulty = 'EASY'
+                            self.restart_game(ship_lives=4, asteroids_amount=4)
+                            self.saucer_spawn_rate = 2000
+                        if self.view.dif_normal_button.collidepoint(event.pos):
+                            self.difficulty = 'NORMAL'
+                            self.restart_game(ship_lives=2, asteroids_amount=6)
+                            self.saucer_spawn_rate = 1200
+                        if self.view.dif_hard_button.collidepoint(event.pos):
+                            self.difficulty = 'HARD'
+                            self.restart_game(ship_lives=1, asteroids_amount=8)
+                            self.saucer_spawn_rate = 600
+
                 elif self.state == 'ENTER_NAME':
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
                             self.save_score_to_leaderboard()
-                            self.show_leaderboard()
+                            self.state = 'LEADERBOARD'
                         elif event.key == pygame.K_BACKSPACE:
                             self.player_name = self.player_name[:-1]
                         else:
@@ -98,6 +113,8 @@ class GameController:
             elif self.state == 'ENTER_NAME':
                 self.view.draw_enter_name_screen(ScreenSize, self.player_name, self.ship.score)
 
+            elif self.state == 'CHOOSE_DIFFICULTY':
+                self.view.draw_difficulty_screen()
             pygame.display.flip()
             self.clock.tick(60)
 
@@ -172,7 +189,7 @@ class GameController:
                         self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
                         self.invincibility_timeout = invincibility_window
                     if self.ship.lives <= 0:
-                        self.enter_name_state()
+                        self.state = 'ENTER_NAME'
                     return
 
         if self.shooting_timeout > 0:
@@ -182,20 +199,17 @@ class GameController:
             self.invincibility_timeout -= 1
 
         # Update saucer spawn
-        self.saucer_spawn_timer -= 1
-        if self.saucer_spawn_timer <= 0 and len(self.saucers) <= max_saucers-1:
-            direction = random.choice([-1, 1])
-            x = 0 if direction == 1 else ScreenSize[0]
-            y = random.randint(50, ScreenSize[1] - 50)
-            self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
-            self.saucer_spawn_timer = random.randint(600, 1000)
+        if len(self.saucers) <= max_saucers-1:
+            self.saucer_spawn_timer -= 1
+            if self.saucer_spawn_timer <= 0:
+                direction = random.choice([-1, 1])
+                x = 0 if direction == 1 else ScreenSize[0]
+                y = random.randint(50, ScreenSize[1] - 50)
+                self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
+                self.saucer_spawn_timer = self.saucer_spawn_rate
 
         # Update saucers
         for saucer in self.saucers:
-        #     if saucer.shoot_timer <= 0:
-        #         saucer.shoot()
-        #         saucer.shoot_timer = 30
-
             saucer.fly()
             # Check collision with bullets
             for bullet in self.bullets:
@@ -203,15 +217,12 @@ class GameController:
                     self.ship.score += 100
                     self.bullets.remove(bullet)
                     self.saucers.remove(saucer)
-                    break  # destroy saucer
+                    break
 
-            # Spawn asteroids
-            saucer.asteroid_spawn_timer -= 1
-            if saucer.asteroid_spawn_timer <= 0:
-                self.asteroids.append(saucer.spawn_asteroid(self.ship))
-                saucer.asteroid_spawn_timer = random.randint(100, 200)
-
-        # saucer.shoot_timer -= 1
+            saucer.shot_timer -= 1
+            if saucer.shot_timer <= 0:
+                self.asteroids.append(saucer.shoot(self.ship))
+                saucer.shot_timer = random.randint(100, 200)
 
         if self.booster_timeout > 0:
             self.booster_timeout -= 1
@@ -219,7 +230,7 @@ class GameController:
     def save_score_to_leaderboard(self):
         with open(leaderboard_file_path, 'r+') as json_file:
             leaderboard = json.load(json_file)
-            leaderboard['leaderboard'].append({"name": self.player_name, "score": self.ship.score})
+            leaderboard['leaderboard'].append({"name": self.player_name, "score": self.ship.score, "difficulty": self.difficulty})
             leaderboard['leaderboard'] = sorted(leaderboard['leaderboard'], key=lambda x: x['score'], reverse=True)
             json_file.seek(0)
             json.dump(leaderboard, json_file, indent=4)

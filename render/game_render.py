@@ -1,7 +1,7 @@
 import pygame
 import json
 
-from settings import DEBUG, leaderboard_file_path, button_color
+from settings import DEBUG, leaderboard_file_path, button_color, background_color
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info, draw_booster, draw_saucers
 
 class GameView:
@@ -16,9 +16,13 @@ class GameView:
         self.exit_button = pygame.Rect(300, 390, 200, 50)
         self.menu_button = pygame.Rect(300, 500, 200, 50)
 
+        self.dif_easy_button = pygame.Rect(300, 250, 200, 50)
+        self.dif_normal_button = pygame.Rect(300, 320, 200, 50)
+        self.dif_hard_button = pygame.Rect(300, 390, 200, 50)
+
 
     def draw_game(self, ship, asteroids, bullets, booster, score, saucers):
-        self.screen.fill((20, 20, 20))
+        self.screen.fill(background_color)
 
         draw_asteroids(self.screen, self.font, asteroids)
 
@@ -35,9 +39,26 @@ class GameView:
         if DEBUG:
             draw_debug_info(self.screen, self.font, ship, asteroids)
 
+    def draw_difficulty_screen(self):
+        self.screen.fill(background_color)
+
+        splash_text = self.splash_font.render("Сложность", False, (255, 255, 255))
+        self.screen.blit(splash_text, (240,80))
+
+        pygame.draw.rect(self.screen, button_color, self.dif_easy_button)
+        pygame.draw.rect(self.screen, button_color, self.dif_normal_button)
+        pygame.draw.rect(self.screen, button_color, self.dif_hard_button)
+
+        easy_text = self.font.render("Легко", True, (0, 0, 0))
+        normal_text = self.font.render("Нормально", True, (0, 0, 0))
+        hard_text = self.font.render("Сложно", True, (0, 0, 0))
+
+        self.screen.blit(easy_text, (self.dif_easy_button.x + 65, self.dif_easy_button.y + 10))
+        self.screen.blit(normal_text, (self.dif_normal_button.x + 32, self.dif_normal_button.y + 10))
+        self.screen.blit(hard_text, (self.dif_hard_button.x + 50, self.dif_hard_button.y + 10))
 
     def draw_start_screen(self):
-        self.screen.fill((20, 20, 20))
+        self.screen.fill(background_color)
 
         splash_text = self.splash_font.render("Asteroids", False, (255, 255, 255))
         self.screen.blit(splash_text, (240,80))
@@ -55,7 +76,7 @@ class GameView:
         self.screen.blit(exit_text, (self.exit_button.x + 60, self.exit_button.y + 10))
 
     def draw_leaderboard_screen(self):
-        self.screen.fill((20, 20, 20))
+        self.screen.fill(background_color)
 
         splash_text = self.forty_font.render("Таблица лидеров", False, (255, 255, 255))
         self.screen.blit(splash_text, (280,30))
@@ -63,10 +84,17 @@ class GameView:
         with open(leaderboard_file_path, 'r') as json_file:
             leaderboard = json.load(json_file)
 
-        name_score_pairs = [(player['name'], player['score']) for player in leaderboard['leaderboard']]
+        name_score_difficulty_pairs = [(player['name'], player['score'], player['difficulty']) for player in leaderboard['leaderboard']]
         i = 0
-        for name, score in name_score_pairs:
-            line = self.font.render(f"{name} {score}", True, (255, 255, 255))
+        player_color = (255, 255, 255)
+        for name, score, difficulty in name_score_difficulty_pairs:
+            if difficulty == 'EASY':
+                player_color = (0, 200, 0)
+            elif difficulty == 'NORMAL':
+                player_color = (240, 210, 42)
+            else:
+                player_color = (200, 0, 0)
+            line = self.font.render(f"{name} {score}", True, player_color)
             self.screen.blit(line, (300, 100+i*40))
             i += 1
 
