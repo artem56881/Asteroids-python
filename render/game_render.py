@@ -9,7 +9,8 @@ class GameView:
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
-        self.splash_font = pygame.font.Font(None, 100)
+        self.splash_font = pygame.font.Font('../exwayer.ttf', 120)
+        self.splash_default_font = pygame.font.Font(None, 120)
         self.forty_font = pygame.font.Font(None, 40)
         self.start_button = pygame.Rect(300, 250, 200, 50)
         self.leaderboard_button = pygame.Rect(300, 320, 200, 50)
@@ -42,8 +43,8 @@ class GameView:
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)
 
-        splash_text = self.splash_font.render("Сложность", False, (255, 255, 255))
-        self.screen.blit(splash_text, (240,80))
+        splash_text = self.splash_default_font.render("Сложность", False, (255, 255, 255))
+        self.screen.blit(splash_text, (175, 80))
 
         pygame.draw.rect(self.screen, button_color, self.dif_easy_button)
         pygame.draw.rect(self.screen, button_color, self.dif_normal_button)
@@ -60,15 +61,15 @@ class GameView:
     def draw_start_screen(self):
         self.screen.fill(background_color)
 
-        splash_text = self.splash_font.render("Asteroids", False, (255, 255, 255))
-        self.screen.blit(splash_text, (240,80))
+        splash_text = self.splash_font.render("Asteroids", True, (255, 255, 255))
+        self.screen.blit(splash_text, (160,80))
 
         pygame.draw.rect(self.screen, button_color, self.start_button)
         pygame.draw.rect(self.screen, button_color, self.leaderboard_button)
         pygame.draw.rect(self.screen, button_color, self.exit_button)
 
         start_text = self.font.render("Начать игру", True, (0, 0, 0))
-        leaderboard_text = self.font.render("Лидер борд", True, (0, 0, 0))
+        leaderboard_text = self.font.render("Лидерборд", True, (0, 0, 0))
         exit_text = self.font.render("Выйти", True, (0, 0, 0))
 
         self.screen.blit(start_text, (self.start_button.x + 35, self.start_button.y + 10))

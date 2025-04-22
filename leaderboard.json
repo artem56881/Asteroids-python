@@ -1,9 +1,34 @@
 {
     "leaderboard": [
         {
+            "name": "artem pro gamer 1111",
+            "score": 1037,
+            "difficulty": "EASY"
+        },
+        {
+            "name": "artem pro gamer hard1111",
+            "score": 669,
+            "difficulty": "HARD"
+        },
+        {
+            "name": "",
+            "score": 597,
+            "difficulty": "EASY"
+        },
+        {
+            "name": "a",
+            "score": 145,
+            "difficulty": "HARD"
+        },
+        {
             "name": "a",
             "score": 115,
             "difficulty": "EASY"
+        },
+        {
+            "name": "",
+            "score": 31,
+            "difficulty": "HARD"
         },
         {
             "name": "zzz",

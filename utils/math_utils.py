@@ -1,5 +1,8 @@
 import math
 from typing import Tuple, List
+import json
+
+from settings import leaderboard_file_path
 
 
 def angle_to_cords(angle: float) -> Tuple[float, float]:
@@ -34,3 +37,12 @@ def calculate_saucer_points(saucer, size=20):
 
 def collision(point_x, point_y, asteroid_x, asteroid_y, asteroid_size):
     return ((point_x - asteroid_x) ** 2 + (point_y - asteroid_y) ** 2) <= asteroid_size ** 2
+
+def save_score_to_leaderboard(player_name, ship_score, difficulty):
+    with open(leaderboard_file_path, 'r+') as json_file:
+        leaderboard = json.load(json_file)
+        leaderboard['leaderboard'].append({"name": player_name, "score": ship_score, "difficulty": difficulty})
+        leaderboard['leaderboard'] = sorted(leaderboard['leaderboard'], key=lambda x: x['score'], reverse=True)
+        json_file.seek(0)
+        json.dump(leaderboard, json_file, indent=4)
+        json_file.truncate()
