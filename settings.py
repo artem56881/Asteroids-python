@@ -4,7 +4,7 @@ DEBUG = False
 shooting_rate = 20
 invincible = False
 friction = 0.99
-invincibility_window = 20
+invincibility_window = 80
 
 max_shot_distance = (ScreenSize[0]+ScreenSize[1])//20
 

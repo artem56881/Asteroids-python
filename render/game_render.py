@@ -22,7 +22,7 @@ class GameView:
         self.dif_hard_button = pygame.Rect(300, 390, 200, 50)
 
 
-    def draw_game(self, ship, asteroids, bullets, booster, score, saucers):
+    def draw_game(self, ship, asteroids, bullets, booster, score, saucers, invincibility):
         self.screen.fill(background_color)
 
         draw_asteroids(self.screen, self.font, asteroids)
@@ -31,7 +31,7 @@ class GameView:
 
         draw_bullets(self.screen, bullets)
 
-        draw_ship(self.screen, ship)
+        draw_ship(self.screen, ship, invincibility)
 
         draw_booster(self.screen, booster)
 

@@ -109,7 +109,7 @@ class GameController:
             if self.state == State.RUNNING:
                 self.handle_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.booster, self.ship.score, self.saucers)
+                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.booster, self.ship.score, self.saucers, self.invincibility_timeout)
 
             elif self.state == State.START:
                 self.view.draw_start_screen()
@@ -218,16 +218,14 @@ class GameController:
         self.bullets = remaining_bullets
         self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
 
-
     def update_game(self):
         ship_points = calculate_ship_points(self.ship)
-
         self.ship.update_position(ScreenSize)
-
 
         if len(self.asteroids) == 0:
             self.restart_game(self.ship.score)
 
+        collision_detected = False
         for asteroid in self.asteroids:
             for point in ship_points:
                 if not invincible and asteroid.collides_with_point(point):
@@ -237,10 +235,14 @@ class GameController:
                         self.invincibility_timeout = invincibility_window
                     if self.ship.lives <= 0:
                         self.state = State.ENTER_NAME
-                    return
+                    collision_detected = True
+                    break
+            if collision_detected:
+                break
 
         self.bullets_asteroid_collision()
         self.update_saucers()
         self.update_boosters(ship_points)
-
         self.update_timers()
+
+        print(self.invincibility_timeout)
