@@ -22,9 +22,13 @@ def draw_bullets(screen, bullets):
     for bullet in bullets:
         pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet.size)
 
-def draw_ship(screen, ship, invincibility):
-    if invincibility % 4 == 0:
-        pygame.draw.polygon(screen, secondary_color, calculate_ship_points(ship))
+def draw_ships(screen, font, ships):
+    for ship in ships:
+        if ship.invincibility_timeout % 4 == 0:
+            pygame.draw.polygon(screen, secondary_color, calculate_ship_points(ship))
+        if DEBUG:
+            text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
+            screen.blit(text_size, (ship.x, ship.y))
 
 def draw_osd(screen, font, score, lives_amount):
     text = font.render(f"Очки: {score}", True, (255, 255, 255))

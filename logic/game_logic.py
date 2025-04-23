@@ -1,9 +1,10 @@
 import json
-import random
+from random import randint, choice
 
 import pygame
 from enum import Enum, auto
 
+from logic.teammate_logic import update_teammate
 from settings import *
 from entities.saucer import Saucer
 from entities.asteroid import Asteroid
@@ -30,14 +31,20 @@ class GameController:
         self.state = State.START
 
         self.ship = None
+        self.ships = []
         self.saucers = []
         self.saucer_spawn_timer = 100
         self.saucer_spawn_rate = 2000
 
+        self.teammate1 = None
+        self.teammate2 = None
+        self.teammate3 = None
+        self.teammate4 = None
+
+
         self.asteroids = []
         self.bullets = []
         self.shooting_timeout = 0
-        self.invincibility_timeout = 0
         self.booster_timeout = 0
         self.player_name = ""
         self.shooting_window = shooting_rate
@@ -51,11 +58,22 @@ class GameController:
         else: # случай нового уровня
             self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, self.ship.lives, score=score)
 
-        self.asteroids = [Asteroid(random.randint(100, ScreenSize[1]-100), 0, random.randint(20, 50), random.randint(0, 360), speed=random.randint(asteroid_min_speed, asteroid_max_speed)) for _ in range(asteroids_amount)]
+        self.teammate1 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
+        self.teammate2 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
+        self.teammate3 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
+        self.teammate4 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
+
+        self.ships.append(self.ship)
+        self.ships.append(self.teammate1)
+        self.ships.append(self.teammate2)
+        self.ships.append(self.teammate3)
+        self.ships.append(self.teammate4)
+
+        self.asteroids = [Asteroid(randint(100, ScreenSize[1]-100), 0, randint(20, 50), randint(0, 360), speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in range(asteroids_amount)]
         self.bullets = []
         self.shooting_timeout = 0
         self.state = State.RUNNING
-        self.booster = Booster(random.randint(50,ScreenSize[0]-50), random.randint(50,ScreenSize[1]-50), 1)
+        self.booster = Booster(randint(50,ScreenSize[0]-50), randint(50,ScreenSize[1]-50), 1)
 
 
     def run(self):
@@ -109,7 +127,7 @@ class GameController:
             if self.state == State.RUNNING:
                 self.handle_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ship, self.asteroids, self.bullets, self.booster, self.ship.score, self.saucers, self.invincibility_timeout)
+                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.booster, self.saucers)
 
             elif self.state == State.START:
                 self.view.draw_start_screen()
@@ -133,17 +151,20 @@ class GameController:
         if keys[pygame.K_RIGHT]:
             self.ship.rotate(self.ship.turn_speed)
         if keys[pygame.K_SPACE] and self.shooting_timeout <= 0:
-            self.bullets.append(Shot(self.ship.x, self.ship.y, self.ship.angle))
-            self.shooting_timeout = self.shooting_window
+            self.ship_shoot(self.ship)
+
+    def ship_shoot(self, ship: Ship):
+        self.bullets.append(Shot(ship.x, ship.y, ship.angle))
+        self.shooting_timeout = self.shooting_window
 
     def update_saucers(self):
         # Update saucer spawn
         if len(self.saucers) <= max_saucers - 1:
             self.saucer_spawn_timer -= 1
             if self.saucer_spawn_timer <= 0:
-                direction = random.choice([-1, 1])
+                direction = choice([-1, 1])
                 x = 0 if direction == 1 else ScreenSize[0]
-                y = random.randint(50, ScreenSize[1] - 50)
+                y = randint(50, ScreenSize[1] - 50)
                 self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
                 self.saucer_spawn_timer = self.saucer_spawn_rate
 
@@ -161,7 +182,7 @@ class GameController:
             saucer.shot_timer -= 1
             if saucer.shot_timer <= 0:
                 self.asteroids.append(saucer.shoot(self.ship))
-                saucer.shot_timer = random.randint(100, 200)
+                saucer.shot_timer = randint(100, 200)
 
     def update_boosters(self, ship_points):
         if self.booster.active:
@@ -177,9 +198,9 @@ class GameController:
 
         if self.shooting_timeout > 0:
             self.shooting_timeout -= 1
-
-        if self.invincibility_timeout > 0:
-            self.invincibility_timeout -= 1
+        for ship in self.ships:
+            if ship.invincibility_timeout > 0:
+                ship.invincibility_timeout -= 1
 
         if self.booster_timeout > 0:
             self.booster_timeout -= 1
@@ -207,10 +228,10 @@ class GameController:
                     if asteroid.size >= min_asteroid_size:
                         for _ in range(2):
                             new_asteroids.append(Asteroid(
-                                asteroid.x_coordinate + random.randint(-10, 10),
-                                asteroid.y_coordinate + random.randint(-10, 10),
+                                asteroid.x_coordinate + randint(-10, 10),
+                                asteroid.y_coordinate + randint(-10, 10),
                                 asteroid.size // asteroid_division_coefficient,
-                                random.randint(0, 360)))
+                                randint(0, 360)))
 
             if not bullet_hit and bullet.distance <= max_shot_distance:
                 remaining_bullets.append(bullet)
@@ -219,30 +240,33 @@ class GameController:
         self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
 
     def update_game(self):
-        ship_points = calculate_ship_points(self.ship)
-        self.ship.update_position(ScreenSize)
+        for ship in self.ships:
+            ship_points = calculate_ship_points(ship)
+            ship.update_position(ScreenSize)
 
-        if len(self.asteroids) == 0:
-            self.restart_game(self.ship.score)
+            if len(self.asteroids) == 0:
+                self.restart_game(ship.score)
 
-        collision_detected = False
-        for asteroid in self.asteroids:
-            for point in ship_points:
-                if not invincible and asteroid.collides_with_point(point):
-                    if self.invincibility_timeout == 0:
-                        self.ship.lives -= 1
-                        self.ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
-                        self.invincibility_timeout = invincibility_window
-                    if self.ship.lives <= 0:
-                        self.state = State.ENTER_NAME
-                    collision_detected = True
+            collision_detected = False
+            for asteroid in self.asteroids:
+                for point in ship_points:
+                    if not invincible and asteroid.collides_with_point(point):
+                        if ship.invincibility_timeout == 0:
+                            ship.lives -= 1
+                            ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
+                            ship.invincibility_timeout = invincibility_window
+                        if self.ship.lives <= 0:
+                            self.state = State.ENTER_NAME
+                        collision_detected = True
+                        break
+                if collision_detected:
                     break
-            if collision_detected:
-                break
+        for teammate in self.ships[1:]: # 0-й корабль это игрок, остальные - боты
+            if update_teammate(teammate, self.asteroids, self.bullets, self.saucers) == "thrust":
+                print("thrust")
+                teammate.thrust()
 
         self.bullets_asteroid_collision()
         self.update_saucers()
-        self.update_boosters(ship_points)
+        # self.update_boosters(ship_points)
         self.update_timers()
-
-        print(self.invincibility_timeout)

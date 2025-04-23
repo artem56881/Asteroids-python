@@ -2,7 +2,9 @@ import pygame
 import json
 
 from settings import DEBUG, leaderboard_file_path, button_color, background_color
-from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info, draw_booster, draw_saucers
+from utils.draw_utils import draw_asteroids, draw_bullets, draw_ships, draw_osd, draw_debug_info, draw_booster, \
+    draw_saucers
+
 
 class GameView:
 
@@ -22,7 +24,7 @@ class GameView:
         self.dif_hard_button = pygame.Rect(300, 390, 200, 50)
 
 
-    def draw_game(self, ship, asteroids, bullets, booster, score, saucers, invincibility):
+    def draw_game(self, ships, asteroids, bullets, booster, saucers):
         self.screen.fill(background_color)
 
         draw_asteroids(self.screen, self.font, asteroids)
@@ -31,14 +33,14 @@ class GameView:
 
         draw_bullets(self.screen, bullets)
 
-        draw_ship(self.screen, ship, invincibility)
+        draw_ships(self.screen, self.font, ships)
 
         draw_booster(self.screen, booster)
 
-        draw_osd(self.screen, self.font, score, ship.lives)
+        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
         if DEBUG:
-            draw_debug_info(self.screen, self.font, ship, asteroids)
+            draw_debug_info(self.screen, self.font, ships[0], asteroids)
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

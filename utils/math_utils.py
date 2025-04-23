@@ -35,8 +35,8 @@ def calculate_saucer_points(saucer, size=20):
             (saucer.x + 0.5 * size, saucer.y - 1 * size), (saucer.x + 1 * size, saucer.y),
             (saucer.x, saucer.y + 1 * size))
 
-def collision(point_x, point_y, asteroid_x, asteroid_y, asteroid_size):
-    return ((point_x - asteroid_x) ** 2 + (point_y - asteroid_y) ** 2) <= asteroid_size ** 2
+def collision(point1_x, point1_y, point2_x, point2_y, collision_range):
+    return ((point1_x - point2_x) ** 2 + (point1_y - point2_y) ** 2) <= collision_range ** 2
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):
     with open(leaderboard_file_path, 'r+') as json_file:

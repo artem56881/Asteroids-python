@@ -13,6 +13,9 @@ class Ship:
         self.turn_speed = 5
         self.score = score
         self.lives = lives
+        self.invincibility_timeout = 0
+
+        self.color = (148, 143, 110)
 
     def update_position(self, screen_size):
         self.x = (self.x + self.vel_x) % screen_size[0]
