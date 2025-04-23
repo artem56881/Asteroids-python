@@ -177,12 +177,7 @@ class GameController:
         if self.booster_timeout > 0:
             self.booster_timeout -= 1
 
-
-    def update_game(self):
-        ship_points = calculate_ship_points(self.ship)
-
-        self.ship.update_position(ScreenSize)
-
+    def bullets_asteroid_collision(self):
         for asteroid in self.asteroids:
             asteroid.fly(ScreenSize)
             if asteroid.time_to_live == 0:
@@ -216,6 +211,13 @@ class GameController:
         self.bullets = remaining_bullets
         self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
 
+
+    def update_game(self):
+        ship_points = calculate_ship_points(self.ship)
+
+        self.ship.update_position(ScreenSize)
+
+
         if len(self.asteroids) == 0:
             self.restart_game(self.ship.score)
 
@@ -230,6 +232,7 @@ class GameController:
                         self.state = 'ENTER_NAME'
                     return
 
+        self.bullets_asteroid_collision()
         self.update_saucers()
         self.update_boosters(ship_points)
 
