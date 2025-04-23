@@ -1,16 +1,15 @@
 from random import randint, choice
-
 import pygame
 from enum import Enum, auto
 
-from logic.teammate_logic import update_teammate
-from entities.saucer import Saucer
-from entities.asteroid import Asteroid
-from entities.booster import Booster
+from settings import *
 from entities.ship import Ship
 from entities.shot import Shot
+from entities.saucer import Saucer
+from entities.booster import Booster
+from entities.asteroid import Asteroid
 from render.game_render import GameView
-from settings import *
+from logic.teammate_logic import update_teammate
 from utils.math_utils import calculate_ship_points, save_score_to_leaderboard
 
 class State(Enum):
@@ -39,7 +38,6 @@ class GameController:
         self.teammate3 = None
         self.teammate4 = None
 
-
         self.asteroids = []
         self.bullets = []
         self.shooting_timeout = 0
@@ -49,34 +47,35 @@ class GameController:
         self.difficulty = None
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
-        if self.ship is None: # случай первого запуска
-            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, ship_lives)
-        elif self.ship.lives == 0: # случай не первого запуска(за период запуска программы)
-            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, ship_lives)
-        else: # случай нового уровня
-            self.ship = Ship(ScreenSize[0]//2, ScreenSize[1] // 2, self.ship.lives, score=score)
+        if self.ship is None:  # случай первого запуска
+            self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
 
-        self.teammate1 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
-        self.teammate2 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
-        self.teammate3 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
-        self.teammate4 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
+            self.teammate1 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate2 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate3 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate4 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
 
+            self.ships.append(self.ship)
+            self.ships.append(self.teammate1)
+            self.ships.append(self.teammate2)
+            self.ships.append(self.teammate3)
+            self.ships.append(self.teammate4)
 
-        self.ships.append(self.ship)
-        self.ships.append(self.teammate1)
-        self.ships.append(self.teammate2)
-        # self.ships.append(self.teammate3)
-        # self.ships.append(self.teammate4)
+            for mate in self.ships[1:]:
+                mate.color = (255, 124, 64)
 
-        for mate in self.ships[1:]:
-            mate.color = (255, 124, 64)
+        elif self.ship.lives == 0:  # случай не первого запуска(за период запуска программы)
+            self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
+        else:  # случай нового уровня
+            self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, self.ship.lives, score=score)
 
-        self.asteroids = [Asteroid(randint(100, ScreenSize[1]-100), 0, randint(20, 50), randint(0, 360), speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in range(asteroids_amount)]
+        self.asteroids = [Asteroid(randint(100, ScreenSize[1] - 100), 0, randint(20, 50), randint(0, 360),
+                                   speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in
+                          range(asteroids_amount)]
         self.bullets = []
         self.shooting_timeout = 0
         self.state = State.RUNNING
-        self.booster = Booster(randint(50,ScreenSize[0]-50), randint(50,ScreenSize[1]-50), 1)
-
+        self.booster = Booster(randint(50, ScreenSize[0] - 50), randint(50, ScreenSize[1] - 50), 1)
 
     def run(self):
         running = True
@@ -263,9 +262,12 @@ class GameController:
                         break
                 if collision_detected:
                     break
-        for teammate in self.ships[1:]: # 0-й корабль это игрок, остальные - боты
+        for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
             if update_teammate(teammate, self.asteroids, self.bullets, self.saucers) == "thrust":
+                # self.ship_shoot(teammate)
                 teammate.thrust()
+            # teammate.rotate(4)
+            # self.ship_shoot(teammate)
 
         self.bullets_asteroid_collision()
         self.update_saucers()

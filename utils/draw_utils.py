@@ -1,11 +1,12 @@
 import pygame
 
-from settings import DEBUG, primary_color, secondary_color, enemy_color, ScreenSize
+from settings import DEBUG, primary_color, secondary_color, enemy_color, ScreenSize, primary_color2
 from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
         a.draw(screen)
+        pygame.draw.circle(screen, primary_color2, (a.x_coordinate, a.y_coordinate) , a.size+2, width=2)
         if DEBUG:
             text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
             screen.blit(text_size, (a.x_coordinate, a.y_coordinate))

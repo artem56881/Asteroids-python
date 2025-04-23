@@ -1,7 +1,7 @@
 import pygame
 import json
 
-from settings import DEBUG, leaderboard_file_path, button_color, background_color
+from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ships, draw_osd, draw_debug_info, draw_booster, \
     draw_saucers
 
@@ -11,17 +11,17 @@ class GameView:
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
-        self.splash_font = pygame.font.Font('../exwayer.ttf', 120)
+        self.splash_font = pygame.font.Font(None, 120)
         self.splash_default_font = pygame.font.Font(None, 120)
         self.forty_font = pygame.font.Font(None, 40)
-        self.start_button = pygame.Rect(300, 250, 200, 50)
-        self.leaderboard_button = pygame.Rect(300, 320, 200, 50)
-        self.exit_button = pygame.Rect(300, 390, 200, 50)
-        self.menu_button = pygame.Rect(300, 500, 200, 50)
+        self.start_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)
+        self.leaderboard_button = pygame.Rect(ScreenSize[0]//2 - 100, 320, 200, 50)
+        self.exit_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
+        self.menu_button = pygame.Rect(ScreenSize[0]//2 - 100, 500, 200, 50)
 
-        self.dif_easy_button = pygame.Rect(300, 250, 200, 50)
-        self.dif_normal_button = pygame.Rect(300, 320, 200, 50)
-        self.dif_hard_button = pygame.Rect(300, 390, 200, 50)
+        self.dif_easy_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)
+        self.dif_normal_button = pygame.Rect(ScreenSize[0]//2 - 100, 320, 200, 50)
+        self.dif_hard_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
 
 
     def draw_game(self, ships, asteroids, bullets, booster, saucers):
