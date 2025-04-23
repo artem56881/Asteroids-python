@@ -164,7 +164,23 @@ class GameController:
                     self.booster_timeout = self.booster.time
                     self.shooting_window = 5
 
+    def update_timers(self):
+        if self.booster_timeout <= 0:
+            self.shooting_window = shooting_rate
+
+        if self.shooting_timeout > 0:
+            self.shooting_timeout -= 1
+
+        if self.invincibility_timeout > 0:
+            self.invincibility_timeout -= 1
+
+        if self.booster_timeout > 0:
+            self.booster_timeout -= 1
+
+
     def update_game(self):
+        ship_points = calculate_ship_points(self.ship)
+
         self.ship.update_position(ScreenSize)
 
         for asteroid in self.asteroids:
@@ -203,8 +219,6 @@ class GameController:
         if len(self.asteroids) == 0:
             self.restart_game(self.ship.score)
 
-        ship_points = calculate_ship_points(self.ship)
-
         for asteroid in self.asteroids:
             for point in ship_points:
                 if not invincible and asteroid.collides_with_point(point):
@@ -219,14 +233,4 @@ class GameController:
         self.update_saucers()
         self.update_boosters(ship_points)
 
-        if self.booster_timeout <= 0:
-            self.shooting_window = shooting_rate
-
-        if self.shooting_timeout > 0:
-            self.shooting_timeout -= 1
-
-        if self.invincibility_timeout > 0:
-            self.invincibility_timeout -= 1
-
-        if self.booster_timeout > 0:
-            self.booster_timeout -= 1
+        self.update_timers()
