@@ -1,11 +1,9 @@
-import json
 from random import randint, choice
 
 import pygame
 from enum import Enum, auto
 
 from logic.teammate_logic import update_teammate
-from settings import *
 from entities.saucer import Saucer
 from entities.asteroid import Asteroid
 from entities.booster import Booster
@@ -63,11 +61,15 @@ class GameController:
         self.teammate3 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
         self.teammate4 = Ship(ScreenSize[0]//2 + randint(0, ScreenSize[0]//2), ScreenSize[1] // 2, 3)
 
+
         self.ships.append(self.ship)
         self.ships.append(self.teammate1)
         self.ships.append(self.teammate2)
-        self.ships.append(self.teammate3)
-        self.ships.append(self.teammate4)
+        # self.ships.append(self.teammate3)
+        # self.ships.append(self.teammate4)
+
+        for mate in self.ships[1:]:
+            mate.color = (255, 124, 64)
 
         self.asteroids = [Asteroid(randint(100, ScreenSize[1]-100), 0, randint(20, 50), randint(0, 360), speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in range(asteroids_amount)]
         self.bullets = []
@@ -102,7 +104,7 @@ class GameController:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.dif_easy_button.collidepoint(event.pos):
                             self.difficulty = 'EASY'
-                            self.restart_game(ship_lives=4, asteroids_amount=4)
+                            self.restart_game(ship_lives=100, asteroids_amount=4)
                             self.saucer_spawn_rate = 2000
                         if self.view.dif_normal_button.collidepoint(event.pos):
                             self.difficulty = 'NORMAL'
@@ -263,7 +265,6 @@ class GameController:
                     break
         for teammate in self.ships[1:]: # 0-й корабль это игрок, остальные - боты
             if update_teammate(teammate, self.asteroids, self.bullets, self.saucers) == "thrust":
-                print("thrust")
                 teammate.thrust()
 
         self.bullets_asteroid_collision()

@@ -1,6 +1,6 @@
 import pygame
 
-from settings import DEBUG, primary_color, secondary_color, enemy_color
+from settings import DEBUG, primary_color, secondary_color, enemy_color, ScreenSize
 from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 def draw_asteroids(screen, font, asteroids):
@@ -25,7 +25,7 @@ def draw_bullets(screen, bullets):
 def draw_ships(screen, font, ships):
     for ship in ships:
         if ship.invincibility_timeout % 4 == 0:
-            pygame.draw.polygon(screen, secondary_color, calculate_ship_points(ship))
+            pygame.draw.polygon(screen, ship.color, calculate_ship_points(ship))
         if DEBUG:
             text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
             screen.blit(text_size, (ship.x, ship.y))
@@ -51,4 +51,4 @@ def draw_statistics(screen, font, score, screen_size):
 
 def draw_debug_info(screen, font, ship, asteroids):
     text = font.render(f"lives: {ship.lives}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f}, asteroids: {len(asteroids)}", True, (255, 255, 255))
-    screen.blit(text, (10, 30))
+    screen.blit(text, (10, ScreenSize[1] - 30))
