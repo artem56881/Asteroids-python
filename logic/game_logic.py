@@ -56,9 +56,9 @@ class GameController:
 
             self.ships.append(self.ship)
             self.ships.append(self.teammate1)
-            self.ships.append(self.teammate2)
-            self.ships.append(self.teammate3)
-            self.ships.append(self.teammate4)
+            # self.ships.append(self.teammate2)
+            # self.ships.append(self.teammate3)
+            # self.ships.append(self.teammate4)
 
             for mate in self.ships[1:]:
                 mate.color = (255, 124, 64)
@@ -265,9 +265,18 @@ class GameController:
                     break
 
         for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
-            if update_teammate(teammate, self.asteroids, self.bullets, self.saucers) == "thrust":
-                self.ship_shoot(teammate)
+            command = update_teammate(teammate, self.asteroids, self.bullets, self.saucers)
+            print(command[0])
+            if command[0] == "thrust":
                 teammate.thrust()
+            elif command[0] == "rotate":
+                teammate.rotate(command[1])
+                print(1)
+            elif command[0] == "shoot":
+                self.ship_shoot(teammate)
+            else:
+                teammate.thrust()
+
             # teammate.rotate(4)
             # self.ship_shoot(teammate)
 
