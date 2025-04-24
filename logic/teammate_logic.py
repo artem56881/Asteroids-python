@@ -1,6 +1,6 @@
 import math
 from entities.ship import Ship
-from utils.math_utils import collision, angle_to_coords
+from utils.math_utils import find_range, angle_to_coords
 
 def update_teammate(ship: Ship, asteroids, bullets, saucers):
     fov = 15  # Field of view in degrees
@@ -14,7 +14,7 @@ def update_teammate(ship: Ship, asteroids, bullets, saucers):
     nearest_distance = float('inf')
     commands = []
 
-    for obj in asteroids+saucers:
+    for obj in asteroids + saucers:
         # Calculate the velocity components based on speed and angle
         vel_x, vel_y = angle_to_coords(obj.angle, obj.speed)
 
@@ -23,7 +23,7 @@ def update_teammate(ship: Ship, asteroids, bullets, saucers):
         predicted_y = obj.y + vel_y * prediction_time
 
         # Check if the asteroid is within shooting range
-        if collision(ship.x, ship.y, predicted_x, predicted_y, max_shooting_range):
+        if find_range(ship.x, ship.y, predicted_x, predicted_y) <= max_shooting_range:
             asteroid_direction = math.atan2(predicted_y - ship.y, predicted_x - ship.x)
             angle_diff = math.degrees(asteroid_direction - ship_direction)
             angle_diff = (angle_diff + 360) % 360  # Normalize angle to [0, 360)

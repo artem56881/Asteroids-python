@@ -13,7 +13,7 @@ class GameView:
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
-        self.splash_font = pygame.font.Font(None, 120)
+        self.splash_font = pygame.font.Font("exwayer.ttf", 120)
         self.splash_default_font = pygame.font.Font(None, 120)
         self.forty_font = pygame.font.Font(None, 40)
         self.start_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)

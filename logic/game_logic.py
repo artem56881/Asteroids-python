@@ -257,6 +257,8 @@ class GameController:
             ship_points = calculate_ship_points(ship)
             ship.update_position(ScreenSize)
 
+            self.update_boosters(ship_points)
+
             if len(self.asteroids) == 0:
                 self.restart_game(ship.score)
 
@@ -291,5 +293,4 @@ class GameController:
         self.bullets_asteroid_collision()
         self.update_saucers()
         player_ship_points = calculate_ship_points(self.ships[0])
-        self.update_boosters(player_ship_points)
         self.update_timers()

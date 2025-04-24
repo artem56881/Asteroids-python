@@ -36,8 +36,8 @@ def calculate_saucer_points(saucer, size=20):
             (saucer.x + 0.5 * size, saucer.y - 1 * size), (saucer.x + 1 * size, saucer.y),
             (saucer.x, saucer.y + 1 * size))
 
-def collision(point1_x, point1_y, point2_x, point2_y, collision_range):
-    return ((point1_x - point2_x) ** 2 + (point1_y - point2_y) ** 2) <= collision_range ** 2
+def find_range(point1_x, point1_y, point2_x, point2_y):
+    return ((point1_x - point2_x) ** 2 + (point1_y - point2_y) ** 2) ** 0.5
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):
     # Check if the leaderboard file exists
