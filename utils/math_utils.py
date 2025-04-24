@@ -6,9 +6,9 @@ import json
 from settings import leaderboard_file_path
 
 
-def angle_to_cords(angle: float) -> Tuple[float, float]:
+def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:
     rad = math.radians(angle)
-    return math.cos(rad), math.sin(rad)
+    return length*math.cos(rad), length*math.sin(rad)
 
 
 def calculate_ship_points(ship) -> List[Tuple[float, float]]:
@@ -17,9 +17,9 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
     width = 15
     length = 35
 
-    dir_vec = angle_to_cords(ship.angle)
-    left_vec = angle_to_cords(ship.angle - back_angle)
-    right_vec = angle_to_cords(ship.angle + back_angle)
+    dir_vec = angle_to_coords(ship.angle)
+    left_vec = angle_to_coords(ship.angle - back_angle)
+    right_vec = angle_to_coords(ship.angle + back_angle)
 
     base_x = ship.x - dir_vec[0] * offset
     base_y = ship.y - dir_vec[1] * offset

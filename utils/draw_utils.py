@@ -6,10 +6,10 @@ from utils.math_utils import calculate_ship_points, calculate_saucer_points
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
         a.draw(screen)
-        pygame.draw.circle(screen, primary_color2, (a.x_coordinate, a.y_coordinate) , a.size+2, width=2)
+        pygame.draw.circle(screen, primary_color2, (a.x, a.y), a.size, width=2)
         if DEBUG:
             text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
-            screen.blit(text_size, (a.x_coordinate, a.y_coordinate))
+            screen.blit(text_size, (a.x, a.y))
 
 def draw_booster(screen, booster):
     if booster.active:
@@ -21,7 +21,7 @@ def draw_saucers(screen, saucers):
 
 def draw_bullets(screen, bullets):
     for bullet in bullets:
-        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet.size)
+        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x), int(bullet.y)), bullet.size)
 
 def draw_ships(screen, font, ships):
     for ship in ships:

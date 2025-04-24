@@ -37,6 +37,10 @@ class GameController:
         self.teammate2 = None
         self.teammate3 = None
         self.teammate4 = None
+        self.teammate5 = None
+        self.teammate6 = None
+        self.teammate8 = None
+        self.teammate4 = None
 
         self.asteroids = []
         self.bullets = []
@@ -53,12 +57,20 @@ class GameController:
             self.teammate2 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
             self.teammate3 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
             self.teammate4 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate5 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate6 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate7 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
+            self.teammate8 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
 
             self.ships.append(self.ship)
             self.ships.append(self.teammate1)
-            # self.ships.append(self.teammate2)
-            # self.ships.append(self.teammate3)
-            # self.ships.append(self.teammate4)
+            self.ships.append(self.teammate2)
+            self.ships.append(self.teammate3)
+            self.ships.append(self.teammate4)
+            # self.ships.append(self.teammate5)
+            # self.ships.append(self.teammate6)
+            # self.ships.append(self.teammate7)
+            # self.ships.append(self.teammate8)
 
             for mate in self.ships[1:]:
                 mate.color = (255, 124, 64)
@@ -103,7 +115,7 @@ class GameController:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.dif_easy_button.collidepoint(event.pos):
                             self.difficulty = 'EASY'
-                            self.restart_game(ship_lives=100, asteroids_amount=4)
+                            self.restart_game(ship_lives=10, asteroids_amount=4)
                             self.saucer_spawn_rate = 2000
                         if self.view.dif_normal_button.collidepoint(event.pos):
                             self.difficulty = 'NORMAL'
@@ -173,9 +185,8 @@ class GameController:
         # Update saucers
         for saucer in self.saucers:
             saucer.fly()
-            # Check collision with bullets
             for bullet in self.bullets:
-                if saucer.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
+                if saucer.collides_with_point((bullet.x, bullet.y)):
                     self.ship.score += 100
                     self.bullets.remove(bullet)
                     self.saucers.remove(saucer)
@@ -183,7 +194,7 @@ class GameController:
 
             saucer.shot_timer -= 1
             if saucer.shot_timer <= 0:
-                self.asteroids.append(saucer.shoot(self.ship))
+                self.asteroids.append(saucer.shoot(self.ships[randint(0, len(self.ships)-1)]))
                 saucer.shot_timer = randint(100, 200)
 
     def update_boosters(self, ship_points):
@@ -222,7 +233,7 @@ class GameController:
             bullet_hit = False
 
             for asteroid in self.asteroids:
-                if asteroid.collides_with_point((bullet.x_coordinate, bullet.y_coordinate)):
+                if asteroid.collides_with_point((bullet.x, bullet.y)):
 
                     self.ship.score += int(10 - asteroid.size % 10)
                     bullet_hit = True
@@ -230,8 +241,8 @@ class GameController:
                     if asteroid.size >= min_asteroid_size:
                         for _ in range(2):
                             new_asteroids.append(Asteroid(
-                                asteroid.x_coordinate + randint(-10, 10),
-                                asteroid.y_coordinate + randint(-10, 10),
+                                asteroid.x + randint(-10, 10),
+                                asteroid.y + randint(-10, 10),
                                 asteroid.size // asteroid_division_coefficient,
                                 randint(0, 360)))
 
@@ -255,7 +266,7 @@ class GameController:
                     if not invincible and asteroid.collides_with_point(point):
                         if ship.invincibility_timeout == 0:
                             ship.lives -= 1
-                            ship.knockback(asteroid.x_coordinate, asteroid.y_coordinate, asteroid.size)
+                            ship.knockback(asteroid.x, asteroid.y, asteroid.size)
                             ship.invincibility_timeout = invincibility_window
                         if self.ship.lives <= 0:
                             self.state = State.ENTER_NAME
@@ -265,17 +276,14 @@ class GameController:
                     break
 
         for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
-            command = update_teammate(teammate, self.asteroids, self.bullets, self.saucers)
-            print(command[0])
-            if command[0] == "thrust":
-                teammate.thrust()
-            elif command[0] == "rotate":
-                teammate.rotate(command[1])
-                print(1)
-            elif command[0] == "shoot":
-                self.ship_shoot(teammate)
-            else:
-                teammate.thrust()
+                commands = update_teammate(teammate, self.asteroids, self.bullets, self.saucers)
+                for command in commands:
+                    if command[0] == "thrust":
+                        teammate.thrust()
+                    elif command[0] == "rotate":
+                        teammate.rotate(command[1])
+                    elif command[0] == "shoot":
+                        self.ship_shoot(teammate)
 
             # teammate.rotate(4)
             # self.ship_shoot(teammate)

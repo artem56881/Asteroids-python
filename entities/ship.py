@@ -1,5 +1,5 @@
 import pygame
-from utils.math_utils import angle_to_cords
+from utils.math_utils import angle_to_coords
 from settings import friction
 
 class Ship:
@@ -28,7 +28,7 @@ class Ship:
         self.angle = (self.angle + angle_delta) % 360
 
     def thrust(self):
-        dx, dy = angle_to_cords(self.angle)
+        dx, dy = angle_to_coords(self.angle)
         self.vel_x += dx * self.acceleration
         self.vel_y += dy * self.acceleration
 
