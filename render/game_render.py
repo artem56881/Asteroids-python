@@ -1,3 +1,5 @@
+from os.path import exists
+
 import pygame
 import json
 
@@ -82,12 +84,20 @@ class GameView:
         self.screen.fill(background_color)
 
         splash_text = self.forty_font.render("Таблица лидеров", False, (255, 255, 255))
-        self.screen.blit(splash_text, (280,30))
+        self.screen.blit(splash_text, (280, 30))
+
+        # Check if the leaderboard file exists
+        if not exists(leaderboard_file_path):
+            # Create the file with an initial structure
+            with open(leaderboard_file_path, 'w') as json_file:
+                initial_data = {"leaderboard": []}
+                json.dump(initial_data, json_file, indent=4)
 
         with open(leaderboard_file_path, 'r') as json_file:
             leaderboard = json.load(json_file)
 
-        name_score_difficulty_pairs = [(player['name'], player['score'], player['difficulty']) for player in leaderboard['leaderboard']]
+        name_score_difficulty_pairs = [(player['name'], player['score'], player['difficulty']) for player in
+                                       leaderboard['leaderboard']]
         i = 0
         player_color = (255, 255, 255)
         for name, score, difficulty in name_score_difficulty_pairs:
@@ -98,7 +108,7 @@ class GameView:
             else:
                 player_color = (200, 0, 0)
             line = self.font.render(f"{name} {score}", True, player_color)
-            self.screen.blit(line, (300, 100+i*40))
+            self.screen.blit(line, (300, 100 + i * 40))
             i += 1
 
         pygame.draw.rect(self.screen, button_color, self.menu_button)
