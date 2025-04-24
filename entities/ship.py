@@ -14,6 +14,7 @@ class Ship:
         self.score = score
         self.lives = lives
         self.invincibility_timeout = 0
+        self.shooting_timeout = 0
 
         self.color = (124, 110, 148)
 

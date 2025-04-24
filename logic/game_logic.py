@@ -40,7 +40,6 @@ class GameController:
 
         self.asteroids = []
         self.bullets = []
-        self.shooting_timeout = 0
         self.booster_timeout = 0
         self.player_name = ""
         self.shooting_window = shooting_rate
@@ -68,8 +67,9 @@ class GameController:
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
         else:  # случай нового уровня
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, self.ship.lives, score=score)
+            self.ships[0] = self.ship
 
-        self.asteroids = [Asteroid(randint(100, ScreenSize[1] - 100), 0, randint(20, 50), randint(0, 360),
+        self.asteroids = [Asteroid(randint(100, ScreenSize[1] - 100), 1, randint(20, 50), randint(0, 360),
                                    speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in
                           range(asteroids_amount)]
         self.bullets = []
@@ -151,12 +151,13 @@ class GameController:
             self.ship.rotate(-self.ship.turn_speed)
         if keys[pygame.K_RIGHT]:
             self.ship.rotate(self.ship.turn_speed)
-        if keys[pygame.K_SPACE] and self.shooting_timeout <= 0:
+        if keys[pygame.K_SPACE]:
             self.ship_shoot(self.ship)
 
     def ship_shoot(self, ship: Ship):
-        self.bullets.append(Shot(ship.x, ship.y, ship.angle))
-        self.shooting_timeout = self.shooting_window
+        if ship.shooting_timeout <= 0:
+            self.bullets.append(Shot(ship.x, ship.y, ship.angle))
+            ship.shooting_timeout = self.shooting_window
 
     def update_saucers(self):
         # Update saucer spawn
@@ -197,11 +198,11 @@ class GameController:
         if self.booster_timeout <= 0:
             self.shooting_window = shooting_rate
 
-        if self.shooting_timeout > 0:
-            self.shooting_timeout -= 1
         for ship in self.ships:
             if ship.invincibility_timeout > 0:
                 ship.invincibility_timeout -= 1
+            if ship.shooting_timeout > 0:
+                ship.shooting_timeout -= 1
 
         if self.booster_timeout > 0:
             self.booster_timeout -= 1
@@ -262,14 +263,16 @@ class GameController:
                         break
                 if collision_detected:
                     break
+
         for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
             if update_teammate(teammate, self.asteroids, self.bullets, self.saucers) == "thrust":
-                # self.ship_shoot(teammate)
+                self.ship_shoot(teammate)
                 teammate.thrust()
             # teammate.rotate(4)
             # self.ship_shoot(teammate)
 
         self.bullets_asteroid_collision()
         self.update_saucers()
-        # self.update_boosters(ship_points)
+        player_ship_points = calculate_ship_points(self.ships[0])
+        self.update_boosters(player_ship_points)
         self.update_timers()
