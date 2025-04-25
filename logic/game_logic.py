@@ -10,7 +10,8 @@ from entities.booster import Booster
 from entities.asteroid import Asteroid
 from render.game_render import GameView
 from logic.teammate_logic import update_teammate
-from utils.math_utils import calculate_ship_points, save_score_to_leaderboard
+from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision
+
 
 class State(Enum):
     START = auto()
@@ -175,6 +176,7 @@ class GameController:
                 if self.booster.collides_with_point(point):
                     self.booster.active = False
                     self.ships.append(Ship(self.ships[0].x + randint(-10, 10), self.ships[0].y + randint(-10, 10), 3, color=teammate_color))
+
                     self.booster_timeout = self.booster.time
                     # self.shooting_window = 5
 
@@ -237,33 +239,32 @@ class GameController:
 
             collision_detected = False
             for asteroid in self.asteroids:
-                for point in ship_points:
-                    if not invincible and asteroid.collides_with_point(point):
-                        if ship.invincibility_timeout == 0:
-                            ship.lives -= 1
-                            ship.knockback(asteroid.x, asteroid.y, asteroid.size)
-                            ship.invincibility_timeout = invincibility_window
-                        if ship.lives <= 0:
-                            self.ships.remove(ship)
-                        if self.ship.lives <= 0:
-                            self.state = State.ENTER_NAME
-                        collision_detected = True
-                        break
-                if collision_detected:
+                asteroid_points = asteroid.points
+                if polygon_collision(ship_points, asteroid_points):
+                    if ship.invincibility_timeout == 0:
+                        ship.lives -= 1
+                        ship.knockback(asteroid.x, asteroid.y, asteroid.size)
+                        ship.invincibility_timeout = invincibility_window
+                    if ship.lives <= 0:
+                        self.ships.remove(ship)
+                    if self.ship.lives <= 0:
+                        self.state = State.ENTER_NAME
+                    collision_detected = True
                     break
+            if collision_detected:
+                break
 
         for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
-                commands = update_teammate(teammate, self.asteroids, self.bullets, self.saucers)
-                for command in commands:
-                    if command[0] == "thrust":
-                        teammate.thrust()
-                    elif command[0] == "rotate":
-                        teammate.rotate(command[1])
-                    elif command[0] == "shoot":
-                        self.ship_shoot(teammate)
+            commands = update_teammate(teammate, self.asteroids, self.bullets, self.saucers)
+            for command in commands:
+                if command[0] == "thrust":
+                    teammate.thrust()
+                elif command[0] == "rotate":
+                    teammate.rotate(command[1])
+                elif command[0] == "shoot":
+                    self.ship_shoot(teammate)
 
         self.camera_offset = pygame.Vector2(self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2)
-
 
         self.bullets_asteroid_collision()
         self.update_saucers()

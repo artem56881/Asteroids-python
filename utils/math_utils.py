@@ -2,13 +2,14 @@ import math
 from os.path import exists
 from typing import Tuple, List
 import json
+import pygame
 
 from settings import leaderboard_file_path, ScreenSize
 
 
 def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:
     rad = math.radians(angle)
-    return length*math.cos(rad), length*math.sin(rad)
+    return length * math.cos(rad), length * math.sin(rad)
 
 
 def calculate_ship_points(ship) -> List[Tuple[float, float]]:
@@ -22,7 +23,7 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
     right_vec = angle_to_coords(ship.angle + back_angle)
 
     base_x = ship.x - dir_vec[0] * offset
-    base_y = ship.y -  dir_vec[1] * offset
+    base_y = ship.y - dir_vec[1] * offset
 
     head = (base_x + dir_vec[0] * length, base_y + dir_vec[1] * length)
     left = (base_x + left_vec[0] * width, base_y + left_vec[1] * width)
@@ -31,13 +32,49 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
 
     return [base, left, head, right]
 
+
+def polygon_collision(poly1, poly2):
+    """Check if two polygons collide using the Separating Axis Theorem (SAT)."""
+    def project_polygon(polygon, axis):
+        """Project a polygon onto an axis."""
+        min_proj = max_proj = pygame.math.Vector2(polygon[0]).dot(axis)
+        for vertex in polygon[1:]:
+            projection = pygame.math.Vector2(vertex).dot(axis)
+            if projection < min_proj:
+                min_proj = projection
+            if projection > max_proj:
+                max_proj = projection
+        return min_proj, max_proj
+
+    def get_axes(polygon):
+        """Get the axes for the polygon."""
+        axes = []
+        for i in range(len(polygon)):
+            p1 = pygame.math.Vector2(polygon[i])
+            p2 = pygame.math.Vector2(polygon[(i + 1) % len(polygon)])
+            edge = p2 - p1
+            perp = pygame.math.Vector2(-edge.y, edge.x)
+            axes.append(perp.normalize())
+        return axes
+
+    axes = get_axes(poly1) + get_axes(poly2)
+    for axis in axes:
+        min1, max1 = project_polygon(poly1, axis)
+        min2, max2 = project_polygon(poly2, axis)
+        if max1 < min2 or max2 < min1:
+            return False
+    return True
+
+
 def calculate_saucer_points(saucer, size=20):
     return ((saucer.x - 1 * size, saucer.y), (saucer.x - 0.5 * size, saucer.y - 1 * size),
             (saucer.x + 0.5 * size, saucer.y - 1 * size), (saucer.x + 1 * size, saucer.y),
             (saucer.x, saucer.y + 1 * size))
 
+
 def find_range(point1_x, point1_y, point2_x, point2_y):
     return ((point1_x - point2_x) ** 2 + (point1_y - point2_y) ** 2) ** 0.5
+
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):
     # Check if the leaderboard file exists

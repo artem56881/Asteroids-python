@@ -32,7 +32,7 @@ class Saucer:
         return (self.x - px) ** 2 + (self.y - py) ** 2 <= (self.size / 2) ** 2
 
     def draw(self, screen, color, camera_offset):
-        pygame.draw.polygon(screen, color, [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_saucer_points(self)], width=3)
+        pygame.draw.polygon(screen, color, [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_saucer_points(self)])
 
     def shoot(self, ship):
         # Calculate the direction towards the player
