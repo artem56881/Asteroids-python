@@ -15,8 +15,8 @@ class Booster:
         pygame.draw.circle(self.image, booster_color, (self.size, self.size), self.size)
         self.rect = self.image.get_rect(center=(x, y))
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
+    def draw(self, screen, camera_offset):
+        screen.blit(self.image, self.rect.topleft - camera_offset)
 
     def collides_with_point(self, point):
         dx = point[0] - self.x_coordinate

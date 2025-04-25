@@ -3,7 +3,7 @@ from os.path import exists
 import pygame
 import json
 
-from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize
+from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize, game_field_size
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ships, draw_osd, draw_debug_info, draw_booster, \
     draw_saucers
 
@@ -26,23 +26,26 @@ class GameView:
         self.dif_hard_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
 
 
-    def draw_game(self, ships, asteroids, bullets, booster, saucers):
+    def draw_game(self, ships, asteroids, bullets, booster, saucers, camera_offset):
         self.screen.fill(background_color)
 
-        draw_asteroids(self.screen, self.font, asteroids)
+        draw_asteroids(self.screen, self.font, asteroids, camera_offset)
 
-        draw_saucers(self.screen, saucers)
+        draw_saucers(self.screen, saucers, camera_offset)
 
-        draw_bullets(self.screen, bullets)
+        draw_bullets(self.screen, bullets, camera_offset)
 
-        draw_ships(self.screen, self.font, ships)
+        draw_ships(self.screen, self.font, ships, camera_offset)
 
-        draw_booster(self.screen, booster)
-
-        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
+        draw_booster(self.screen, booster, camera_offset)
 
         if DEBUG:
             draw_debug_info(self.screen, self.font, ships[0], asteroids)
+
+        pygame.draw.polygon(self.screen, (100, 100, 100), ((0 - camera_offset.x, 0 - camera_offset.y), (0  - camera_offset.x, game_field_size[1] - camera_offset.y),
+                                                               (game_field_size[0] - camera_offset.x, game_field_size[1] - camera_offset.y), (game_field_size[0] - camera_offset.x, 0 - camera_offset.y)), width=10)
+
+        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

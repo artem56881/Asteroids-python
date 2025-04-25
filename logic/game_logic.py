@@ -40,6 +40,8 @@ class GameController:
         self.shooting_window = shooting_rate
         self.difficulty = None
 
+        self.camera_offset = None
+
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None:  # случай первого запуска
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
@@ -110,7 +112,7 @@ class GameController:
             if self.state == State.RUNNING:
                 self.handle_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.booster, self.saucers)
+                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.booster, self.saucers, self.camera_offset)
 
             elif self.state == State.START:
                 self.view.draw_start_screen()
@@ -200,7 +202,7 @@ class GameController:
         new_asteroids = []
 
         for bullet in self.bullets:
-            bullet.fly(ScreenSize)
+            bullet.fly(game_field_size)
             bullet_hit = False
 
             for asteroid in self.asteroids:
@@ -226,7 +228,7 @@ class GameController:
     def update_game(self):
         for ship in self.ships:
             ship_points = calculate_ship_points(ship)
-            ship.update_position(ScreenSize)
+            ship.update_position(game_field_size)
 
             self.update_boosters(ship_points)
 
@@ -259,6 +261,8 @@ class GameController:
                         teammate.rotate(command[1])
                     elif command[0] == "shoot":
                         self.ship_shoot(teammate)
+
+        self.camera_offset = pygame.Vector2(self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2)
 
 
         self.bullets_asteroid_collision()

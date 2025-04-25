@@ -1,5 +1,5 @@
 import pygame
-from utils.math_utils import angle_to_coords
+from utils.math_utils import angle_to_coords, calculate_ship_points
 from settings import friction
 
 class Ship:
@@ -26,6 +26,9 @@ class Ship:
 
     def rotate(self, angle_delta):
         self.angle = (self.angle + angle_delta) % 360
+
+    def draw(self, screen, camera_offset):
+        pygame.draw.polygon(screen, self.color, [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)], width=2)
 
     def thrust(self):
         dx, dy = angle_to_coords(self.angle)

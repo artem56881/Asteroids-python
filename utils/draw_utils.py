@@ -3,33 +3,32 @@ import pygame
 from settings import DEBUG, primary_color, secondary_color, enemy_color, ScreenSize, primary_color2
 from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
-def draw_asteroids(screen, font, asteroids):
+def draw_asteroids(screen, font, asteroids, camera_offset):
     for a in asteroids:
-        a.draw(screen)
-        pygame.draw.circle(screen, primary_color2, (a.x, a.y), a.size, width=2)
+        a.draw(screen, camera_offset)
         if DEBUG:
             text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
-            screen.blit(text_size, (a.x, a.y))
+            screen.blit(text_size, (a.x - camera_offset.x, a.y - camera_offset.y))
 
-def draw_booster(screen, booster):
+def draw_booster(screen, booster, camera_offset):
     if booster.active:
-        booster.draw(screen)
+        booster.draw(screen, camera_offset)
 
-def draw_saucers(screen, saucers):
+def draw_saucers(screen, saucers, camera_offset):
     for saucer in saucers:
-        pygame.draw.polygon(screen, enemy_color, calculate_saucer_points(saucer))
+        saucer.draw(screen, enemy_color, camera_offset)
 
-def draw_bullets(screen, bullets):
+def draw_bullets(screen, bullets, camera_offset):
     for bullet in bullets:
-        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x), int(bullet.y)), bullet.size)
+        bullet.draw(screen, camera_offset)
 
-def draw_ships(screen, font, ships):
+def draw_ships(screen, font, ships, camera_offset):
     for ship in ships:
         if ship.invincibility_timeout % 4 == 0:
-            pygame.draw.polygon(screen, ship.color, calculate_ship_points(ship))
+            ship.draw(screen, camera_offset)
         if DEBUG:
             text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
-            screen.blit(text_size, (ship.x, ship.y))
+            screen.blit(text_size, (ship.x - camera_offset.x, ship.y - camera_offset.y))
 
 def draw_osd(screen, font, score, lives_amount):
     text = font.render(f"Очки: {score}", True, (255, 255, 255))

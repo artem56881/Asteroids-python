@@ -3,7 +3,7 @@ from os.path import exists
 from typing import Tuple, List
 import json
 
-from settings import leaderboard_file_path
+from settings import leaderboard_file_path, ScreenSize
 
 
 def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:
@@ -22,7 +22,7 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
     right_vec = angle_to_coords(ship.angle + back_angle)
 
     base_x = ship.x - dir_vec[0] * offset
-    base_y = ship.y - dir_vec[1] * offset
+    base_y = ship.y -  dir_vec[1] * offset
 
     head = (base_x + dir_vec[0] * length, base_y + dir_vec[1] * length)
     left = (base_x + left_vec[0] * width, base_y + left_vec[1] * width)
