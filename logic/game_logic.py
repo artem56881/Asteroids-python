@@ -44,11 +44,7 @@ class GameController:
         if self.ship is None:  # случай первого запуска
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
 
-            self.teammate1 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-
             self.ships.append(self.ship)
-            # self.ships += [Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3) for _ in range(5)]
-
 
         elif self.ship.lives == 0:  # случай не первого запуска(за период запуска программы)
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
@@ -60,7 +56,6 @@ class GameController:
                                    speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in
                           range(asteroids_amount)]
         self.bullets = []
-        self.shooting_timeout = 0
         self.state = State.RUNNING
         self.booster = Booster(randint(50, ScreenSize[0] - 50), randint(50, ScreenSize[1] - 50), 1)
 
@@ -265,10 +260,7 @@ class GameController:
                     elif command[0] == "shoot":
                         self.ship_shoot(teammate)
 
-            # teammate.rotate(4)
-            # self.ship_shoot(teammate)
 
         self.bullets_asteroid_collision()
         self.update_saucers()
-        player_ship_points = calculate_ship_points(self.ships[0])
         self.update_timers()
