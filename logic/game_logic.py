@@ -33,15 +33,6 @@ class GameController:
         self.saucer_spawn_timer = 100
         self.saucer_spawn_rate = 2000
 
-        self.teammate1 = None
-        self.teammate2 = None
-        self.teammate3 = None
-        self.teammate4 = None
-        self.teammate5 = None
-        self.teammate6 = None
-        self.teammate8 = None
-        self.teammate4 = None
-
         self.asteroids = []
         self.bullets = []
         self.booster_timeout = 0
@@ -54,26 +45,10 @@ class GameController:
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
 
             self.teammate1 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate2 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate3 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate4 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate5 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate6 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate7 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
-            self.teammate8 = Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3)
 
             self.ships.append(self.ship)
-            self.ships.append(self.teammate1)
-            self.ships.append(self.teammate2)
-            self.ships.append(self.teammate3)
-            self.ships.append(self.teammate4)
-            # self.ships.append(self.teammate5)
-            # self.ships.append(self.teammate6)
-            # self.ships.append(self.teammate7)
-            # self.ships.append(self.teammate8)
+            # self.ships += [Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3) for _ in range(5)]
 
-            for mate in self.ships[1:]:
-                mate.color = (255, 124, 64)
 
         elif self.ship.lives == 0:  # случай не первого запуска(за период запуска программы)
             self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
@@ -202,8 +177,9 @@ class GameController:
             for point in ship_points:
                 if self.booster.collides_with_point(point):
                     self.booster.active = False
+                    self.ships.append(Ship(randint(0, ScreenSize[0]), ScreenSize[1] // 2, 3, color=teammate_color))
                     self.booster_timeout = self.booster.time
-                    self.shooting_window = 5
+                    # self.shooting_window = 5
 
     def update_timers(self):
         if self.booster_timeout <= 0:
@@ -270,6 +246,8 @@ class GameController:
                             ship.lives -= 1
                             ship.knockback(asteroid.x, asteroid.y, asteroid.size)
                             ship.invincibility_timeout = invincibility_window
+                        if ship.lives <= 0:
+                            self.ships.remove(ship)
                         if self.ship.lives <= 0:
                             self.state = State.ENTER_NAME
                         collision_detected = True

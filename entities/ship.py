@@ -3,7 +3,7 @@ from utils.math_utils import angle_to_coords
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, lives: int, score: int=0):
+    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148)):
         self.x = x
         self.y = y
         self.angle = 45
@@ -16,7 +16,7 @@ class Ship:
         self.invincibility_timeout = 0
         self.shooting_timeout = 0
 
-        self.color = (124, 110, 148)
+        self.color = color
 
     def update_position(self, screen_size):
         self.x = (self.x + self.vel_x) % screen_size[0]
