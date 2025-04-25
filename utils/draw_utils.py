@@ -1,14 +1,15 @@
 import pygame
 
-from settings import DEBUG, primary_color, secondary_color, enemy_color
+from settings import DEBUG, primary_color, secondary_color, enemy_color, ScreenSize, primary_color2
 from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 def draw_asteroids(screen, font, asteroids):
     for a in asteroids:
         a.draw(screen)
+        pygame.draw.circle(screen, primary_color2, (a.x, a.y), a.size, width=2)
         if DEBUG:
             text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
-            screen.blit(text_size, (a.x_coordinate, a.y_coordinate))
+            screen.blit(text_size, (a.x, a.y))
 
 def draw_booster(screen, booster):
     if booster.active:
@@ -20,11 +21,15 @@ def draw_saucers(screen, saucers):
 
 def draw_bullets(screen, bullets):
     for bullet in bullets:
-        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x_coordinate), int(bullet.y_coordinate)), bullet.size)
+        pygame.draw.circle(screen, (115, 148, 110), (int(bullet.x), int(bullet.y)), bullet.size)
 
-def draw_ship(screen, ship, invincibility):
-    if invincibility % 4 == 0:
-        pygame.draw.polygon(screen, secondary_color, calculate_ship_points(ship))
+def draw_ships(screen, font, ships):
+    for ship in ships:
+        if ship.invincibility_timeout % 4 == 0:
+            pygame.draw.polygon(screen, ship.color, calculate_ship_points(ship))
+        if DEBUG:
+            text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
+            screen.blit(text_size, (ship.x, ship.y))
 
 def draw_osd(screen, font, score, lives_amount):
     text = font.render(f"Очки: {score}", True, (255, 255, 255))
@@ -47,4 +52,4 @@ def draw_statistics(screen, font, score, screen_size):
 
 def draw_debug_info(screen, font, ship, asteroids):
     text = font.render(f"lives: {ship.lives}, Vx: {ship.vel_x:.3f}, Vy: {ship.vel_y:.3f}, asteroids: {len(asteroids)}", True, (255, 255, 255))
-    screen.blit(text, (10, 30))
+    screen.blit(text, (10, ScreenSize[1] - 30))

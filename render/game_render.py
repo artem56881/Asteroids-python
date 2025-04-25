@@ -1,28 +1,32 @@
+from os.path import exists
+
 import pygame
 import json
 
-from settings import DEBUG, leaderboard_file_path, button_color, background_color
-from utils.draw_utils import draw_asteroids, draw_bullets, draw_ship, draw_osd, draw_debug_info, draw_booster, draw_saucers
+from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize
+from utils.draw_utils import draw_asteroids, draw_bullets, draw_ships, draw_osd, draw_debug_info, draw_booster, \
+    draw_saucers
+
 
 class GameView:
 
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
-        self.splash_font = pygame.font.Font('../exwayer.ttf', 120)
+        self.splash_font = pygame.font.Font("exwayer.ttf", 120)
         self.splash_default_font = pygame.font.Font(None, 120)
         self.forty_font = pygame.font.Font(None, 40)
-        self.start_button = pygame.Rect(300, 250, 200, 50)
-        self.leaderboard_button = pygame.Rect(300, 320, 200, 50)
-        self.exit_button = pygame.Rect(300, 390, 200, 50)
-        self.menu_button = pygame.Rect(300, 500, 200, 50)
+        self.start_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)
+        self.leaderboard_button = pygame.Rect(ScreenSize[0]//2 - 100, 320, 200, 50)
+        self.exit_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
+        self.menu_button = pygame.Rect(ScreenSize[0]//2 - 100, 500, 200, 50)
 
-        self.dif_easy_button = pygame.Rect(300, 250, 200, 50)
-        self.dif_normal_button = pygame.Rect(300, 320, 200, 50)
-        self.dif_hard_button = pygame.Rect(300, 390, 200, 50)
+        self.dif_easy_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)
+        self.dif_normal_button = pygame.Rect(ScreenSize[0]//2 - 100, 320, 200, 50)
+        self.dif_hard_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
 
 
-    def draw_game(self, ship, asteroids, bullets, booster, score, saucers, invincibility):
+    def draw_game(self, ships, asteroids, bullets, booster, saucers):
         self.screen.fill(background_color)
 
         draw_asteroids(self.screen, self.font, asteroids)
@@ -31,14 +35,14 @@ class GameView:
 
         draw_bullets(self.screen, bullets)
 
-        draw_ship(self.screen, ship, invincibility)
+        draw_ships(self.screen, self.font, ships)
 
         draw_booster(self.screen, booster)
 
-        draw_osd(self.screen, self.font, score, ship.lives)
+        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
         if DEBUG:
-            draw_debug_info(self.screen, self.font, ship, asteroids)
+            draw_debug_info(self.screen, self.font, ships[0], asteroids)
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)
@@ -80,12 +84,20 @@ class GameView:
         self.screen.fill(background_color)
 
         splash_text = self.forty_font.render("Таблица лидеров", False, (255, 255, 255))
-        self.screen.blit(splash_text, (280,30))
+        self.screen.blit(splash_text, (280, 30))
+
+        # Check if the leaderboard file exists
+        if not exists(leaderboard_file_path):
+            # Create the file with an initial structure
+            with open(leaderboard_file_path, 'w') as json_file:
+                initial_data = {"leaderboard": []}
+                json.dump(initial_data, json_file, indent=4)
 
         with open(leaderboard_file_path, 'r') as json_file:
             leaderboard = json.load(json_file)
 
-        name_score_difficulty_pairs = [(player['name'], player['score'], player['difficulty']) for player in leaderboard['leaderboard']]
+        name_score_difficulty_pairs = [(player['name'], player['score'], player['difficulty']) for player in
+                                       leaderboard['leaderboard']]
         i = 0
         player_color = (255, 255, 255)
         for name, score, difficulty in name_score_difficulty_pairs:
@@ -96,7 +108,7 @@ class GameView:
             else:
                 player_color = (200, 0, 0)
             line = self.font.render(f"{name} {score}", True, player_color)
-            self.screen.blit(line, (300, 100+i*40))
+            self.screen.blit(line, (300, 100 + i * 40))
             i += 1
 
         pygame.draw.rect(self.screen, button_color, self.menu_button)

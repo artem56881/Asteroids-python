@@ -1,13 +1,14 @@
 import math
+from os.path import exists
 from typing import Tuple, List
 import json
 
 from settings import leaderboard_file_path
 
 
-def angle_to_cords(angle: float) -> Tuple[float, float]:
+def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:
     rad = math.radians(angle)
-    return math.cos(rad), math.sin(rad)
+    return length*math.cos(rad), length*math.sin(rad)
 
 
 def calculate_ship_points(ship) -> List[Tuple[float, float]]:
@@ -16,9 +17,9 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
     width = 15
     length = 35
 
-    dir_vec = angle_to_cords(ship.angle)
-    left_vec = angle_to_cords(ship.angle - back_angle)
-    right_vec = angle_to_cords(ship.angle + back_angle)
+    dir_vec = angle_to_coords(ship.angle)
+    left_vec = angle_to_coords(ship.angle - back_angle)
+    right_vec = angle_to_coords(ship.angle + back_angle)
 
     base_x = ship.x - dir_vec[0] * offset
     base_y = ship.y - dir_vec[1] * offset
@@ -35,10 +36,17 @@ def calculate_saucer_points(saucer, size=20):
             (saucer.x + 0.5 * size, saucer.y - 1 * size), (saucer.x + 1 * size, saucer.y),
             (saucer.x, saucer.y + 1 * size))
 
-def collision(point_x, point_y, asteroid_x, asteroid_y, asteroid_size):
-    return ((point_x - asteroid_x) ** 2 + (point_y - asteroid_y) ** 2) <= asteroid_size ** 2
+def find_range(point1_x, point1_y, point2_x, point2_y):
+    return ((point1_x - point2_x) ** 2 + (point1_y - point2_y) ** 2) ** 0.5
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):
+    # Check if the leaderboard file exists
+    if not exists(leaderboard_file_path):
+        # Create the file with an initial structure
+        with open(leaderboard_file_path, 'w') as json_file:
+            initial_data = {"leaderboard": []}
+            json.dump(initial_data, json_file, indent=4)
+
     with open(leaderboard_file_path, 'r+') as json_file:
         leaderboard = json.load(json_file)
         leaderboard['leaderboard'].append({"name": player_name, "score": ship_score, "difficulty": difficulty})

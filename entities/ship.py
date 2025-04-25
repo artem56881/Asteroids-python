@@ -1,9 +1,9 @@
 import pygame
-from utils.math_utils import angle_to_cords
+from utils.math_utils import angle_to_coords
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, lives: int, score: int=0):
+    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148)):
         self.x = x
         self.y = y
         self.angle = 45
@@ -13,6 +13,10 @@ class Ship:
         self.turn_speed = 5
         self.score = score
         self.lives = lives
+        self.invincibility_timeout = 0
+        self.shooting_timeout = 0
+
+        self.color = color
 
     def update_position(self, screen_size):
         self.x = (self.x + self.vel_x) % screen_size[0]
@@ -24,7 +28,7 @@ class Ship:
         self.angle = (self.angle + angle_delta) % 360
 
     def thrust(self):
-        dx, dy = angle_to_cords(self.angle)
+        dx, dy = angle_to_coords(self.angle)
         self.vel_x += dx * self.acceleration
         self.vel_y += dy * self.acceleration
 
