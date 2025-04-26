@@ -34,9 +34,7 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
 
 
 def polygon_collision(poly1, poly2):
-    """Check if two polygons collide using the Separating Axis Theorem (SAT)."""
     def project_polygon(polygon, axis):
-        """Project a polygon onto an axis."""
         min_proj = max_proj = pygame.math.Vector2(polygon[0]).dot(axis)
         for vertex in polygon[1:]:
             projection = pygame.math.Vector2(vertex).dot(axis)
@@ -47,7 +45,6 @@ def polygon_collision(poly1, poly2):
         return min_proj, max_proj
 
     def get_axes(polygon):
-        """Get the axes for the polygon."""
         axes = []
         for i in range(len(polygon)):
             p1 = pygame.math.Vector2(polygon[i])
@@ -77,9 +74,7 @@ def find_range(point1_x, point1_y, point2_x, point2_y):
 
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):
-    # Check if the leaderboard file exists
     if not exists(leaderboard_file_path):
-        # Create the file with an initial structure
         with open(leaderboard_file_path, 'w') as json_file:
             initial_data = {"leaderboard": []}
             json.dump(initial_data, json_file, indent=4)

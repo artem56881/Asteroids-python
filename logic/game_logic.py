@@ -10,7 +10,7 @@ from entities.booster import Booster
 from entities.asteroid import Asteroid
 from render.game_render import GameView
 from logic.teammate_logic import update_teammate
-from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision
+from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision, find_range
 
 
 class State(Enum):
@@ -19,6 +19,11 @@ class State(Enum):
     LEADERBOARD = auto()
     RUNNING = auto()
     ENTER_NAME = auto()
+
+class Difficulty(Enum):
+    EASY = auto()
+    NORMAL = auto()
+    HARD = auto()
 
 class GameController:
     def __init__(self, screen):
@@ -87,22 +92,22 @@ class GameController:
                 elif self.state == State.CHOOSE_DIFFICULTY:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.dif_easy_button.collidepoint(event.pos):
-                            self.difficulty = 'EASY'
-                            self.restart_game(ship_lives=10, asteroids_amount=4)
+                            self.difficulty = Difficulty.EASY
+                            self.restart_game(ship_lives=100, asteroids_amount=6)
                             self.saucer_spawn_rate = 2000
                         if self.view.dif_normal_button.collidepoint(event.pos):
-                            self.difficulty = 'NORMAL'
+                            self.difficulty = Difficulty.NORMAL
                             self.restart_game(ship_lives=2, asteroids_amount=6)
                             self.saucer_spawn_rate = 1200
                         if self.view.dif_hard_button.collidepoint(event.pos):
-                            self.difficulty = 'HARD'
+                            self.difficulty = Difficulty.HARD
                             self.restart_game(ship_lives=1, asteroids_amount=8)
                             self.saucer_spawn_rate = 600
 
                 elif self.state == State.ENTER_NAME:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
-                            save_score_to_leaderboard(self.player_name, self.ship.score, self.difficulty)
+                            save_score_to_leaderboard(self.player_name, self.ship.score, self.difficulty.name)
                             self.state = State.LEADERBOARD
                         elif event.key == pygame.K_BACKSPACE:
                             self.player_name = self.player_name[:-1]
@@ -113,7 +118,7 @@ class GameController:
             if self.state == State.RUNNING:
                 self.handle_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.booster, self.saucers, self.camera_offset)
+                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.booster, self.saucers, self.camera_offset, self.clock.get_fps())
 
             elif self.state == State.START:
                 self.view.draw_start_screen()
@@ -195,7 +200,7 @@ class GameController:
 
     def bullets_asteroid_collision(self):
         for asteroid in self.asteroids:
-            asteroid.fly(ScreenSize)
+            asteroid.fly(game_field_size)
             if asteroid.time_to_live == 0:
                 self.asteroids.remove(asteroid)
 
@@ -209,7 +214,6 @@ class GameController:
 
             for asteroid in self.asteroids:
                 if asteroid.collides_with_point((bullet.x, bullet.y)):
-
                     self.ship.score += int(10 - asteroid.size % 10)
                     bullet_hit = True
                     hit_asteroids.append(asteroid)
@@ -239,18 +243,19 @@ class GameController:
 
             collision_detected = False
             for asteroid in self.asteroids:
-                asteroid_points = asteroid.points
-                if polygon_collision(ship_points, asteroid_points):
-                    if ship.invincibility_timeout == 0:
-                        ship.lives -= 1
-                        ship.knockback(asteroid.x, asteroid.y, asteroid.size)
-                        ship.invincibility_timeout = invincibility_window
-                    if ship.lives <= 0:
-                        self.ships.remove(ship)
-                    if self.ship.lives <= 0:
-                        self.state = State.ENTER_NAME
-                    collision_detected = True
-                    break
+                if find_range(asteroid.x, asteroid.y, ship.x, ship.y) < 80:
+                    asteroid_points = asteroid.points
+                    if polygon_collision(ship_points, asteroid_points):
+                        if ship.invincibility_timeout == 0:
+                            ship.lives -= 1
+                            ship.knockback(asteroid.x, asteroid.y, asteroid.size)
+                            ship.invincibility_timeout = invincibility_window
+                        if ship.lives <= 0:
+                            self.ships.remove(ship)
+                        if self.ship.lives <= 0:
+                            self.state = State.ENTER_NAME
+                        collision_detected = True
+                        break
             if collision_detected:
                 break
 

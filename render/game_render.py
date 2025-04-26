@@ -26,7 +26,7 @@ class GameView:
         self.dif_hard_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
 
 
-    def draw_game(self, ships, asteroids, bullets, booster, saucers, camera_offset):
+    def draw_game(self, ships, asteroids, bullets, booster, saucers, camera_offset, fps):
         self.screen.fill(background_color)
 
         draw_asteroids(self.screen, self.font, asteroids, camera_offset)
@@ -39,13 +39,14 @@ class GameView:
 
         draw_booster(self.screen, booster, camera_offset)
 
-        if DEBUG:
-            draw_debug_info(self.screen, self.font, ships[0], asteroids)
 
         pygame.draw.polygon(self.screen, (100, 100, 100), ((0 - camera_offset.x, 0 - camera_offset.y), (0  - camera_offset.x, game_field_size[1] - camera_offset.y),
                                                                (game_field_size[0] - camera_offset.x, game_field_size[1] - camera_offset.y), (game_field_size[0] - camera_offset.x, 0 - camera_offset.y)), width=10)
 
-        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
+        if DEBUG:
+            if len(ships) > 0:
+                draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
+                draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

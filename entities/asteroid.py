@@ -5,7 +5,6 @@ from utils.math_utils import angle_to_coords
 from settings import primary_color, asteroid_min_speed, asteroid_max_speed, primary_color2, game_field_size
 
 def calculate_octagon_points(x, y, size, angle):
-    """Calculate the vertices of an octagon."""
     points = []
     for i in range(6):
         theta = math.radians(angle + i * 60)
@@ -23,18 +22,16 @@ class Asteroid:
         self.speed = random.uniform(asteroid_min_speed, asteroid_max_speed) if speed == 0 else speed
         self.time_to_live = time_to_live
 
-        # Calculate the vertices of the octagon
         self.points = calculate_octagon_points(x, y, size, angle)
 
-        # Create a surface for the asteroid
         self.image = pygame.Surface((size * 2, size * 2), pygame.SRCALPHA)
         pygame.draw.polygon(self.image, primary_color, [(p[0] - x + size, p[1] - y + size) for p in self.points])
         self.rect = self.image.get_rect(center=(x, y))
 
     def fly(self, screen_size):
         dx, dy = angle_to_coords(self.angle)
-        self.x = (self.x + dx * self.speed / 10) % game_field_size[0]
-        self.y = (self.y + dy * self.speed / 10) % game_field_size[1]
+        self.x = (self.x + dx * self.speed / 10) % screen_size[0]
+        self.y = (self.y + dy * self.speed / 10) % screen_size[1]
 
         # Update the vertices of the octagon
         self.points = calculate_octagon_points(self.x, self.y, self.size, self.angle)
