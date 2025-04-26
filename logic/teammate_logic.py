@@ -3,13 +3,9 @@ from entities.ship import Ship
 from utils.math_utils import find_range, angle_to_coords
 
 def update_teammate(ship: Ship, asteroids, saucers, player):
-    fov = 15
-    prediction_time = 1
     max_shooting_range = 300
 
-    ship_direction = math.radians(ship.angle)
     target_asteroid = None
-    min_angle_diff = float('inf')
     nearest_asteroid = None
     nearest_distance = float('inf')
     target_player = None
@@ -18,21 +14,8 @@ def update_teammate(ship: Ship, asteroids, saucers, player):
     for obj in asteroids + saucers:
         player_distance = math.hypot(ship.x - player.x, player.y - ship.y)
         if player_distance < 300:
-            vel_x, vel_y = angle_to_coords(obj.angle, obj.speed)
-
-            predicted_x = obj.x + vel_x * prediction_time
-            predicted_y = obj.y + vel_y * prediction_time
-
-            if find_range(ship.x, ship.y, predicted_x, predicted_y) <= max_shooting_range:
-                asteroid_direction = math.atan2(predicted_y - ship.y, predicted_x - ship.x)
-                angle_diff = math.degrees(asteroid_direction - ship_direction)
-                angle_diff = (angle_diff + 360) % 360
-
-                if angle_diff <= fov / 2 or angle_diff >= 360 - fov / 2:
-                    if angle_diff < min_angle_diff:
-                        min_angle_diff = angle_diff
-                        target_asteroid = obj
-
+            if find_range(ship.x, ship.y, obj.x, obj.y) <= max_shooting_range:
+                target_asteroid = obj
             distance = math.hypot(obj.x - ship.x, obj.y - ship.y)
             if distance < nearest_distance:
                 nearest_distance = distance
@@ -59,9 +42,8 @@ def update_teammate(ship: Ship, asteroids, saucers, player):
 
     elif target_asteroid:
         vel_x, vel_y = angle_to_coords(target_asteroid.angle, target_asteroid.speed)
-
-        predicted_x = target_asteroid.x + vel_x * prediction_time
-        predicted_y = target_asteroid.y + vel_y * prediction_time
+        predicted_x = target_asteroid.x + vel_x
+        predicted_y = target_asteroid.y + vel_y
         target_direction = math.atan2(predicted_y - ship.y, predicted_x - ship.x)
         target_angle = math.degrees(target_direction)
 

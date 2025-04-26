@@ -62,6 +62,9 @@ class GameController:
         self.asteroids = [Asteroid(randint(100, ScreenSize[1] - 100), 1, randint(20, 50), randint(0, 360),
                                    speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in
                           range(asteroids_amount)]
+
+        # self.ships + [Ship(self.ships[0].x + randint(-10, 10), self.ships[0].y + randint(-10, 10), 3, color=teammate_color)]
+
         self.bullets = []
         self.state = State.RUNNING
         self.booster = Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1)
@@ -180,6 +183,7 @@ class GameController:
             for point in ship_points:
                 if self.booster.collides_with_point(point):
                     self.booster.active = False
+                    # for _ in range(40):
                     self.ships.append(Ship(self.ships[0].x + randint(-10, 10), self.ships[0].y + randint(-10, 10), 3, color=teammate_color))
 
                     self.booster_timeout = self.booster.time
