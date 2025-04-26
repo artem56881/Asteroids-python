@@ -50,14 +50,14 @@ class GameController:
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None:  # случай первого запуска
-            self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
+            self.ship = Ship(game_field_size[0] // 2, game_field_size[1] // 2, ship_lives)
 
             self.ships.append(self.ship)
 
         elif self.ship.lives == 0:  # случай не первого запуска(за период запуска программы)
-            self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, ship_lives)
+            self.ship = Ship(game_field_size[0] // 2, game_field_size[1], ship_lives)
         else:  # случай нового уровня
-            self.ship = Ship(ScreenSize[0] // 2, ScreenSize[1] // 2, self.ship.lives, score=score)
+            self.ship = Ship(game_field_size[0] // 2, game_field_size[1], self.ship.lives, score=score)
             self.ships[0] = self.ship
 
         self.asteroids = [Asteroid(randint(100, ScreenSize[1] - 100), 1, randint(20, 50), randint(0, 360),
@@ -65,7 +65,7 @@ class GameController:
                           range(asteroids_amount)]
         self.bullets = []
         self.state = State.RUNNING
-        self.booster = Booster(randint(50, ScreenSize[0] - 50), randint(50, ScreenSize[1] - 50), 1)
+        self.booster = Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1)
 
     def run(self):
         running = True
@@ -93,7 +93,7 @@ class GameController:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.dif_easy_button.collidepoint(event.pos):
                             self.difficulty = Difficulty.EASY
-                            self.restart_game(ship_lives=100, asteroids_amount=6)
+                            self.restart_game(ship_lives=6, asteroids_amount=6)
                             self.saucer_spawn_rate = 2000
                         if self.view.dif_normal_button.collidepoint(event.pos):
                             self.difficulty = Difficulty.NORMAL

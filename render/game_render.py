@@ -54,7 +54,7 @@ class GameView:
         if DEBUG:
             if len(ships) > 0:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
-                draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
+        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
 
     def draw_bg(self, x_offset, y_offset):
@@ -67,7 +67,7 @@ class GameView:
         self.screen.fill(background_color)
 
         splash_text = self.splash_default_font.render("Сложность", False, (255, 255, 255))
-        self.screen.blit(splash_text, (175, 80))
+        self.screen.blit(splash_text, (ScreenSize[0] // 2 - 230, 80))
 
         pygame.draw.rect(self.screen, button_color, self.dif_easy_button)
         pygame.draw.rect(self.screen, button_color, self.dif_normal_button)
@@ -85,7 +85,7 @@ class GameView:
         self.screen.fill(background_color)
 
         splash_text = self.splash_font.render("Asteroids", True, (255, 255, 255))
-        self.screen.blit(splash_text, (160,80))
+        self.screen.blit(splash_text, (ScreenSize[0] // 2 - 250,80))
 
         pygame.draw.rect(self.screen, button_color, self.start_button)
         pygame.draw.rect(self.screen, button_color, self.leaderboard_button)

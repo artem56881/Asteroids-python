@@ -34,7 +34,9 @@ class Ship:
         self.angle = (self.angle + angle_delta) % 360
 
     def draw(self, screen, camera_offset):
-        pygame.draw.polygon(screen, self.color, [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)], width=2)
+        pygame.draw.polygon(screen, self.color,
+                            [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)],
+                            width=3)
 
     def thrust(self):
         dx, dy = angle_to_coords(self.angle)

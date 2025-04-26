@@ -1,13 +1,13 @@
-ScreenSize = [1000, 1000]
+ScreenSize = [1920, 1080]
 game_field_size = [1000, 1000]
-DEBUG = True
+DEBUG = False
 
 shooting_rate = 20
 invincible = False
 friction = 0.99
 invincibility_window = 80
 
-max_shot_distance = (ScreenSize[0]+ScreenSize[1])//20
+max_shot_distance = (game_field_size[0]+game_field_size[1])//20
 
 asteroid_min_speed = 4
 asteroid_max_speed = 30
