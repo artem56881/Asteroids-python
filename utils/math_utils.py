@@ -32,6 +32,12 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
 
     return [base, left, head, right]
 
+def coordinates_to_angle(x1, x2, y1, y2):
+    delta_x = x2 - x1
+    delta_y = y2 - y1
+    rad = math.atan2(delta_y, delta_x)
+
+    return math.degrees(math.atan2(delta_y, delta_x))
 
 def polygon_collision(poly1, poly2):
     def project_polygon(polygon, axis):
@@ -70,7 +76,7 @@ def calculate_saucer_points(saucer, size=20):
 
 
 def find_range(point1_x, point1_y, point2_x, point2_y):
-    return ((point1_x - point2_x) ** 2 + (point1_y - point2_y) ** 2) ** 0.5
+    return math.hypot(point1_x - point2_x, point1_y - point2_y)
 
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):

@@ -1,5 +1,5 @@
-ScreenSize = [800, 600]
-game_field_size = [5000, 5000]
+ScreenSize = [1000, 1000]
+game_field_size = [1000, 1000]
 DEBUG = True
 
 shooting_rate = 20

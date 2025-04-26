@@ -24,10 +24,18 @@ class GameView:
         self.dif_easy_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)
         self.dif_normal_button = pygame.Rect(ScreenSize[0]//2 - 100, 320, 200, 50)
         self.dif_hard_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
+        self.bg_images = []
 
+        for i in range(1, 3):
+            bg_image = pygame.image.load(f"plx-{i}.png").convert_alpha()
+            self.bg_images.append(bg_image)
+
+        self.bg_width = self.bg_images[0].get_width()
+        self.bg_height = self.bg_images[0].get_height()
 
     def draw_game(self, ships, asteroids, bullets, booster, saucers, camera_offset, fps):
-        self.screen.fill(background_color)
+        # self.screen.fill(background_color)
+        self.draw_bg(ships[0].x, ships[0].y)
 
         draw_asteroids(self.screen, self.font, asteroids, camera_offset)
 
@@ -47,6 +55,13 @@ class GameView:
             if len(ships) > 0:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
                 draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
+
+
+    def draw_bg(self, x_offset, y_offset):
+        for y in range(10):
+            for x in range(10):
+                for i in self.bg_images:
+                    self.screen.blit(i, (x*self.bg_width - x_offset//1.5, y*self.bg_height - y_offset//1.5))
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

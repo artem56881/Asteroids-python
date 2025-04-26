@@ -131,6 +131,7 @@ class GameController:
 
             elif self.state == State.CHOOSE_DIFFICULTY:
                 self.view.draw_difficulty_screen()
+
             pygame.display.flip()
             self.clock.tick(60)
 
@@ -260,7 +261,7 @@ class GameController:
                 break
 
         for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
-            commands = update_teammate(teammate, self.asteroids, self.bullets, self.saucers)
+            commands = update_teammate(teammate, self.asteroids, self.saucers, self.ships[0])
             for command in commands:
                 if command[0] == "thrust":
                     teammate.thrust()
