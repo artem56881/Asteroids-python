@@ -1,5 +1,5 @@
 ScreenSize = [1920, 1080]
-game_field_size = [1000, 1000]
+game_field_size = [2000, 2000]
 DEBUG = False
 
 shooting_rate = 20

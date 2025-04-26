@@ -5,7 +5,7 @@ import json
 
 from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize, game_field_size
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ships, draw_osd, draw_debug_info, draw_booster, \
-    draw_saucers
+    draw_saucers, draw_minimap
 
 
 class GameView:
@@ -34,27 +34,31 @@ class GameView:
         self.bg_height = self.bg_images[0].get_height()
 
     def draw_game(self, ships, asteroids, bullets, booster, saucers, camera_offset, fps):
-        # self.screen.fill(background_color)
-        self.draw_bg(ships[0].x, ships[0].y)
+        if len(ships) > 0:
 
-        draw_asteroids(self.screen, self.font, asteroids, camera_offset)
-
-        draw_saucers(self.screen, saucers, camera_offset)
-
-        draw_bullets(self.screen, bullets, camera_offset)
-
-        draw_ships(self.screen, self.font, ships, camera_offset)
-
-        draw_booster(self.screen, booster, camera_offset)
+            # self.screen.fill(background_color)
+            self.draw_bg(ships[0].x, ships[0].y)
 
 
-        pygame.draw.polygon(self.screen, (100, 100, 100), ((0 - camera_offset.x, 0 - camera_offset.y), (0  - camera_offset.x, game_field_size[1] - camera_offset.y),
-                                                               (game_field_size[0] - camera_offset.x, game_field_size[1] - camera_offset.y), (game_field_size[0] - camera_offset.x, 0 - camera_offset.y)), width=10)
+            draw_asteroids(self.screen, self.font, asteroids, camera_offset)
 
-        if DEBUG:
-            if len(ships) > 0:
+            draw_saucers(self.screen, saucers, camera_offset)
+
+            draw_bullets(self.screen, bullets, camera_offset)
+
+            draw_ships(self.screen, self.font, ships, camera_offset)
+
+            draw_booster(self.screen, booster, camera_offset)
+
+
+            pygame.draw.polygon(self.screen, (100, 100, 100), ((0 - camera_offset.x, 0 - camera_offset.y), (0  - camera_offset.x, game_field_size[1] - camera_offset.y),
+                                                                   (game_field_size[0] - camera_offset.x, game_field_size[1] - camera_offset.y), (game_field_size[0] - camera_offset.x, 0 - camera_offset.y)), width=10)
+
+            if DEBUG:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
-        draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
+
+            draw_minimap(self.screen, asteroids, ships, bullets, saucers, 20, 7)
+            draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
 
     def draw_bg(self, x_offset, y_offset):
@@ -62,6 +66,7 @@ class GameView:
             for x in range(10):
                 for i in self.bg_images:
                     self.screen.blit(i, (x*self.bg_width - x_offset//1.5, y*self.bg_height - y_offset//1.5))
+
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

@@ -51,11 +51,10 @@ class GameController:
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None:  # случай первого запуска
             self.ship = Ship(game_field_size[0] // 2, game_field_size[1] // 2, ship_lives)
-
             self.ships.append(self.ship)
-
         elif self.ship.lives == 0:  # случай не первого запуска(за период запуска программы)
             self.ship = Ship(game_field_size[0] // 2, game_field_size[1], ship_lives)
+            self.ships.append(self.ship)
         else:  # случай нового уровня
             self.ship = Ship(game_field_size[0] // 2, game_field_size[1], self.ship.lives, score=score)
             self.ships[0] = self.ship
