@@ -40,10 +40,13 @@ def update_teammate(ship: Ship, asteroids, saucers, player):
 
         target_player = None
 
-    elif target_asteroid:
+    elif target_asteroid or nearest_asteroid:
+        target_asteroid = nearest_asteroid
         vel_x, vel_y = angle_to_coords(target_asteroid.angle, target_asteroid.speed)
-        predicted_x = target_asteroid.x + vel_x
-        predicted_y = target_asteroid.y + vel_y
+        distance = find_range(ship.x, ship.y, target_asteroid.x, target_asteroid.y)
+        time_to_fly = distance / 121
+        predicted_x = target_asteroid.x + vel_x * time_to_fly
+        predicted_y = target_asteroid.y + vel_y * time_to_fly
         target_direction = math.atan2(predicted_y - ship.y, predicted_x - ship.x)
         target_angle = math.degrees(target_direction)
 
@@ -54,7 +57,6 @@ def update_teammate(ship: Ship, asteroids, saucers, player):
         elif angle_delta < -ship.turn_speed:
             angle_delta = -ship.turn_speed
         commands.append(("rotate", angle_delta))
-
         commands.append(("shoot",))
 
     elif nearest_asteroid:
@@ -68,6 +70,7 @@ def update_teammate(ship: Ship, asteroids, saucers, player):
         elif angle_delta < -ship.turn_speed:
             angle_delta = -ship.turn_speed
         commands.append(("rotate", angle_delta))
+        commands.append(("shoot",))
         commands.append(("thrust",))
 
     return commands

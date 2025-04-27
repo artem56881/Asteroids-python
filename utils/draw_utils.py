@@ -30,7 +30,7 @@ def draw_ships(screen, font, ships, camera_offset):
             text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
             screen.blit(text_size, (ship.x - camera_offset.x, ship.y - camera_offset.y))
 
-def draw_minimap(screen, asteroids, ships, bullets, saucers, padding, scale):
+def draw_minimap(screen, asteroids, ships, bullets, saucers, boosters, padding, scale):
     minimap_width = game_field_size[0] // scale
     minimap_height = game_field_size[1] // scale
 
@@ -60,6 +60,8 @@ def draw_minimap(screen, asteroids, ships, bullets, saucers, padding, scale):
     for saucer in saucers:
         pygame.draw.circle(minimap_surface, (255, 0, 255),
                            (get_minimap_coords((saucer.x, saucer.y))), 4)
+    pygame.draw.circle(minimap_surface, (50, 255, 0),
+                       (get_minimap_coords((boosters.x_coordinate, boosters.y_coordinate))), 6)
 
     screen.blit(minimap_surface, (ScreenSize[0] - minimap_width - padding, padding))
 

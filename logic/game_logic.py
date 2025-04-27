@@ -95,7 +95,7 @@ class GameController:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if self.view.dif_easy_button.collidepoint(event.pos):
                             self.difficulty = Difficulty.EASY
-                            self.restart_game(ship_lives=6, asteroids_amount=6)
+                            self.restart_game(ship_lives=6, asteroids_amount=10)
                             self.saucer_spawn_rate = 2000
                         if self.view.dif_normal_button.collidepoint(event.pos):
                             self.difficulty = Difficulty.NORMAL
@@ -183,8 +183,8 @@ class GameController:
             for point in ship_points:
                 if self.booster.collides_with_point(point):
                     self.booster.active = False
-                    # for _ in range(40):
-                    self.ships.append(Ship(self.ships[0].x + randint(-10, 10), self.ships[0].y + randint(-10, 10), 3, color=teammate_color))
+                    for _ in range(1):
+                        self.ships.append(Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 30, color=teammate_color))
 
                     self.booster_timeout = self.booster.time
                     # self.shooting_window = 5
@@ -217,17 +217,18 @@ class GameController:
             bullet_hit = False
 
             for asteroid in self.asteroids:
-                if asteroid.collides_with_point((bullet.x, bullet.y)):
-                    self.ship.score += int(10 - asteroid.size % 10)
-                    bullet_hit = True
-                    hit_asteroids.append(asteroid)
-                    if asteroid.size >= min_asteroid_size:
-                        for _ in range(2):
-                            new_asteroids.append(Asteroid(
-                                asteroid.x + randint(-10, 10),
-                                asteroid.y + randint(-10, 10),
-                                asteroid.size // asteroid_division_coefficient,
-                                randint(0, 360)))
+                if find_range(asteroid.x, asteroid.y, bullet.x, bullet.y) < 90:
+                    if asteroid.collides_with_point((bullet.x, bullet.y)):
+                        self.ship.score += int(10 - asteroid.size % 10)
+                        bullet_hit = True
+                        hit_asteroids.append(asteroid)
+                        if asteroid.size >= min_asteroid_size:
+                            for _ in range(2):
+                                new_asteroids.append(Asteroid(
+                                    asteroid.x + randint(-10, 10),
+                                    asteroid.y + randint(-10, 10),
+                                    asteroid.size // asteroid_division_coefficient,
+                                    randint(0, 360)))
 
             if not bullet_hit and bullet.distance <= max_shot_distance:
                 remaining_bullets.append(bullet)
@@ -276,5 +277,5 @@ class GameController:
         self.camera_offset = pygame.Vector2(self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2)
 
         self.bullets_asteroid_collision()
-        self.update_saucers()
+        # self.update_saucers()
         self.update_timers()
