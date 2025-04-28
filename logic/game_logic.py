@@ -184,10 +184,9 @@ class GameController:
                 if self.booster.collides_with_point(point):
                     self.booster.active = False
                     for _ in range(1):
-                        self.ships.append(Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 30, color=teammate_color))
+                        self.ships.append(Ship(self.ships[0].x + randint(-800, 800), self.ships[0].y + randint(-800, 800), 30, color=teammate_color))
 
                     self.booster_timeout = self.booster.time
-                    # self.shooting_window = 5
 
     def update_timers(self):
         if self.booster_timeout <= 0:

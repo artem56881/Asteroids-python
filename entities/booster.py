@@ -21,4 +21,4 @@ class Booster:
     def collides_with_point(self, point):
         dx = point[0] - self.x_coordinate
         dy = point[1] - self.y_coordinate
-        return dx * dx + dy * dy <= self.size * self.size
+        return dx * dx + dy * dy <= self.size ** 2
