@@ -10,9 +10,10 @@ def draw_asteroids(screen, font, asteroids, camera_offset):
             text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
             screen.blit(text_size, (a.x - camera_offset.x, a.y - camera_offset.y))
 
-def draw_booster(screen, booster, camera_offset):
-    if booster.active:
-        booster.draw(screen, camera_offset)
+def draw_booster(screen, boosters, camera_offset):
+    for booster in boosters:
+        if booster.active:
+            booster.draw(screen, camera_offset)
 
 def draw_saucers(screen, saucers, camera_offset):
     for saucer in saucers:
@@ -60,8 +61,10 @@ def draw_minimap(screen, asteroids, ships, bullets, saucers, boosters, padding, 
     for saucer in saucers:
         pygame.draw.circle(minimap_surface, (255, 0, 255),
                            (get_minimap_coords((saucer.x, saucer.y))), 4)
-    pygame.draw.circle(minimap_surface, (50, 255, 0),
-                       (get_minimap_coords((boosters.x_coordinate, boosters.y_coordinate))), 6)
+
+    for booster in boosters:
+        pygame.draw.circle(minimap_surface, (50, 255, 0),
+                           (get_minimap_coords((booster.x_coordinate, booster.y_coordinate))), 3)
 
     screen.blit(minimap_surface, (ScreenSize[0] - minimap_width - padding, padding))
 

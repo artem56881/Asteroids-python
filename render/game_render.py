@@ -33,7 +33,7 @@ class GameView:
         self.bg_width = self.bg_images[0].get_width()
         self.bg_height = self.bg_images[0].get_height()
 
-    def draw_game(self, ships, asteroids, bullets, booster, saucers, camera_offset, fps):
+    def draw_game(self, ships, asteroids, bullets, boosters, saucers, camera_offset, fps):
         if len(ships) > 0:
 
             # self.screen.fill(background_color)
@@ -48,7 +48,7 @@ class GameView:
 
             draw_ships(self.screen, self.font, ships, camera_offset)
 
-            draw_booster(self.screen, booster, camera_offset)
+            draw_booster(self.screen, boosters, camera_offset)
 
 
             pygame.draw.polygon(self.screen, (100, 100, 100), ((0 - camera_offset.x, 0 - camera_offset.y), (0  - camera_offset.x, game_field_size[1] - camera_offset.y),
@@ -57,7 +57,7 @@ class GameView:
             if DEBUG:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
 
-            draw_minimap(self.screen, asteroids, ships, bullets, saucers, booster, 20, 15)
+            draw_minimap(self.screen, asteroids, ships, bullets, saucers, boosters, 20, 10)
             draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
 
