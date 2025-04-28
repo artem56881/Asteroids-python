@@ -14,12 +14,12 @@ def calculate_octagon_points(x, y, size, angle):
     return points
 
 class Asteroid:
-    def __init__(self, x, y, size, angle, speed=0, time_to_live=-1):
+    def __init__(self, x, y, size, angle, speed=-1, time_to_live=-1):
         self.x = x
         self.y = y
         self.size = size
         self.angle = angle
-        self.speed = random.uniform(asteroid_min_speed, asteroid_max_speed) if speed == 0 else speed
+        self.speed = random.uniform(asteroid_min_speed, asteroid_max_speed) if speed == -1 else speed
         self.time_to_live = time_to_live
 
         self.points = calculate_octagon_points(x, y, size, angle)

@@ -3,6 +3,7 @@ from random import randint, choice
 import pygame
 from enum import Enum, auto
 
+from entities.zone import Zone, ZoneType
 from settings import *
 from entities.ship import Ship
 from entities.shot import Shot
@@ -50,6 +51,7 @@ class GameController:
         self.difficulty = None
 
         self.camera_offset = None
+        self.zones = []
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None:  # случай первого запуска
@@ -70,6 +72,11 @@ class GameController:
         self.boosters += [Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1) for _ in
                          range(4)]
         self.state = State.RUNNING
+
+        # Create random zones
+        self.zones = [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200), 1600, 1600, choice(list(ZoneType))) for _ in range(6)]
+        for zone in self.zones:
+            zone.spawn_content(self)
 
     def run(self):
         running = True
@@ -156,25 +163,25 @@ class GameController:
             ship.shooting_timeout = self.shooting_window
 
     def update_saucers(self):
-        # Update saucer spawn
-        if len(self.saucers) <= max_saucers - 1:
-            self.saucer_spawn_timer -= 1
-            if self.saucer_spawn_timer <= 0:
-                direction = choice([-1, 1])
-                x = 0 if direction == 1 else ScreenSize[0]
-                y = randint(50, ScreenSize[1] - 50)
-                self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
-                self.saucer_spawn_timer = self.saucer_spawn_rate
+        # if len(self.saucers) <= max_saucers - 1:
+        #     self.saucer_spawn_timer -= 1
+        #     if self.saucer_spawn_timer <= 0:
+        #         direction = choice([-1, 1])
+        #         x = 0 if direction == 1 else ScreenSize[0]
+        #         y = randint(50, ScreenSize[1] - 50)
+        #         self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
+        #         self.saucer_spawn_timer = self.saucer_spawn_rate
 
         # Update saucers
         for saucer in self.saucers:
-            saucer.fly()
-            for bullet in self.bullets:
-                if saucer.collides_with_point((bullet.x, bullet.y)):
-                    self.ship.score += 100
-                    self.bullets.remove(bullet)
-                    self.saucers.remove(saucer)
-                    break
+            if find_range(saucer.x, saucer.y, self.ship.x, self.ship.y) < 800:
+                saucer.fly()
+                for bullet in self.bullets:
+                    if saucer.collides_with_point((bullet.x, bullet.y)):
+                        self.ship.score += 100
+                        self.bullets.remove(bullet)
+                        self.saucers.remove(saucer)
+                        break
 
             saucer.shot_timer -= 1
             if saucer.shot_timer <= 0:
@@ -286,5 +293,5 @@ class GameController:
         self.update_boosters(calculate_ship_points(self.ships[0]))
         self.bullets_asteroid_collision()
         self.fly_asteroids()
-        # self.update_saucers()
+        self.update_saucers()
         self.update_timers()
