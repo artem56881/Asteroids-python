@@ -207,12 +207,15 @@ class GameController:
         if self.booster_timeout > 0:
             self.booster_timeout -= 1
 
-    def bullets_asteroid_collision(self):
+    def fly_asteroids(self):
         for asteroid in self.asteroids:
-            asteroid.fly(game_field_size)
-            if asteroid.time_to_live == 0:
-                self.asteroids.remove(asteroid)
+            if find_range(asteroid.x, asteroid.y, self.ship.x, self.ship.y) < 1200:
 
+                asteroid.fly(game_field_size)
+                if asteroid.time_to_live == 0:
+                    self.asteroids.remove(asteroid)
+
+    def bullets_asteroid_collision(self):
         remaining_bullets = []
         hit_asteroids = []
         new_asteroids = []
@@ -282,5 +285,6 @@ class GameController:
 
         self.update_boosters(calculate_ship_points(self.ships[0]))
         self.bullets_asteroid_collision()
+        self.fly_asteroids()
         # self.update_saucers()
         self.update_timers()
