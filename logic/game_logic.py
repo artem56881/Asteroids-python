@@ -209,7 +209,7 @@ class GameController:
                     for _ in range(1):
                         self.ships.append(
                             Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 3,
-                                 color=teammate_color))
+                                 color=teammate_color, name="John"))
 
                     self.booster_timeout = booster.time
                     self.shooting_window = 5
