@@ -21,6 +21,7 @@ class State(Enum):
     LEADERBOARD = auto()
     RUNNING = auto()
     ENTER_NAME = auto()
+    CHOOSE_SKIN = auto()
 
 
 class Difficulty(Enum):
@@ -156,6 +157,8 @@ class GameController:
             self.ship.rotate(self.ship.turn_speed)
         if keys[pygame.K_SPACE]:
             self.ship_shoot(self.ship)
+        if keys[pygame.K_z]:
+            self.state = State.CHOOSE_SKIN
 
     def ship_shoot(self, ship: Ship):
         if ship.shooting_timeout <= 0:
@@ -255,7 +258,6 @@ class GameController:
         for ship in self.ships:
             ship_points = calculate_ship_points(ship)
             ship.update_position(game_field_size)
-
 
             if len(self.asteroids) == 0:
                 self.restart_game(ship.score)
