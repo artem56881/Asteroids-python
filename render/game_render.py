@@ -57,7 +57,7 @@ class GameView:
             if DEBUG:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
 
-            draw_minimap(self.screen, asteroids, ships, bullets, saucers, boosters, 20, 10)
+            draw_minimap(self.screen, asteroids, ships, bullets, saucers, boosters, 20, 17)
             draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
 

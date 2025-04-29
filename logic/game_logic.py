@@ -183,10 +183,10 @@ class GameController:
                         self.saucers.remove(saucer)
                         break
 
-            saucer.shot_timer -= 1
-            if saucer.shot_timer <= 0:
-                self.asteroids.append(saucer.shoot(self.ships[randint(0, len(self.ships) - 1)]))
-                saucer.shot_timer = randint(100, 200)
+                saucer.shot_timer -= 1
+                if saucer.shot_timer <= 0:
+                    self.asteroids.append(saucer.shoot(self.ships[randint(0, len(self.ships) - 1)]))
+                    saucer.shot_timer = randint(100, 200)
 
     def update_boosters(self, ship_points):
         for booster in self.boosters:
@@ -195,7 +195,7 @@ class GameController:
                     self.boosters.remove(booster)
                     for _ in range(1):
                         self.ships.append(
-                            Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 30,
+                            Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 3,
                                  color=teammate_color))
 
                     self.booster_timeout = booster.time
