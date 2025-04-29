@@ -1,6 +1,7 @@
 from os.path import exists
 
 import pygame
+from pygame_widgets.button import Button
 import json
 
 from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize, game_field_size
@@ -24,6 +25,7 @@ class GameView:
         self.dif_easy_button = pygame.Rect(ScreenSize[0]//2 - 100, 250, 200, 50)
         self.dif_normal_button = pygame.Rect(ScreenSize[0]//2 - 100, 320, 200, 50)
         self.dif_hard_button = pygame.Rect(ScreenSize[0]//2 - 100, 390, 200, 50)
+
         self.bg_images = []
 
         for i in range(1, 3):
@@ -52,7 +54,7 @@ class GameView:
 
 
             pygame.draw.polygon(self.screen, (100, 100, 100), ((0 - camera_offset.x, 0 - camera_offset.y), (0  - camera_offset.x, game_field_size[1] - camera_offset.y),
-                                                                   (game_field_size[0] - camera_offset.x, game_field_size[1] - camera_offset.y), (game_field_size[0] - camera_offset.x, 0 - camera_offset.y)), width=10)
+                                                               (game_field_size[0] - camera_offset.x, game_field_size[1] - camera_offset.y), (game_field_size[0] - camera_offset.x, 0 - camera_offset.y)), width=10)
 
             if DEBUG:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
