@@ -1,6 +1,7 @@
 from os import remove
 from random import randint, choice
 import pygame
+import pygame_gui
 from enum import Enum, auto
 
 from entities.zone import Zone, ZoneType
@@ -78,41 +79,50 @@ class GameController:
 
     def run(self):
         running = True
+        clock = pygame.time.Clock()
 
         while running:
+            time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
-                if self.state == self.State.START:
+                # self.view.manager.process_events(event)
 
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.view.start_button.collidepoint(event.pos):
-                            self.state = self.State.CHOOSE_DIFFICULTY
-                        if self.view.exit_button.collidepoint(event.pos):
-                            pygame.quit()
-                        elif self.view.leaderboard_button.collidepoint(event.pos):
-                            self.state = self.State.LEADERBOARD
+                if self.state == self.State.START:
+                    self.view.start_manager.process_events(event)
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.start_button:
+                                self.state = self.State.CHOOSE_DIFFICULTY
+                            elif event.ui_element == self.view.exit_button:
+                                pygame.quit()
+                            elif event.ui_element == self.view.leaderboard_button:
+                                self.state = self.State.LEADERBOARD
 
                 elif self.state == self.State.LEADERBOARD:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.view.menu_button.collidepoint(event.pos):
-                            self.state = self.State.START
+                    self.view.leaderboard_manager.process_events(event)
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.menu_button:
+                                self.state = self.State.START
 
                 elif self.state == self.State.CHOOSE_DIFFICULTY:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.view.dif_easy_button.collidepoint(event.pos):
-                            self.difficulty = self.Difficulty.EASY
-                            self.restart_game(ship_lives=6, asteroids_amount=10)
-                            self.saucer_spawn_rate = 2000
-                        if self.view.dif_normal_button.collidepoint(event.pos):
-                            self.difficulty = self.Difficulty.NORMAL
-                            self.restart_game(ship_lives=2, asteroids_amount=6)
-                            self.saucer_spawn_rate = 1200
-                        if self.view.dif_hard_button.collidepoint(event.pos):
-                            self.difficulty = self.Difficulty.HARD
-                            self.restart_game(ship_lives=1, asteroids_amount=8)
-                            self.saucer_spawn_rate = 600
+                    self.view.difficulty_manager.process_events(event)
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.dif_easy_button:
+                                self.difficulty = self.Difficulty.EASY
+                                self.restart_game(ship_lives=6, asteroids_amount=10)
+                                self.saucer_spawn_rate = 2000
+                            elif event.ui_element == self.view.dif_normal_button:
+                                self.difficulty = self.Difficulty.NORMAL
+                                self.restart_game(ship_lives=2, asteroids_amount=6)
+                                self.saucer_spawn_rate = 1200
+                            elif event.ui_element == self.view.dif_hard_button:
+                                self.difficulty = self.Difficulty.HARD
+                                self.restart_game(ship_lives=1, asteroids_amount=8)
+                                self.saucer_spawn_rate = 600
 
                 elif self.state == self.State.ENTER_NAME:
                     if event.type == pygame.KEYDOWN:
@@ -128,6 +138,10 @@ class GameController:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_x:
                             self.state = self.State.RUNNING
+
+            self.view.start_manager.update(time_delta)
+            self.view.difficulty_manager.update(time_delta)
+            self.view.leaderboard_manager.update(time_delta)
 
             keys = pygame.key.get_pressed()
             if self.state == self.State.RUNNING:
@@ -153,10 +167,13 @@ class GameController:
                                     self.camera_offset, self.clock.get_fps())
                 self.view.draw_skinchoose_screen(50)
 
+            # self.view.manager.draw_ui(self.screen)
             pygame.display.flip()
             self.clock.tick(60)
+
     def start_game(self):
         self.state = self.State.CHOOSE_DIFFICULTY
+
     def handle_game_input(self, keys):
         if keys[pygame.K_UP]:
             self.ship.thrust()
@@ -301,7 +318,7 @@ class GameController:
 
         self.camera_offset = pygame.Vector2(self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2)
 
-        self.update_boosters(calculate_ship_points(self.ships[0]))
+        self.update_boosters(calculate_ship_points(self.ship))
         self.bullets_asteroid_collision()
         self.fly_asteroids()
         self.update_saucers()
