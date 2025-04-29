@@ -23,12 +23,12 @@ class Zone:
 
     def spawn_content(self, game_controller):
         if self.zone_type == ZoneType.ASTEROID_FIELD:
-            for _ in range(5):
+            for _ in range(40):
                 asteroid_x = randint(self.x, self.x + self.width)
                 asteroid_y = randint(self.y, self.y + self.height)
                 game_controller.asteroids.append(Asteroid(asteroid_x, asteroid_y, randint(20, 50), randint(0, 360), speed=0))
         elif self.zone_type == ZoneType.ENEMY_SWARM:
-            for _ in range(3):
+            for _ in range(20):
                 enemy_x = randint(self.x, self.x + self.width)
                 enemy_y = randint(self.y, self.y + self.height)
                 game_controller.saucers.append(Saucer(enemy_x, enemy_y, size=30, speed=choice([-3, 3])))

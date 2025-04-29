@@ -57,7 +57,7 @@ class GameView:
             if DEBUG:
                 draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
 
-            draw_minimap(self.screen, asteroids, ships, bullets, saucers, boosters, 20, 17)
+            draw_minimap(self.screen, asteroids, ships, bullets, saucers, boosters, 20, 30)
             draw_osd(self.screen, self.font, ships[0].score, ships[0].lives) # 0-й корабль это игрок
 
 
@@ -68,6 +68,20 @@ class GameView:
                 for i in self.bg_images:
                     self.screen.blit(i, ((x*self.bg_width - x_offset//1.5 * image_number), (y*self.bg_height - y_offset//1.5 * image_number)))
                     # image_number += 1
+
+    def draw_skinchoose_screen(self, padding):
+        interface_width = ScreenSize[0] - padding * 2
+        interface_height = ScreenSize[1] - padding * 2
+
+        interface_surface = pygame.Surface((interface_width, interface_height))
+        interface_surface.set_alpha(210)
+
+        pygame.draw.rect(interface_surface, (50, 50, 50),
+                         (0, 0, interface_width, interface_height))
+        pygame.draw.rect(interface_surface, (100, 100, 100),
+                         (0, 0, interface_width, interface_height), width=10)
+
+        self.screen.blit(interface_surface, (padding, padding))
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

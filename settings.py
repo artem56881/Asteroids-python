@@ -1,4 +1,4 @@
-ScreenSize = [800, 600]
+ScreenSize = [980, 900]
 game_field_size = [10000, 10000]
 DEBUG = True
 

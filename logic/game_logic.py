@@ -126,9 +126,14 @@ class GameController:
                         else:
                             self.player_name += event.unicode
 
+                elif self.state == State.CHOOSE_SKIN:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_x:
+                            self.state = State.RUNNING
+
             keys = pygame.key.get_pressed()
             if self.state == State.RUNNING:
-                self.handle_input(keys)
+                self.handle_game_input(keys)
                 self.update_game()
                 self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
                                     self.camera_offset, self.clock.get_fps())
@@ -145,10 +150,15 @@ class GameController:
             elif self.state == State.CHOOSE_DIFFICULTY:
                 self.view.draw_difficulty_screen()
 
+            elif self.state == State.CHOOSE_SKIN:
+                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
+                                    self.camera_offset, self.clock.get_fps())
+                self.view.draw_skinchoose_screen(50)
+
             pygame.display.flip()
             self.clock.tick(60)
 
-    def handle_input(self, keys):
+    def handle_game_input(self, keys):
         if keys[pygame.K_UP]:
             self.ship.thrust()
         if keys[pygame.K_LEFT]:
