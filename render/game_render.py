@@ -64,9 +64,10 @@ class GameView:
     def draw_bg(self, x_offset, y_offset):
         for y in range(10):
             for x in range(10):
+                image_number = 1
                 for i in self.bg_images:
-                    self.screen.blit(i, (x*self.bg_width - x_offset//1.5, y*self.bg_height - y_offset//1.5))
-
+                    self.screen.blit(i, ((x*self.bg_width - x_offset//1.5 * image_number), (y*self.bg_height - y_offset//1.5 * image_number)))
+                    # image_number += 1
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)
