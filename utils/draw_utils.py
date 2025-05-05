@@ -90,5 +90,5 @@ def draw_statistics(screen, font, score, screen_size):
     screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
 
 def draw_debug_info(screen, font, ship, asteroids, fps):
-    text = font.render(f"fps {fps:.2f}, asteroids: {len(asteroids)} ship vel x {ship.vel_x} vel y {ship.vel_y}", True, (255, 255, 255))
+    text = font.render(f"fps {fps:.2f}, asteroids: {len(asteroids)} ship vel x {ship.vel_x:.2f} vel y {ship.vel_y:.2f}", True, (255, 255, 255))
     screen.blit(text, (10, ScreenSize[1] - 30))
