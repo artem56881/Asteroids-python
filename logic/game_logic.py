@@ -1,22 +1,24 @@
-from os import remove
 from random import randint, choice
 import pygame
 import pygame_gui
 from enum import Enum, auto
 
-from entities.zone import Zone, ZoneType
+from time import time
 from settings import *
 from entities.ship import Ship
 from entities.shot import Shot
-from entities.saucer import Saucer
 from entities.booster import Booster
 from entities.asteroid import Asteroid
 from render.game_render import GameView
+from entities.zone import Zone, ZoneType
 from logic.teammate_logic import update_teammate
 from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision, find_range
 
 class GameController:
     def __init__(self, screen):
+        self.framerate = 60
+        self.last_time = time()
+
         self.screen = screen
         self.view = GameView(screen)
         self.clock = pygame.time.Clock()
@@ -82,6 +84,7 @@ class GameController:
         clock = pygame.time.Clock()
 
         while running:
+            fps = self.clock.get_fps()
             time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -164,12 +167,13 @@ class GameController:
 
             elif self.state == self.State.CHOOSE_SKIN:
                 self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
-                                    self.camera_offset, self.clock.get_fps())
+                                    self.camera_offset, fps)
                 self.view.draw_skinchoose_screen(50)
 
             # self.view.manager.draw_ui(self.screen)
             pygame.display.flip()
-            self.clock.tick(60)
+            # print(f"{self.lag:.3f}, {fps:.3f}")
+            self.clock.tick(self.framerate)
 
     def start_game(self):
         self.state = self.State.CHOOSE_DIFFICULTY
