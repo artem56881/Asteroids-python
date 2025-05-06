@@ -8,7 +8,7 @@ class Ship:
     def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148), name=""):
         self.x = x
         self.y = y
-        self.angle = 45
+        self.angle = -90
         self.vel_x = 0.0
         self.vel_y = 0.0
         self.acceleration = 0.1
@@ -19,7 +19,9 @@ class Ship:
         self.invincibility_timeout = 80
         self.shooting_timeout = 0
 
-        self.image = pygame.Surface((15, 15), pygame.SRCALPHA)
+        # self.image = pygame.Surface((15, 15), pygame.SRCALPHA)
+        self.original_image = pygame.image.load("../sprites/ship_sprite_1.png")
+        self.image = self.original_image
         self.rect = self.image.get_rect(center=(x, y))
 
         self.color = color
@@ -33,13 +35,20 @@ class Ship:
         self.vel_x *= friction
         self.vel_y *= friction
 
+    def rotate_sprite(self, image, angle):
+        rotated_image = pygame.transform.rotate(image, angle - 90) # почему-то спрайт отрисовывался со сдвигом на 90 градусов, поэтому пришлось сдвинуть на -90
+        new_rect = rotated_image.get_rect(center=image.get_rect(center=(self.x, self.y)).center)
+        return rotated_image, new_rect
+
     def rotate(self, angle_delta):
         self.angle = (self.angle + angle_delta) % 360
+        self.image, self.rect = self.rotate_sprite(self.original_image, -self.angle)
 
     def draw(self, screen, camera_offset):
-        pygame.draw.polygon(screen, self.color,
-                            [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)],
-                            width=3)
+        # pygame.draw.polygon(screen, self.color,
+        #                     [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)],
+        #                     width=3)
+        screen.blit(self.image, (self.rect.x - camera_offset.x, self.rect.y - camera_offset.y))
 
     def thrust(self):
         dx, dy = angle_to_coords(self.angle)
