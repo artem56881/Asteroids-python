@@ -38,6 +38,8 @@ class GameController:
         self.shooting_window = shooting_rate
         self.difficulty = None
 
+        self.changing_skin_for = 0
+
         self.camera_offset = None
         self.zones = []
 
@@ -143,9 +145,17 @@ class GameController:
                     if event.type == pygame.USEREVENT:
                         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                             if event.ui_element == self.view.next_skin_button:
-                                self.ships[0].change_sprite(1)
+                                self.ships[self.changing_skin_for].change_sprite(1)
                             elif event.ui_element == self.view.prev_skin_button:
-                                self.ships[0].change_sprite(-1)
+                                self.ships[self.changing_skin_for].change_sprite(-1)
+                            elif event.ui_element == self.view.next_ship_button:
+                                self.changing_skin_for += 1
+                                self.changing_skin_for %= len(self.ships)
+                                print(self.changing_skin_for)
+                            elif event.ui_element == self.view.prev_ship_button:
+                                self.changing_skin_for += 1
+                                self.changing_skin_for %= len(self.ships)
+                                print(self.changing_skin_for)
 
             self.view.start_manager.update(time_delta)
             self.view.difficulty_manager.update(time_delta)
@@ -174,7 +184,7 @@ class GameController:
             elif self.state == self.State.CHOOSE_SKIN:
                 self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
                                     self.camera_offset, fps)
-                self.view.draw_skinchoose_screen(padding=60)
+                self.view.draw_skinchoose_screen(padding=60, ship=self.ships[self.changing_skin_for])
 
             pygame.display.flip()
             # print(f"{self.lag:.3f}, {fps:.3f}")
@@ -235,7 +245,7 @@ class GameController:
                     for _ in range(1):
                         self.ships.append(
                             Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 3,
-                                 color=teammate_color, name="John"))
+                                 color=teammate_color, name=f"Jonh {len(self.ships)+1}"))
 
                     self.booster_timeout = booster.time
                     self.shooting_window = 5

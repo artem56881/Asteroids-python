@@ -17,6 +17,7 @@ class GameView:
         self.splash_font = pygame.font.Font("exwayer.ttf", 120)
         self.splash_default_font = pygame.font.Font(None, 120)
         self.forty_font = pygame.font.Font(None, 40)
+        self.ship_name_font = pygame.font.Font(None, 80)
 
         self.start_manager = pygame_gui.UIManager(ScreenSize)
         self.leaderboard_manager = pygame_gui.UIManager(ScreenSize)
@@ -38,6 +39,7 @@ class GameView:
             text='Выйти',
             manager=self.start_manager
         )
+
         self.menu_button = UIButton(
             relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 500), (200, 50)),
             text='Назад',
@@ -62,9 +64,15 @@ class GameView:
             manager=self.difficulty_manager,
             tool_tip_text=":)))"
         )
+
         self.next_ship_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 390), (200, 50)),
+            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100 + 100, ScreenSize[1] - 100 - 60), (200, 50)),
             text='Следующий корабль',
+            manager=self.skin_menu_manager
+        )
+        self.prev_ship_button = UIButton(
+            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100 - 100, ScreenSize[1] - 100 - 60), (200, 50)),
+            text='Предыдущий корабль',
             manager=self.skin_menu_manager
         )
         self.next_skin_button = UIButton(
@@ -77,6 +85,7 @@ class GameView:
             text='<',
             manager=self.skin_menu_manager
         )
+
 
         self.bg_images = []
 
@@ -109,18 +118,29 @@ class GameView:
                 for i in self.bg_images:
                     self.screen.blit(i, ((x*self.bg_width - x_offset//1.5 * image_number), (y*self.bg_height - y_offset//1.5 * image_number)))
 
-    def draw_skinchoose_screen(self, padding):
+    def draw_skinchoose_screen(self, padding, ship):
         interface_width = ScreenSize[0] - padding * 2
         interface_height = ScreenSize[1] - padding * 2
         interface_surface = pygame.Surface((interface_width, interface_height))
         interface_surface.set_alpha(210)
+
         pygame.draw.rect(interface_surface, (50, 50, 50), (0, 0, interface_width, interface_height))
         pygame.draw.rect(interface_surface, (100, 100, 100), (0, 0, interface_width, interface_height), width=10)
 
-        # Draw the interface surface onto the main screen
-        self.screen.blit(interface_surface, (padding, padding))
+        scale_factor = 2
+        scaled_width = int(ship.image.get_width() * scale_factor)
+        scaled_height = int(ship.image.get_height() * scale_factor)
+        interface_ship_image = pygame.transform.scale(ship.image, (scaled_width, scaled_height))
+        interface_ship_image = pygame.transform.rotate(interface_ship_image, ship.angle + 90)
 
-        # Draw the UI elements directly onto the main screen
+        self.screen.blit(interface_surface, (padding, padding))
+        self.screen.blit(interface_ship_image, (ScreenSize[0]//2-interface_ship_image.get_width()//2, ScreenSize[1]//2-80))
+
+        display_name = "Игрок" if ship.name == "" else ship.name
+
+        splash_text = self.ship_name_font.render(display_name, False, (255, 255, 255))
+        self.screen.blit(splash_text, (ScreenSize[0] // 2 - 100, 170))
+
         self.skin_menu_manager.draw_ui(self.screen)
 
     def draw_difficulty_screen(self):
