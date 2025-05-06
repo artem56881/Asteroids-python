@@ -5,7 +5,7 @@ import json
 import pygame_gui
 from pygame_gui.elements import UIButton
 
-from settings import DEBUG, leaderboard_file_path, button_color, background_color, ScreenSize, game_field_size
+from settings import DEBUG, leaderboard_file_path, background_color, ScreenSize, game_field_size
 from utils.draw_utils import draw_asteroids, draw_bullets, draw_ships, draw_osd, draw_debug_info, draw_booster, \
     draw_saucers, draw_minimap
 
@@ -18,10 +18,10 @@ class GameView:
         self.splash_default_font = pygame.font.Font(None, 120)
         self.forty_font = pygame.font.Font(None, 40)
 
-        self.difficulty_manager = pygame_gui.UIManager(ScreenSize)
         self.start_manager = pygame_gui.UIManager(ScreenSize)
         self.leaderboard_manager = pygame_gui.UIManager(ScreenSize)
-
+        self.difficulty_manager = pygame_gui.UIManager(ScreenSize)
+        self.skin_menu_manager = pygame_gui.UIManager(ScreenSize)
 
         self.start_button = UIButton(
             relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 250), (200, 50)),
@@ -62,6 +62,21 @@ class GameView:
             manager=self.difficulty_manager,
             tool_tip_text=":)))"
         )
+        self.next_ship_button = UIButton(
+            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 390), (200, 50)),
+            text='Следующий корабль',
+            manager=self.skin_menu_manager
+        )
+        self.next_skin_button = UIButton(
+            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100 + 100, ScreenSize[1] - 100), (200, 50)),
+            text='>',
+            manager=self.skin_menu_manager
+        )
+        self.prev_skin_button = UIButton(
+            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100 - 100, ScreenSize[1] - 100), (200, 50)),
+            text='<',
+            manager=self.skin_menu_manager
+        )
 
         self.bg_images = []
 
@@ -101,7 +116,12 @@ class GameView:
         interface_surface.set_alpha(210)
         pygame.draw.rect(interface_surface, (50, 50, 50), (0, 0, interface_width, interface_height))
         pygame.draw.rect(interface_surface, (100, 100, 100), (0, 0, interface_width, interface_height), width=10)
+
+        # Draw the interface surface onto the main screen
         self.screen.blit(interface_surface, (padding, padding))
+
+        # Draw the UI elements directly onto the main screen
+        self.skin_menu_manager.draw_ui(self.screen)
 
     def draw_difficulty_screen(self):
         self.screen.fill(background_color)

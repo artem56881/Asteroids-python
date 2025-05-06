@@ -90,8 +90,6 @@ class GameController:
                 if event.type == pygame.QUIT:
                     running = False
 
-                # self.view.manager.process_events(event)
-
                 if self.state == self.State.START:
                     self.view.start_manager.process_events(event)
                     if event.type == pygame.USEREVENT:
@@ -99,7 +97,7 @@ class GameController:
                             if event.ui_element == self.view.start_button:
                                 self.state = self.State.CHOOSE_DIFFICULTY
                             elif event.ui_element == self.view.exit_button:
-                                pygame.quit()
+                                running = False
                             elif event.ui_element == self.view.leaderboard_button:
                                 self.state = self.State.LEADERBOARD
 
@@ -138,13 +136,21 @@ class GameController:
                             self.player_name += event.unicode
 
                 elif self.state == self.State.CHOOSE_SKIN:
+                    self.view.skin_menu_manager.process_events(event)
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_x:
                             self.state = self.State.RUNNING
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.next_skin_button:
+                                self.ships[0].change_sprite(1)
+                            elif event.ui_element == self.view.prev_skin_button:
+                                self.ships[0].change_sprite(-1)
 
             self.view.start_manager.update(time_delta)
             self.view.difficulty_manager.update(time_delta)
             self.view.leaderboard_manager.update(time_delta)
+            self.view.skin_menu_manager.update(time_delta)
 
             keys = pygame.key.get_pressed()
             if self.state == self.State.RUNNING:
@@ -168,9 +174,8 @@ class GameController:
             elif self.state == self.State.CHOOSE_SKIN:
                 self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
                                     self.camera_offset, fps)
-                self.view.draw_skinchoose_screen(200)
+                self.view.draw_skinchoose_screen(padding=60)
 
-            # self.view.manager.draw_ui(self.screen)
             pygame.display.flip()
             # print(f"{self.lag:.3f}, {fps:.3f}")
             self.clock.tick(self.framerate)
@@ -194,6 +199,7 @@ class GameController:
         if ship.shooting_timeout <= 0:
             self.bullets.append(Shot(ship.x, ship.y, ship.angle))
             ship.shooting_timeout = self.shooting_window
+            # ship.change_sprite(f"../sprites/ship_sprite_{randint(1,2)}.png")
 
     def update_saucers(self):
         # if len(self.saucers) <= max_saucers - 1:

@@ -1,9 +1,11 @@
 import pygame
+from pygame.examples.cursors import image
+
 from utils.math_utils import angle_to_coords, calculate_ship_points
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148), name=""):
+    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148), name="", img_sprite=pygame.image.load("../sprites/ship_sprite_2.png")):
         self.x = x
         self.y = y
         self.angle = -90
@@ -18,9 +20,13 @@ class Ship:
         self.shooting_timeout = 0
 
         # self.image = pygame.Surface((15, 15), pygame.SRCALPHA)
-        self.original_image = pygame.image.load("../sprites/ship_sprite_1.png")
-        self.image = self.original_image
+        # self.original_image = img_sprite
+        self.sprites = [pygame.image.load(f"../sprites/ship_sprite_{n}.png") for n in range(1, 3)]
+
+        self.current_sprite = 0
+        self.image = self.sprites[self.current_sprite]
         self.rect = self.image.get_rect(center=(x, y))
+
 
         self.color = color
 
@@ -40,7 +46,7 @@ class Ship:
 
     def rotate(self, angle_delta):
         self.angle = (self.angle + angle_delta) % 360
-        self.image, self.rect = self.rotate_sprite(self.original_image, -self.angle)
+        self.image, self.rect = self.rotate_sprite(self.sprites[self.current_sprite], -self.angle)
 
     def draw(self, screen, camera_offset):
         # pygame.draw.polygon(screen, self.color,
@@ -66,6 +72,7 @@ class Ship:
         self.vel_x -= dx * knockback_strength
         self.vel_y -= dy * knockback_strength
 
-    def change_sprite(self, sprite_path):
-        self.original_image = pygame.image.load(sprite_path)
-        self.image, self.rect = self.rotate_sprite(self.original_image, 0)
+    def change_sprite(self, number):
+        self.current_sprite += 1
+        self.current_sprite %= len(self.sprites)
+        self.image, self.rect = self.rotate_sprite(self.sprites[self.current_sprite], -self.angle)
