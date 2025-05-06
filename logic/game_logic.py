@@ -151,11 +151,9 @@ class GameController:
                             elif event.ui_element == self.view.next_ship_button:
                                 self.changing_skin_for += 1
                                 self.changing_skin_for %= len(self.ships)
-                                print(self.changing_skin_for)
                             elif event.ui_element == self.view.prev_ship_button:
-                                self.changing_skin_for += 1
+                                self.changing_skin_for -= 1
                                 self.changing_skin_for %= len(self.ships)
-                                print(self.changing_skin_for)
 
             self.view.start_manager.update(time_delta)
             self.view.difficulty_manager.update(time_delta)

@@ -73,6 +73,6 @@ class Ship:
         self.vel_y -= dy * knockback_strength
 
     def change_sprite(self, number):
-        self.current_sprite += 1
+        self.current_sprite += number
         self.current_sprite %= len(self.sprites)
         self.image, self.rect = self.rotate_sprite(self.sprites[self.current_sprite], -self.angle)

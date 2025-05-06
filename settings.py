@@ -1,6 +1,6 @@
 ScreenSize = [980, 900]
 game_field_size = [10000, 10000]
-DEBUG = True
+DEBUG = False
 
 shooting_rate = 20
 invincible = False
