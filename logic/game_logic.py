@@ -1,41 +1,28 @@
-from os import remove
 from random import randint, choice
 import pygame
+import pygame_gui
 from enum import Enum, auto
 
-from entities.zone import Zone, ZoneType
+from time import time
 from settings import *
 from entities.ship import Ship
 from entities.shot import Shot
-from entities.saucer import Saucer
 from entities.booster import Booster
 from entities.asteroid import Asteroid
 from render.game_render import GameView
+from entities.zone import Zone, ZoneType
 from logic.teammate_logic import update_teammate
 from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision, find_range
 
-
-class State(Enum):
-    START = auto()
-    CHOOSE_DIFFICULTY = auto()
-    LEADERBOARD = auto()
-    RUNNING = auto()
-    ENTER_NAME = auto()
-    CHOOSE_SKIN = auto()
-
-
-class Difficulty(Enum):
-    EASY = auto()
-    NORMAL = auto()
-    HARD = auto()
-
-
 class GameController:
     def __init__(self, screen):
+        self.framerate = 60
+        self.last_time = time()
+
         self.screen = screen
         self.view = GameView(screen)
         self.clock = pygame.time.Clock()
-        self.state = State.START
+        self.state = self.State.START
 
         self.ship = None
         self.ships = []
@@ -53,6 +40,19 @@ class GameController:
 
         self.camera_offset = None
         self.zones = []
+
+    class State(Enum):
+        START = auto()
+        CHOOSE_DIFFICULTY = auto()
+        LEADERBOARD = auto()
+        RUNNING = auto()
+        ENTER_NAME = auto()
+        CHOOSE_SKIN = auto()
+
+    class Difficulty(Enum):
+        EASY = auto()
+        NORMAL = auto()
+        HARD = auto()
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None:  # случай первого запуска
@@ -72,7 +72,7 @@ class GameController:
         self.bullets = []
         self.boosters += [Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1) for _ in
                          range(4)]
-        self.state = State.RUNNING
+        self.state = self.State.RUNNING
 
         # Create random zones
         self.zones = [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200), 1600, 1600, choice(list(ZoneType))) for _ in range(6)]
@@ -81,74 +81,104 @@ class GameController:
 
     def run(self):
         running = True
+        clock = pygame.time.Clock()
 
         while running:
+            fps = self.clock.get_fps()
+            time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
-                if self.state == State.START:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.view.start_button.collidepoint(event.pos):
-                            self.state = State.CHOOSE_DIFFICULTY
-                        elif self.view.exit_button.collidepoint(event.pos):
-                            pygame.quit()
-                        elif self.view.leaderboard_button.collidepoint(event.pos):
-                            self.state = State.LEADERBOARD
+                # self.view.manager.process_events(event)
 
-                elif self.state == State.LEADERBOARD:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.view.menu_button.collidepoint(event.pos):
-                            self.state = State.START
+                if self.state == self.State.START:
+                    self.view.start_manager.process_events(event)
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.start_button:
+                                self.state = self.State.CHOOSE_DIFFICULTY
+                            elif event.ui_element == self.view.exit_button:
+                                pygame.quit()
+                            elif event.ui_element == self.view.leaderboard_button:
+                                self.state = self.State.LEADERBOARD
 
-                elif self.state == State.CHOOSE_DIFFICULTY:
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if self.view.dif_easy_button.collidepoint(event.pos):
-                            self.difficulty = Difficulty.EASY
-                            self.restart_game(ship_lives=6, asteroids_amount=10)
-                            self.saucer_spawn_rate = 2000
-                        if self.view.dif_normal_button.collidepoint(event.pos):
-                            self.difficulty = Difficulty.NORMAL
-                            self.restart_game(ship_lives=2, asteroids_amount=6)
-                            self.saucer_spawn_rate = 1200
-                        if self.view.dif_hard_button.collidepoint(event.pos):
-                            self.difficulty = Difficulty.HARD
-                            self.restart_game(ship_lives=1, asteroids_amount=8)
-                            self.saucer_spawn_rate = 600
+                elif self.state == self.State.LEADERBOARD:
+                    self.view.leaderboard_manager.process_events(event)
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.menu_button:
+                                self.state = self.State.START
 
-                elif self.state == State.ENTER_NAME:
+                elif self.state == self.State.CHOOSE_DIFFICULTY:
+                    self.view.difficulty_manager.process_events(event)
+                    if event.type == pygame.USEREVENT:
+                        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                            if event.ui_element == self.view.dif_easy_button:
+                                self.difficulty = self.Difficulty.EASY
+                                self.restart_game(ship_lives=6, asteroids_amount=10)
+                                self.saucer_spawn_rate = 2000
+                            elif event.ui_element == self.view.dif_normal_button:
+                                self.difficulty = self.Difficulty.NORMAL
+                                self.restart_game(ship_lives=2, asteroids_amount=6)
+                                self.saucer_spawn_rate = 1200
+                            elif event.ui_element == self.view.dif_hard_button:
+                                self.difficulty = self.Difficulty.HARD
+                                self.restart_game(ship_lives=1, asteroids_amount=8)
+                                self.saucer_spawn_rate = 600
+
+                elif self.state == self.State.ENTER_NAME:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
                             save_score_to_leaderboard(self.player_name, self.ship.score, self.difficulty.name)
-                            self.state = State.LEADERBOARD
+                            self.state = self.State.LEADERBOARD
                         elif event.key == pygame.K_BACKSPACE:
                             self.player_name = self.player_name[:-1]
                         else:
                             self.player_name += event.unicode
 
+                elif self.state == self.State.CHOOSE_SKIN:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_x:
+                            self.state = self.State.RUNNING
+
+            self.view.start_manager.update(time_delta)
+            self.view.difficulty_manager.update(time_delta)
+            self.view.leaderboard_manager.update(time_delta)
+
             keys = pygame.key.get_pressed()
-            if self.state == State.RUNNING:
-                self.handle_input(keys)
+            if self.state == self.State.RUNNING:
+                self.handle_game_input(keys)
                 self.update_game()
                 self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
                                     self.camera_offset, self.clock.get_fps())
 
-            elif self.state == State.START:
+            elif self.state == self.State.START:
                 self.view.draw_start_screen()
 
-            elif self.state == State.LEADERBOARD:
+            elif self.state == self.State.LEADERBOARD:
                 self.view.draw_leaderboard_screen()
 
-            elif self.state == State.ENTER_NAME:
+            elif self.state == self.State.ENTER_NAME:
                 self.view.draw_enter_name_screen(ScreenSize, self.player_name, self.ship.score)
 
-            elif self.state == State.CHOOSE_DIFFICULTY:
+            elif self.state == self.State.CHOOSE_DIFFICULTY:
                 self.view.draw_difficulty_screen()
 
-            pygame.display.flip()
-            self.clock.tick(60)
+            elif self.state == self.State.CHOOSE_SKIN:
+                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
+                                    self.camera_offset, fps)
+                self.view.draw_skinchoose_screen(50)
 
-    def handle_input(self, keys):
+            # self.view.manager.draw_ui(self.screen)
+            pygame.display.flip()
+            # print(f"{self.lag:.3f}, {fps:.3f}")
+            self.clock.tick(self.framerate)
+
+    def start_game(self):
+        self.state = self.State.CHOOSE_DIFFICULTY
+
+    def handle_game_input(self, keys):
         if keys[pygame.K_UP]:
             self.ship.thrust()
         if keys[pygame.K_LEFT]:
@@ -158,7 +188,7 @@ class GameController:
         if keys[pygame.K_SPACE]:
             self.ship_shoot(self.ship)
         if keys[pygame.K_z]:
-            self.state = State.CHOOSE_SKIN
+            self.state = self.State.CHOOSE_SKIN
 
     def ship_shoot(self, ship: Ship):
         if ship.shooting_timeout <= 0:
@@ -199,7 +229,7 @@ class GameController:
                     for _ in range(1):
                         self.ships.append(
                             Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 3,
-                                 color=teammate_color))
+                                 color=teammate_color, name="John"))
 
                     self.booster_timeout = booster.time
                     self.shooting_window = 5
@@ -274,7 +304,7 @@ class GameController:
                         if ship.lives <= 0:
                             self.ships.remove(ship)
                         if self.ship.lives <= 0:
-                            self.state = State.ENTER_NAME
+                            self.state = self.State.ENTER_NAME
                         collision_detected = True
                         break
             if collision_detected:
@@ -292,7 +322,7 @@ class GameController:
 
         self.camera_offset = pygame.Vector2(self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2)
 
-        self.update_boosters(calculate_ship_points(self.ships[0]))
+        self.update_boosters(calculate_ship_points(self.ship))
         self.bullets_asteroid_collision()
         self.fly_asteroids()
         self.update_saucers()

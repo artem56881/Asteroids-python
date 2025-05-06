@@ -27,6 +27,8 @@ def draw_ships(screen, font, ships, camera_offset):
     for ship in ships:
         if ship.invincibility_timeout % 4 == 0:
             ship.draw(screen, camera_offset)
+        name_text = font.render(f"{ship.name}", False, (255, 255, 255))
+        screen.blit(name_text, (ship.x - 26 - camera_offset.x, ship.y - 55 - camera_offset.y))
         if DEBUG:
             text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
             screen.blit(text_size, (ship.x - camera_offset.x, ship.y - camera_offset.y))
@@ -88,5 +90,5 @@ def draw_statistics(screen, font, score, screen_size):
     screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
 
 def draw_debug_info(screen, font, ship, asteroids, fps):
-    text = font.render(f"fps {fps:.2f}, asteroids: {len(asteroids)} ship vel x {ship.vel_x} vel y {ship.vel_y}", True, (255, 255, 255))
+    text = font.render(f"fps {fps:.2f}, asteroids: {len(asteroids)} ship vel x {ship.vel_x:.2f} vel y {ship.vel_y:.2f}", True, (255, 255, 255))
     screen.blit(text, (10, ScreenSize[1] - 30))

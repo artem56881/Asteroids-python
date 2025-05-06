@@ -1,9 +1,11 @@
+from html.entities import name2codepoint
+
 import pygame
 from utils.math_utils import angle_to_coords, calculate_ship_points
 from settings import friction
 
 class Ship:
-    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148)):
+    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148), name=""):
         self.x = x
         self.y = y
         self.angle = 45
@@ -13,6 +15,7 @@ class Ship:
         self.turn_speed = 5
         self.score = score
         self.lives = lives
+        self.name = name
         self.invincibility_timeout = 80
         self.shooting_timeout = 0
 
