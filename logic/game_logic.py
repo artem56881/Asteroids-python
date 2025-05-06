@@ -168,7 +168,7 @@ class GameController:
             elif self.state == self.State.CHOOSE_SKIN:
                 self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
                                     self.camera_offset, fps)
-                self.view.draw_skinchoose_screen(50)
+                self.view.draw_skinchoose_screen(200)
 
             # self.view.manager.draw_ui(self.screen)
             pygame.display.flip()

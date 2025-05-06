@@ -3,11 +3,12 @@ import random
 import math
 from settings import game_field_size
 from entities.asteroid import Asteroid
-from utils.math_utils import calculate_saucer_points
+from utils.math_utils import calculate_saucer_points, find_range
+
 
 
 class Saucer:
-    def __init__(self, x, y, size=30, speed=3):
+    def __init__(self, x, y, zone, size=30, speed=3):
         self.x = x
         self.y = y
         self.shoot_timer = random.randint(20, 30)
@@ -19,8 +20,11 @@ class Saucer:
         self.zigzag_amplitude = 2
         self.zigzag_period = 60
         self.shot_timer = 100
+        self.zone = zone
 
     def fly(self):
+        if 400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300: # не работает--💔
+            self.direction *= -1
         self.x += self.speed * self.direction
         self.x %= game_field_size[0]
         self.zigzag_counter += 1

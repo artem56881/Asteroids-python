@@ -1,5 +1,3 @@
-from html.entities import name2codepoint
-
 import pygame
 from utils.math_utils import angle_to_coords, calculate_ship_points
 from settings import friction
@@ -67,3 +65,7 @@ class Ship:
         knockback_strength = asteroid_size // 8
         self.vel_x -= dx * knockback_strength
         self.vel_y -= dy * knockback_strength
+
+    def change_sprite(self, sprite_path):
+        self.original_image = pygame.image.load(sprite_path)
+        self.image, self.rect = self.rotate_sprite(self.original_image, 0)

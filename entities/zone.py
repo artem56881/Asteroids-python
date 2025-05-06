@@ -31,4 +31,4 @@ class Zone:
             for _ in range(20):
                 enemy_x = randint(self.x, self.x + self.width)
                 enemy_y = randint(self.y, self.y + self.height)
-                game_controller.saucers.append(Saucer(enemy_x, enemy_y, size=30, speed=choice([-3, 3])))
+                game_controller.saucers.append(Saucer(enemy_x, enemy_y, self, size=30, speed=choice([-3, 3])))
