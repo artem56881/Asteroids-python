@@ -127,7 +127,7 @@ class GameView:
         pygame.draw.rect(interface_surface, (50, 50, 50), (0, 0, interface_width, interface_height))
         pygame.draw.rect(interface_surface, (100, 100, 100), (0, 0, interface_width, interface_height), width=10)
 
-        scale_factor = 2
+        scale_factor = 1.5
         scaled_width = int(ship.image.get_width() * scale_factor)
         scaled_height = int(ship.image.get_height() * scale_factor)
         interface_ship_image = pygame.transform.scale(ship.image, (scaled_width, scaled_height))
@@ -167,7 +167,7 @@ class GameView:
             leaderboard = json.load(json_file)
         name_score_difficulty_pairs = [(player['name'], player['score'], player['difficulty']) for player in leaderboard['leaderboard']]
         i = 0
-        player_color = (255, 255, 255)
+        # player_color = (255, 255, 255)
         for name, score, difficulty in name_score_difficulty_pairs:
             if difficulty == 'EASY':
                 player_color = (0, 200, 0)
