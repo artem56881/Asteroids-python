@@ -14,6 +14,7 @@ from entities.zone import Zone, ZoneType
 from logic.teammate_logic import update_teammate
 from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision, find_range
 
+
 class GameController:
     def __init__(self, screen):
         self.framerate = 60
@@ -72,12 +73,16 @@ class GameController:
                           range(asteroids_amount)]
 
         self.bullets = []
-        self.boosters += [Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1) for _ in
-                         range(4)]
+        self.boosters += [Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1) for _
+                          in
+                          range(4)]
         self.state = self.State.RUNNING
 
         # Create random zones
-        self.zones = [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200), 1600, 1600, choice(list(ZoneType))) for _ in range(6)]
+        self.zones = [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200),
+                           1600, 1600, list(ZoneType)[0]) for _ in range(7)]
+        self.zones += [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200),
+                            1600, 1600, list(ZoneType)[1]) for _ in range(1)]
         for zone in self.zones:
             zone.spawn_content(self)
 
@@ -243,7 +248,7 @@ class GameController:
                     for _ in range(1):
                         self.ships.append(
                             Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 3,
-                                 color=teammate_color, name=f"Jonh {len(self.ships)+1}"))
+                                 color=teammate_color, name=f"Jonh {len(self.ships) + 1}"))
 
                     self.booster_timeout = booster.time
                     self.shooting_window = 5

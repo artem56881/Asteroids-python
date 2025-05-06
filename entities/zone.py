@@ -1,5 +1,4 @@
 from random import randint, choice
-import pygame
 from enum import Enum, auto
 
 from entities.asteroid import Asteroid
@@ -28,7 +27,7 @@ class Zone:
                 asteroid_y = randint(self.y, self.y + self.height)
                 game_controller.asteroids.append(Asteroid(asteroid_x, asteroid_y, randint(20, 50), randint(0, 360), speed=0))
         elif self.zone_type == ZoneType.ENEMY_SWARM:
-            for _ in range(20):
+            for _ in range(10):
                 enemy_x = randint(self.x, self.x + self.width)
                 enemy_y = randint(self.y, self.y + self.height)
                 game_controller.saucers.append(Saucer(enemy_x, enemy_y, self, size=30, speed=choice([-3, 3])))
