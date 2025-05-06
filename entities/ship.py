@@ -21,7 +21,7 @@ class Ship:
 
         # self.image = pygame.Surface((15, 15), pygame.SRCALPHA)
         # self.original_image = img_sprite
-        self.sprites = [pygame.image.load(f"../sprites/ship_sprite_{n}.png") for n in range(1, 3)]
+        self.sprites = [pygame.image.load(f"../sprites/ship_sprite_{n}.png") for n in range(1, 7)]
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
