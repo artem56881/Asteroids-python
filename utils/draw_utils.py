@@ -7,7 +7,6 @@ from settings import (
     ScreenSize,
     game_field_size,
 )
-# from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 
 def draw_asteroids(screen, font, asteroids, camera_offset):
@@ -157,7 +156,7 @@ def draw_statistics(screen, font, score, screen_size):
 
 def draw_debug_info(screen, font, ship, asteroids, fps):
     text = font.render(
-        f"fps {fps:.2f}, asteroids: {len(asteroids)} ship vel x {ship.vel_x:.2f} vel y {ship.vel_y:.2f}",
+        f"fps {fps:.2f}, {len(asteroids)} vel x {ship.vel_x:.2f} vel y {ship.vel_y:.2f}",
         True,
         (255, 255, 255),
     )

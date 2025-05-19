@@ -53,9 +53,7 @@ class Ship:
         self.vel_y *= friction
 
     def rotate_sprite(self, image, angle):
-        rotated_image = pygame.transform.rotate(
-            image, angle - 90
-        )  # почему-то спрайт отрисовывался со сдвигом на 90 градусов, поэтому пришлось сдвинуть на -90
+        rotated_image = pygame.transform.rotate(image, angle - 90)
         new_rect = rotated_image.get_rect(
             center=image.get_rect(center=(self.x, self.y)).center
         )
@@ -68,9 +66,6 @@ class Ship:
         )
 
     def draw(self, screen, camera_offset):
-        # pygame.draw.polygon(screen, self.color,
-        #                     [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)],
-        #                     width=3)
         screen.blit(
             self.image,
             (self.rect.x - camera_offset.x, self.rect.y - camera_offset.y),

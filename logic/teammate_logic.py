@@ -52,9 +52,7 @@ def update_teammate(ship: Ship, asteroids, saucers, player):
         distance = find_range(
             ship.x, ship.y, target_object.x, target_object.y
         )
-        time_to_fly = (
-            distance / 121
-        )  # тут вместо 121 по идее должна быть скорость пули (10), но с 10 вообще не работает
+        time_to_fly = distance / 121
         predicted_x = target_object.x + vel_x * time_to_fly
         predicted_y = target_object.y + vel_y * time_to_fly
         target_direction = math.atan2(

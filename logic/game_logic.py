@@ -106,7 +106,6 @@ class GameController:
         ]
         self.state = self.State.RUNNING
 
-        # Create random zones
         self.zones = [
             Zone(
                 randint(0, game_field_size[0] - 200),
@@ -308,19 +307,8 @@ class GameController:
         if ship.shooting_timeout <= 0:
             self.bullets.append(Shot(ship.x, ship.y, ship.angle))
             ship.shooting_timeout = self.shooting_window
-            # ship.change_sprite(f"../sprites/ship_sprite_{randint(1,2)}.png")
 
     def update_saucers(self):
-        # if len(self.saucers) <= max_saucers - 1:
-        #     self.saucer_spawn_timer -= 1
-        #     if self.saucer_spawn_timer <= 0:
-        #         direction = choice([-1, 1])
-        #         x = 0 if direction == 1 else ScreenSize[0]
-        #         y = randint(50, ScreenSize[1] - 50)
-        #         self.saucers.append(Saucer(x, y, size=30, speed=3 * direction))
-        #         self.saucer_spawn_timer = self.saucer_spawn_rate
-
-        # Update saucers
         for saucer in self.saucers:
             if (
                 find_range(saucer.x, saucer.y, self.ship.x, self.ship.y)

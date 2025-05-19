@@ -22,9 +22,7 @@ class Saucer:
         self.zone = zone
 
     def fly(self):
-        if (
-            400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300
-        ):  # не работает--💔
+        if 400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300:
             self.direction *= -1
         self.x += self.speed * self.direction
         self.x %= game_field_size[0]
@@ -52,9 +50,7 @@ class Saucer:
         )
 
     def shoot(self, ship):
-        # Calculate the direction towards the player
         angle = math.atan2(ship.y - self.y, ship.x - self.x)
-        # Spawn an asteroid at the saucer's position, flying towards the player
         return Asteroid(
             self.x,
             self.y,
