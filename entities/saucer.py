@@ -37,7 +37,9 @@ class Saucer:
 
     def collides_with_point(self, point):
         px, py = point
-        return (self.x - px) ** 2 + (self.y - py) ** 2 <= (self.size / 2) ** 2
+        return (self.x - px) ** 2 + (self.y - py) ** 2 <= (
+            self.size / 2
+        ) ** 2
 
     def draw(self, screen, color, camera_offset):
         pygame.draw.polygon(
@@ -54,5 +56,10 @@ class Saucer:
         angle = math.atan2(ship.y - self.y, ship.x - self.x)
         # Spawn an asteroid at the saucer's position, flying towards the player
         return Asteroid(
-            self.x, self.y, 7, math.degrees(angle), speed=25, time_to_live=130
+            self.x,
+            self.y,
+            7,
+            math.degrees(angle),
+            speed=25,
+            time_to_live=130,
         )

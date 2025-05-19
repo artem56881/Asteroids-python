@@ -31,7 +31,9 @@ class Ship:
         # self.image = pygame.Surface((15, 15), pygame.SRCALPHA)
         # self.original_image = img_sprite
         self.sprites = [
-            pygame.image.load(f"../sprites/ship_sprite_{n}.png").convert_alpha()
+            pygame.image.load(
+                f"../sprites/ship_sprite_{n}.png"
+            ).convert_alpha()
             for n in range(1, 9)
         ]
 
@@ -70,7 +72,8 @@ class Ship:
         #                     [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)],
         #                     width=3)
         screen.blit(
-            self.image, (self.rect.x - camera_offset.x, self.rect.y - camera_offset.y)
+            self.image,
+            (self.rect.x - camera_offset.x, self.rect.y - camera_offset.y),
         )
 
     def thrust(self):

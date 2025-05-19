@@ -20,7 +20,8 @@ class Zone:
 
     def contains_point(self, px, py):
         return (
-            self.x <= px <= self.x + self.width and self.y <= py <= self.y + self.height
+            self.x <= px <= self.x + self.width
+            and self.y <= py <= self.y + self.height
         )
 
     def spawn_content(self, game_controller):
@@ -42,5 +43,11 @@ class Zone:
                 enemy_x = randint(self.x, self.x + self.width)
                 enemy_y = randint(self.y, self.y + self.height)
                 game_controller.saucers.append(
-                    Saucer(enemy_x, enemy_y, self, size=30, speed=choice([-3, 3]))
+                    Saucer(
+                        enemy_x,
+                        enemy_y,
+                        self,
+                        size=30,
+                        speed=choice([-3, 3]),
+                    )
                 )

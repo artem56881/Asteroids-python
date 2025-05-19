@@ -71,7 +71,9 @@ class GameController:
         elif (
             self.ship.lives == 0
         ):  # случай не первого запуска(за период запуска программы)
-            self.ship = Ship(game_field_size[0] // 2, game_field_size[1], ship_lives)
+            self.ship = Ship(
+                game_field_size[0] // 2, game_field_size[1], ship_lives
+            )
             self.ships.append(self.ship)
         else:  # случай нового уровня
             self.ship = Ship(
@@ -147,7 +149,10 @@ class GameController:
                                 self.state = self.State.CHOOSE_DIFFICULTY
                             elif event.ui_element == self.view.exit_button:
                                 running = False
-                            elif event.ui_element == self.view.leaderboard_button:
+                            elif (
+                                event.ui_element
+                                == self.view.leaderboard_button
+                            ):
                                 self.state = self.State.LEADERBOARD
 
                 elif self.state == self.State.LEADERBOARD:
@@ -163,22 +168,35 @@ class GameController:
                         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                             if event.ui_element == self.view.dif_easy_button:
                                 self.difficulty = self.Difficulty.EASY
-                                self.restart_game(ship_lives=6, asteroids_amount=10)
+                                self.restart_game(
+                                    ship_lives=6, asteroids_amount=10
+                                )
                                 self.saucer_spawn_rate = 2000
-                            elif event.ui_element == self.view.dif_normal_button:
+                            elif (
+                                event.ui_element
+                                == self.view.dif_normal_button
+                            ):
                                 self.difficulty = self.Difficulty.NORMAL
-                                self.restart_game(ship_lives=2, asteroids_amount=6)
+                                self.restart_game(
+                                    ship_lives=2, asteroids_amount=6
+                                )
                                 self.saucer_spawn_rate = 1200
-                            elif event.ui_element == self.view.dif_hard_button:
+                            elif (
+                                event.ui_element == self.view.dif_hard_button
+                            ):
                                 self.difficulty = self.Difficulty.HARD
-                                self.restart_game(ship_lives=1, asteroids_amount=8)
+                                self.restart_game(
+                                    ship_lives=1, asteroids_amount=8
+                                )
                                 self.saucer_spawn_rate = 600
 
                 elif self.state == self.State.ENTER_NAME:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
                             save_score_to_leaderboard(
-                                self.player_name, self.ship.score, self.difficulty.name
+                                self.player_name,
+                                self.ship.score,
+                                self.difficulty.name,
                             )
                             self.state = self.State.LEADERBOARD
                         elif event.key == pygame.K_BACKSPACE:
@@ -193,14 +211,30 @@ class GameController:
                             self.state = self.State.RUNNING
                     if event.type == pygame.USEREVENT:
                         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                            if event.ui_element == self.view.next_skin_button:
-                                self.ships[self.changing_skin_for].change_sprite(1)
-                            elif event.ui_element == self.view.prev_skin_button:
-                                self.ships[self.changing_skin_for].change_sprite(-1)
-                            elif event.ui_element == self.view.next_ship_button:
+                            if (
+                                event.ui_element
+                                == self.view.next_skin_button
+                            ):
+                                self.ships[
+                                    self.changing_skin_for
+                                ].change_sprite(1)
+                            elif (
+                                event.ui_element
+                                == self.view.prev_skin_button
+                            ):
+                                self.ships[
+                                    self.changing_skin_for
+                                ].change_sprite(-1)
+                            elif (
+                                event.ui_element
+                                == self.view.next_ship_button
+                            ):
                                 self.changing_skin_for += 1
                                 self.changing_skin_for %= len(self.ships)
-                            elif event.ui_element == self.view.prev_ship_button:
+                            elif (
+                                event.ui_element
+                                == self.view.prev_ship_button
+                            ):
                                 self.changing_skin_for -= 1
                                 self.changing_skin_for %= len(self.ships)
 
@@ -288,7 +322,10 @@ class GameController:
 
         # Update saucers
         for saucer in self.saucers:
-            if find_range(saucer.x, saucer.y, self.ship.x, self.ship.y) < 800:
+            if (
+                find_range(saucer.x, saucer.y, self.ship.x, self.ship.y)
+                < 800
+            ):
                 saucer.fly()
                 for bullet in self.bullets:
                     if saucer.collides_with_point((bullet.x, bullet.y)):
@@ -300,7 +337,9 @@ class GameController:
                 saucer.shot_timer -= 1
                 if saucer.shot_timer <= 0:
                     self.asteroids.append(
-                        saucer.shoot(self.ships[randint(0, len(self.ships) - 1)])
+                        saucer.shoot(
+                            self.ships[randint(0, len(self.ships) - 1)]
+                        )
                     )
                     saucer.shot_timer = randint(100, 200)
 
@@ -338,7 +377,10 @@ class GameController:
 
     def fly_asteroids(self):
         for asteroid in self.asteroids:
-            if find_range(asteroid.x, asteroid.y, self.ship.x, self.ship.y) < 1200:
+            if (
+                find_range(asteroid.x, asteroid.y, self.ship.x, self.ship.y)
+                < 1200
+            ):
                 asteroid.fly(game_field_size)
                 if asteroid.time_to_live == 0:
                     self.asteroids.remove(asteroid)
@@ -353,7 +395,10 @@ class GameController:
             bullet_hit = False
 
             for asteroid in self.asteroids:
-                if find_range(asteroid.x, asteroid.y, bullet.x, bullet.y) < 90:
+                if (
+                    find_range(asteroid.x, asteroid.y, bullet.x, bullet.y)
+                    < 90
+                ):
                     if asteroid.collides_with_point((bullet.x, bullet.y)):
                         self.ship.score += int(10 - asteroid.size % 10)
                         bullet_hit = True
@@ -364,7 +409,8 @@ class GameController:
                                     Asteroid(
                                         asteroid.x + randint(-10, 10),
                                         asteroid.y + randint(-10, 10),
-                                        asteroid.size // asteroid_division_coefficient,
+                                        asteroid.size
+                                        // asteroid_division_coefficient,
                                         randint(0, 360),
                                     )
                                 )
@@ -392,7 +438,9 @@ class GameController:
                     if polygon_collision(ship_points, asteroid_points):
                         if ship.invincibility_timeout == 0:
                             ship.lives -= 1
-                            ship.knockback(asteroid.x, asteroid.y, asteroid.size)
+                            ship.knockback(
+                                asteroid.x, asteroid.y, asteroid.size
+                            )
                             ship.invincibility_timeout = invincibility_window
                         if ship.lives <= 0:
                             self.ships.remove(ship)
@@ -403,7 +451,9 @@ class GameController:
             if collision_detected:
                 break
 
-        for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
+        for teammate in self.ships[
+            1:
+        ]:  # 0-й корабль это игрок, остальные - боты
             commands = update_teammate(
                 teammate, self.asteroids, self.saucers, self.ships[0]
             )
@@ -416,7 +466,8 @@ class GameController:
                     self.ship_shoot(teammate)
 
         self.camera_offset = pygame.Vector2(
-            self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2
+            self.ship.x - ScreenSize[0] // 2,
+            self.ship.y - ScreenSize[1] // 2,
         )
 
         self.update_boosters(calculate_ship_points(self.ship))

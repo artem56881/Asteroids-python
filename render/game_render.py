@@ -39,41 +39,55 @@ class GameView:
         self.skin_menu_manager = pygame_gui.UIManager(ScreenSize)
 
         self.start_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 250), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 250), (200, 50)
+            ),
             text="Начать игру",
             manager=self.start_manager,
         )
         self.leaderboard_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 320), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 320), (200, 50)
+            ),
             text="Лидерборд",
             manager=self.start_manager,
         )
         self.exit_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 390), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 390), (200, 50)
+            ),
             text="Выйти",
             manager=self.start_manager,
         )
 
         self.menu_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 500), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 500), (200, 50)
+            ),
             text="Назад",
             manager=self.leaderboard_manager,
         )
 
         self.dif_easy_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 250), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 250), (200, 50)
+            ),
             text="Легко",
             manager=self.difficulty_manager,
             tool_tip_text="-_-",
         )
         self.dif_normal_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 320), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 320), (200, 50)
+            ),
             text="Нормально",
             manager=self.difficulty_manager,
             tool_tip_text="'_'",
         )
         self.dif_hard_button = UIButton(
-            relative_rect=pygame.Rect((ScreenSize[0] // 2 - 100, 390), (200, 50)),
+            relative_rect=pygame.Rect(
+                (ScreenSize[0] // 2 - 100, 390), (200, 50)
+            ),
             text="Сложно",
             manager=self.difficulty_manager,
             tool_tip_text=":)))",
@@ -81,28 +95,32 @@ class GameView:
 
         self.next_ship_button = UIButton(
             relative_rect=pygame.Rect(
-                (ScreenSize[0] // 2 - 100 + 100, ScreenSize[1] - 100 - 60), (200, 50)
+                (ScreenSize[0] // 2 - 100 + 100, ScreenSize[1] - 100 - 60),
+                (200, 50),
             ),
             text="Следующий корабль",
             manager=self.skin_menu_manager,
         )
         self.prev_ship_button = UIButton(
             relative_rect=pygame.Rect(
-                (ScreenSize[0] // 2 - 100 - 100, ScreenSize[1] - 100 - 60), (200, 50)
+                (ScreenSize[0] // 2 - 100 - 100, ScreenSize[1] - 100 - 60),
+                (200, 50),
             ),
             text="Предыдущий корабль",
             manager=self.skin_menu_manager,
         )
         self.next_skin_button = UIButton(
             relative_rect=pygame.Rect(
-                (ScreenSize[0] // 2 - 100 + 100, ScreenSize[1] - 100), (200, 50)
+                (ScreenSize[0] // 2 - 100 + 100, ScreenSize[1] - 100),
+                (200, 50),
             ),
             text=">",
             manager=self.skin_menu_manager,
         )
         self.prev_skin_button = UIButton(
             relative_rect=pygame.Rect(
-                (ScreenSize[0] // 2 - 100 - 100, ScreenSize[1] - 100), (200, 50)
+                (ScreenSize[0] // 2 - 100 - 100, ScreenSize[1] - 100),
+                (200, 50),
             ),
             text="<",
             manager=self.skin_menu_manager,
@@ -118,7 +136,14 @@ class GameView:
         self.bg_height = self.bg_images[0].get_height()
 
     def draw_game(
-        self, ships, asteroids, bullets, boosters, saucers, camera_offset, fps
+        self,
+        ships,
+        asteroids,
+        bullets,
+        boosters,
+        saucers,
+        camera_offset,
+        fps,
     ):
         if len(ships) > 0:
             self.draw_bg(ships[0].x, ships[0].y)
@@ -132,19 +157,34 @@ class GameView:
                 (100, 100, 100),
                 (
                     (0 - camera_offset.x, 0 - camera_offset.y),
-                    (0 - camera_offset.x, game_field_size[1] - camera_offset.y),
+                    (
+                        0 - camera_offset.x,
+                        game_field_size[1] - camera_offset.y,
+                    ),
                     (
                         game_field_size[0] - camera_offset.x,
                         game_field_size[1] - camera_offset.y,
                     ),
-                    (game_field_size[0] - camera_offset.x, 0 - camera_offset.y),
+                    (
+                        game_field_size[0] - camera_offset.x,
+                        0 - camera_offset.y,
+                    ),
                 ),
                 width=10,
             )
             if DEBUG:
-                draw_debug_info(self.screen, self.font, ships[0], asteroids, fps)
+                draw_debug_info(
+                    self.screen, self.font, ships[0], asteroids, fps
+                )
             draw_minimap(
-                self.screen, asteroids, ships, bullets, saucers, boosters, 20, 30
+                self.screen,
+                asteroids,
+                ships,
+                bullets,
+                saucers,
+                boosters,
+                20,
+                30,
             )
             draw_osd(self.screen, self.font, ships[0].score, ships[0].lives)
 
@@ -156,19 +196,29 @@ class GameView:
                     self.screen.blit(
                         i,
                         (
-                            (x * self.bg_width - x_offset // 1.5 * image_number),
-                            (y * self.bg_height - y_offset // 1.5 * image_number),
+                            (
+                                x * self.bg_width
+                                - x_offset // 1.5 * image_number
+                            ),
+                            (
+                                y * self.bg_height
+                                - y_offset // 1.5 * image_number
+                            ),
                         ),
                     )
 
     def draw_skinchoose_screen(self, padding, ship):
         interface_width = ScreenSize[0] - padding * 2
         interface_height = ScreenSize[1] - padding * 2
-        interface_surface = pygame.Surface((interface_width, interface_height))
+        interface_surface = pygame.Surface(
+            (interface_width, interface_height)
+        )
         interface_surface.set_alpha(210)
 
         pygame.draw.rect(
-            interface_surface, (50, 50, 50), (0, 0, interface_width, interface_height)
+            interface_surface,
+            (50, 50, 50),
+            (0, 0, interface_width, interface_height),
         )
         pygame.draw.rect(
             interface_surface,
@@ -198,7 +248,9 @@ class GameView:
 
         display_name = "Игрок" if ship.name == "" else ship.name
 
-        splash_text = self.ship_name_font.render(display_name, False, (255, 255, 255))
+        splash_text = self.ship_name_font.render(
+            display_name, False, (255, 255, 255)
+        )
         self.screen.blit(splash_text, (ScreenSize[0] // 2 - 100, 170))
 
         self.skin_menu_manager.draw_ui(self.screen)
@@ -213,13 +265,17 @@ class GameView:
 
     def draw_start_screen(self):
         self.screen.fill(background_color)
-        splash_text = self.splash_font.render("Asteroids", True, (255, 255, 255))
+        splash_text = self.splash_font.render(
+            "Asteroids", True, (255, 255, 255)
+        )
         self.start_manager.draw_ui(self.screen)
         self.screen.blit(splash_text, (ScreenSize[0] // 2 - 250, 80))
 
     def draw_leaderboard_screen(self):
         self.screen.fill(background_color)
-        splash_text = self.forty_font.render("Таблица лидеров", False, (255, 255, 255))
+        splash_text = self.forty_font.render(
+            "Таблица лидеров", False, (255, 255, 255)
+        )
         self.screen.blit(splash_text, (280, 30))
         if not exists(leaderboard_file_path):
             with open(leaderboard_file_path, "w") as json_file:
@@ -254,7 +310,9 @@ class GameView:
         text_1 = self.font.render(
             f"Вы проиграли. Очки: {score}", False, (255, 255, 255)
         )
-        self.screen.blit(text_1, (screen_size[0] // 2 - 180, screen_size[1] // 2 - 100))
+        self.screen.blit(
+            text_1, (screen_size[0] // 2 - 180, screen_size[1] // 2 - 100)
+        )
         text = self.font.render("Ваше имя:", False, (255, 255, 255))
         self.screen.blit(text, (screen_size[0] // 2 - 180, 240))
         name_text = self.font.render(player_name, False, (255, 255, 255))
@@ -271,7 +329,15 @@ class GameView:
         text_2 = self.font.render(
             "Нажмите R чтобы начать заново", False, (255, 255, 255)
         )
-        text_3 = self.font.render("Q чтобы выйти в меню", False, (255, 255, 255))
-        self.screen.blit(text_1, (screen_size[0] // 2 - 120, screen_size[1] // 2))
-        self.screen.blit(text_2, (screen_size[0] // 2 - 180, screen_size[1] // 2 + 35))
-        self.screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
+        text_3 = self.font.render(
+            "Q чтобы выйти в меню", False, (255, 255, 255)
+        )
+        self.screen.blit(
+            text_1, (screen_size[0] // 2 - 120, screen_size[1] // 2)
+        )
+        self.screen.blit(
+            text_2, (screen_size[0] // 2 - 180, screen_size[1] // 2 + 35)
+        )
+        self.screen.blit(
+            text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70)
+        )
