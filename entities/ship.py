@@ -4,8 +4,17 @@ from pygame.examples.cursors import image
 from utils.math_utils import angle_to_coords, calculate_ship_points
 from settings import friction
 
+
 class Ship:
-    def __init__(self, x: float, y: float, lives: int, score: int=0, color=(124, 110, 148), name=""):
+    def __init__(
+        self,
+        x: float,
+        y: float,
+        lives: int,
+        score: int = 0,
+        color=(124, 110, 148),
+        name="",
+    ):
         self.x = x
         self.y = y
         self.angle = -90
@@ -21,12 +30,14 @@ class Ship:
 
         # self.image = pygame.Surface((15, 15), pygame.SRCALPHA)
         # self.original_image = img_sprite
-        self.sprites = [pygame.image.load(f"../sprites/ship_sprite_{n}.png").convert_alpha() for n in range(1, 9)]
+        self.sprites = [
+            pygame.image.load(f"../sprites/ship_sprite_{n}.png").convert_alpha()
+            for n in range(1, 9)
+        ]
 
         self.current_sprite = 0
         self.image = self.sprites[self.current_sprite]
         self.rect = self.image.get_rect(center=(x, y))
-
 
         self.color = color
 
@@ -40,19 +51,27 @@ class Ship:
         self.vel_y *= friction
 
     def rotate_sprite(self, image, angle):
-        rotated_image = pygame.transform.rotate(image, angle - 90) # почему-то спрайт отрисовывался со сдвигом на 90 градусов, поэтому пришлось сдвинуть на -90
-        new_rect = rotated_image.get_rect(center=image.get_rect(center=(self.x, self.y)).center)
+        rotated_image = pygame.transform.rotate(
+            image, angle - 90
+        )  # почему-то спрайт отрисовывался со сдвигом на 90 градусов, поэтому пришлось сдвинуть на -90
+        new_rect = rotated_image.get_rect(
+            center=image.get_rect(center=(self.x, self.y)).center
+        )
         return rotated_image, new_rect
 
     def rotate(self, angle_delta):
         self.angle = (self.angle + angle_delta) % 360
-        self.image, self.rect = self.rotate_sprite(self.sprites[self.current_sprite], -self.angle)
+        self.image, self.rect = self.rotate_sprite(
+            self.sprites[self.current_sprite], -self.angle
+        )
 
     def draw(self, screen, camera_offset):
         # pygame.draw.polygon(screen, self.color,
         #                     [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_ship_points(self)],
         #                     width=3)
-        screen.blit(self.image, (self.rect.x - camera_offset.x, self.rect.y - camera_offset.y))
+        screen.blit(
+            self.image, (self.rect.x - camera_offset.x, self.rect.y - camera_offset.y)
+        )
 
     def thrust(self):
         dx, dy = angle_to_coords(self.angle)
@@ -63,7 +82,7 @@ class Ship:
         dx = asteroid_x - self.x
         dy = asteroid_y - self.y
 
-        distance = (dx ** 2 + dy ** 2) ** 0.5
+        distance = (dx**2 + dy**2) ** 0.5
         if distance != 0:
             dx /= distance
             dy /= distance
@@ -75,4 +94,6 @@ class Ship:
     def change_sprite(self, number):
         self.current_sprite += number
         self.current_sprite %= len(self.sprites)
-        self.image, self.rect = self.rotate_sprite(self.sprites[self.current_sprite], -self.angle)
+        self.image, self.rect = self.rotate_sprite(
+            self.sprites[self.current_sprite], -self.angle
+        )

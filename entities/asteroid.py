@@ -2,7 +2,14 @@ import random
 import pygame
 import math
 from utils.math_utils import angle_to_coords
-from settings import primary_color, asteroid_min_speed, asteroid_max_speed, primary_color2, game_field_size
+from settings import (
+    primary_color,
+    asteroid_min_speed,
+    asteroid_max_speed,
+    primary_color2,
+    game_field_size,
+)
+
 
 def calculate_octagon_points(x, y, size, angle):
     points = []
@@ -13,19 +20,28 @@ def calculate_octagon_points(x, y, size, angle):
         points.append((x + dx, y + dy))
     return points
 
+
 class Asteroid:
     def __init__(self, x, y, size, angle, speed=-1, time_to_live=-1):
         self.x = x
         self.y = y
         self.size = size
         self.angle = angle
-        self.speed = random.uniform(asteroid_min_speed, asteroid_max_speed) if speed == -1 else speed
+        self.speed = (
+            random.uniform(asteroid_min_speed, asteroid_max_speed)
+            if speed == -1
+            else speed
+        )
         self.time_to_live = time_to_live
 
         self.points = calculate_octagon_points(x, y, size, angle)
 
         self.image = pygame.Surface((size * 2, size * 2), pygame.SRCALPHA)
-        pygame.draw.polygon(self.image, primary_color, [(p[0] - x + size, p[1] - y + size) for p in self.points])
+        pygame.draw.polygon(
+            self.image,
+            primary_color,
+            [(p[0] - x + size, p[1] - y + size) for p in self.points],
+        )
         self.rect = self.image.get_rect(center=(x, y))
 
     def fly(self, screen_size):
@@ -42,7 +58,9 @@ class Asteroid:
 
     def draw(self, screen, camera_offset):
         # Draw the octagon
-        translated_points = [(p[0] - camera_offset[0], p[1] - camera_offset[1]) for p in self.points]
+        translated_points = [
+            (p[0] - camera_offset[0], p[1] - camera_offset[1]) for p in self.points
+        ]
         pygame.draw.polygon(screen, primary_color, translated_points)
         pygame.draw.polygon(screen, primary_color2, translated_points, width=2)
 
@@ -61,6 +79,8 @@ class Asteroid:
 
         # Check if the point is inside any of the triangles formed by the octagon's vertices
         for i in range(4):  # Only need to check 6 triangles for an octagon
-            if point_in_triangle(point, self.points[0], self.points[i + 1], self.points[i + 2]):
+            if point_in_triangle(
+                point, self.points[0], self.points[i + 1], self.points[i + 2]
+            ):
                 return True
         return False
