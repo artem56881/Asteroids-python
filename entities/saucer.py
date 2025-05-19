@@ -6,7 +6,6 @@ from entities.asteroid import Asteroid
 from utils.math_utils import calculate_saucer_points, find_range
 
 
-
 class Saucer:
     def __init__(self, x, y, zone, size=30, speed=3):
         self.x = x
@@ -23,12 +22,17 @@ class Saucer:
         self.zone = zone
 
     def fly(self):
-        if 400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300: # не работает--💔
+        if (
+            400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300
+        ):  # не работает--💔
             self.direction *= -1
         self.x += self.speed * self.direction
         self.x %= game_field_size[0]
         self.zigzag_counter += 1
-        self.y += (math.sin(self.zigzag_counter / self.zigzag_period * 2 * math.pi) * self.zigzag_amplitude)
+        self.y += (
+            math.sin(self.zigzag_counter / self.zigzag_period * 2 * math.pi)
+            * self.zigzag_amplitude
+        )
         return True
 
     def collides_with_point(self, point):
@@ -36,10 +40,19 @@ class Saucer:
         return (self.x - px) ** 2 + (self.y - py) ** 2 <= (self.size / 2) ** 2
 
     def draw(self, screen, color, camera_offset):
-        pygame.draw.polygon(screen, color, [(x - camera_offset.x , y - camera_offset.y) for (x, y) in calculate_saucer_points(self)])
+        pygame.draw.polygon(
+            screen,
+            color,
+            [
+                (x - camera_offset.x, y - camera_offset.y)
+                for (x, y) in calculate_saucer_points(self)
+            ],
+        )
 
     def shoot(self, ship):
         # Calculate the direction towards the player
         angle = math.atan2(ship.y - self.y, ship.x - self.x)
         # Spawn an asteroid at the saucer's position, flying towards the player
-        return Asteroid(self.x, self.y, 7, math.degrees(angle), speed=25, time_to_live=130)
+        return Asteroid(
+            self.x, self.y, 7, math.degrees(angle), speed=25, time_to_live=130
+        )

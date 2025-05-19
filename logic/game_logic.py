@@ -12,7 +12,12 @@ from entities.asteroid import Asteroid
 from render.game_render import GameView
 from entities.zone import Zone, ZoneType
 from logic.teammate_logic import update_teammate
-from utils.math_utils import calculate_ship_points, save_score_to_leaderboard, polygon_collision, find_range
+from utils.math_utils import (
+    calculate_ship_points,
+    save_score_to_leaderboard,
+    polygon_collision,
+    find_range,
+)
 
 
 class GameController:
@@ -59,30 +64,67 @@ class GameController:
 
     def restart_game(self, score=0, ship_lives=0, asteroids_amount=5):
         if self.ship is None:  # случай первого запуска
-            self.ship = Ship(game_field_size[0] // 2, game_field_size[1] // 2, ship_lives)
+            self.ship = Ship(
+                game_field_size[0] // 2, game_field_size[1] // 2, ship_lives
+            )
             self.ships.append(self.ship)
-        elif self.ship.lives == 0:  # случай не первого запуска(за период запуска программы)
+        elif (
+            self.ship.lives == 0
+        ):  # случай не первого запуска(за период запуска программы)
             self.ship = Ship(game_field_size[0] // 2, game_field_size[1], ship_lives)
             self.ships.append(self.ship)
         else:  # случай нового уровня
-            self.ship = Ship(game_field_size[0] // 2, game_field_size[1], self.ship.lives, score=score)
+            self.ship = Ship(
+                game_field_size[0] // 2,
+                game_field_size[1],
+                self.ship.lives,
+                score=score,
+            )
             self.ships[0] = self.ship
 
-        self.asteroids = [Asteroid(randint(100, ScreenSize[1] - 100), 1, randint(20, 50), randint(0, 360),
-                                   speed=randint(asteroid_min_speed, asteroid_max_speed)) for _ in
-                          range(asteroids_amount)]
+        self.asteroids = [
+            Asteroid(
+                randint(100, ScreenSize[1] - 100),
+                1,
+                randint(20, 50),
+                randint(0, 360),
+                speed=randint(asteroid_min_speed, asteroid_max_speed),
+            )
+            for _ in range(asteroids_amount)
+        ]
 
         self.bullets = []
-        self.boosters += [Booster(randint(50, game_field_size[0] - 50), randint(50, game_field_size[1] - 50), 1) for _
-                          in
-                          range(4)]
+        self.boosters += [
+            Booster(
+                randint(50, game_field_size[0] - 50),
+                randint(50, game_field_size[1] - 50),
+                1,
+            )
+            for _ in range(4)
+        ]
         self.state = self.State.RUNNING
 
         # Create random zones
-        self.zones = [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200),
-                           1600, 1600, list(ZoneType)[0]) for _ in range(7)]
-        self.zones += [Zone(randint(0, game_field_size[0] - 200), randint(0, game_field_size[1] - 200),
-                            1600, 1600, list(ZoneType)[1]) for _ in range(1)]
+        self.zones = [
+            Zone(
+                randint(0, game_field_size[0] - 200),
+                randint(0, game_field_size[1] - 200),
+                1600,
+                1600,
+                list(ZoneType)[0],
+            )
+            for _ in range(7)
+        ]
+        self.zones += [
+            Zone(
+                randint(0, game_field_size[0] - 200),
+                randint(0, game_field_size[1] - 200),
+                1600,
+                1600,
+                list(ZoneType)[1],
+            )
+            for _ in range(1)
+        ]
         for zone in self.zones:
             zone.spawn_content(self)
 
@@ -135,7 +177,9 @@ class GameController:
                 elif self.state == self.State.ENTER_NAME:
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
-                            save_score_to_leaderboard(self.player_name, self.ship.score, self.difficulty.name)
+                            save_score_to_leaderboard(
+                                self.player_name, self.ship.score, self.difficulty.name
+                            )
                             self.state = self.State.LEADERBOARD
                         elif event.key == pygame.K_BACKSPACE:
                             self.player_name = self.player_name[:-1]
@@ -169,8 +213,15 @@ class GameController:
             if self.state == self.State.RUNNING:
                 self.handle_game_input(keys)
                 self.update_game()
-                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
-                                    self.camera_offset, self.clock.get_fps())
+                self.view.draw_game(
+                    self.ships,
+                    self.asteroids,
+                    self.bullets,
+                    self.boosters,
+                    self.saucers,
+                    self.camera_offset,
+                    self.clock.get_fps(),
+                )
 
             elif self.state == self.State.START:
                 self.view.draw_start_screen()
@@ -179,15 +230,26 @@ class GameController:
                 self.view.draw_leaderboard_screen()
 
             elif self.state == self.State.ENTER_NAME:
-                self.view.draw_enter_name_screen(ScreenSize, self.player_name, self.ship.score)
+                self.view.draw_enter_name_screen(
+                    ScreenSize, self.player_name, self.ship.score
+                )
 
             elif self.state == self.State.CHOOSE_DIFFICULTY:
                 self.view.draw_difficulty_screen()
 
             elif self.state == self.State.CHOOSE_SKIN:
-                self.view.draw_game(self.ships, self.asteroids, self.bullets, self.boosters, self.saucers,
-                                    self.camera_offset, fps)
-                self.view.draw_skinchoose_screen(padding=60, ship=self.ships[self.changing_skin_for])
+                self.view.draw_game(
+                    self.ships,
+                    self.asteroids,
+                    self.bullets,
+                    self.boosters,
+                    self.saucers,
+                    self.camera_offset,
+                    fps,
+                )
+                self.view.draw_skinchoose_screen(
+                    padding=60, ship=self.ships[self.changing_skin_for]
+                )
 
             pygame.display.flip()
             # print(f"{self.lag:.3f}, {fps:.3f}")
@@ -237,7 +299,9 @@ class GameController:
 
                 saucer.shot_timer -= 1
                 if saucer.shot_timer <= 0:
-                    self.asteroids.append(saucer.shoot(self.ships[randint(0, len(self.ships) - 1)]))
+                    self.asteroids.append(
+                        saucer.shoot(self.ships[randint(0, len(self.ships) - 1)])
+                    )
                     saucer.shot_timer = randint(100, 200)
 
     def update_boosters(self, ship_points):
@@ -247,8 +311,14 @@ class GameController:
                     self.boosters.remove(booster)
                     for _ in range(1):
                         self.ships.append(
-                            Ship(self.ships[0].x + randint(-80, 80), self.ships[0].y + randint(-80, 80), 3,
-                                 color=teammate_color, name=f"Jonh {len(self.ships) + 1}"))
+                            Ship(
+                                self.ships[0].x + randint(-80, 80),
+                                self.ships[0].y + randint(-80, 80),
+                                3,
+                                color=teammate_color,
+                                name=f"Jonh {len(self.ships) + 1}",
+                            )
+                        )
 
                     self.booster_timeout = booster.time
                     self.shooting_window = 5
@@ -269,7 +339,6 @@ class GameController:
     def fly_asteroids(self):
         for asteroid in self.asteroids:
             if find_range(asteroid.x, asteroid.y, self.ship.x, self.ship.y) < 1200:
-
                 asteroid.fly(game_field_size)
                 if asteroid.time_to_live == 0:
                     self.asteroids.remove(asteroid)
@@ -291,17 +360,22 @@ class GameController:
                         hit_asteroids.append(asteroid)
                         if asteroid.size >= min_asteroid_size:
                             for _ in range(2):
-                                new_asteroids.append(Asteroid(
-                                    asteroid.x + randint(-10, 10),
-                                    asteroid.y + randint(-10, 10),
-                                    asteroid.size // asteroid_division_coefficient,
-                                    randint(0, 360)))
+                                new_asteroids.append(
+                                    Asteroid(
+                                        asteroid.x + randint(-10, 10),
+                                        asteroid.y + randint(-10, 10),
+                                        asteroid.size // asteroid_division_coefficient,
+                                        randint(0, 360),
+                                    )
+                                )
 
             if not bullet_hit and bullet.distance <= max_shot_distance:
                 remaining_bullets.append(bullet)
 
         self.bullets = remaining_bullets
-        self.asteroids = [a for a in self.asteroids if a not in hit_asteroids] + new_asteroids
+        self.asteroids = [
+            a for a in self.asteroids if a not in hit_asteroids
+        ] + new_asteroids
 
     def update_game(self):
         for ship in self.ships:
@@ -330,7 +404,9 @@ class GameController:
                 break
 
         for teammate in self.ships[1:]:  # 0-й корабль это игрок, остальные - боты
-            commands = update_teammate(teammate, self.asteroids, self.saucers, self.ships[0])
+            commands = update_teammate(
+                teammate, self.asteroids, self.saucers, self.ships[0]
+            )
             for command in commands:
                 if command[0] == "thrust":
                     teammate.thrust()
@@ -339,7 +415,9 @@ class GameController:
                 elif command[0] == "shoot":
                     self.ship_shoot(teammate)
 
-        self.camera_offset = pygame.Vector2(self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2)
+        self.camera_offset = pygame.Vector2(
+            self.ship.x - ScreenSize[0] // 2, self.ship.y - ScreenSize[1] // 2
+        )
 
         self.update_boosters(calculate_ship_points(self.ship))
         self.bullets_asteroid_collision()

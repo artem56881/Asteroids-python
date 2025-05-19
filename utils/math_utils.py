@@ -4,7 +4,7 @@ from typing import Tuple, List
 import json
 import pygame
 
-from settings import leaderboard_file_path, ScreenSize
+from settings import leaderboard_file_path
 
 
 def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:
@@ -32,12 +32,13 @@ def calculate_ship_points(ship) -> List[Tuple[float, float]]:
 
     return [base, left, head, right]
 
+
 def coordinates_to_angle(x1, x2, y1, y2):
     delta_x = x2 - x1
     delta_y = y2 - y1
-    rad = math.atan2(delta_y, delta_x)
 
     return math.degrees(math.atan2(delta_y, delta_x))
+
 
 def polygon_collision(poly1, poly2):
     def project_polygon(polygon, axis):
@@ -70,9 +71,13 @@ def polygon_collision(poly1, poly2):
 
 
 def calculate_saucer_points(saucer, size=20):
-    return ((saucer.x - 1 * size, saucer.y), (saucer.x - 0.5 * size, saucer.y - 1 * size),
-            (saucer.x + 0.5 * size, saucer.y - 1 * size), (saucer.x + 1 * size, saucer.y),
-            (saucer.x, saucer.y + 1 * size))
+    return (
+        (saucer.x - 1 * size, saucer.y),
+        (saucer.x - 0.5 * size, saucer.y - 1 * size),
+        (saucer.x + 0.5 * size, saucer.y - 1 * size),
+        (saucer.x + 1 * size, saucer.y),
+        (saucer.x, saucer.y + 1 * size),
+    )
 
 
 def find_range(point1_x, point1_y, point2_x, point2_y):
@@ -81,14 +86,18 @@ def find_range(point1_x, point1_y, point2_x, point2_y):
 
 def save_score_to_leaderboard(player_name, ship_score, difficulty):
     if not exists(leaderboard_file_path):
-        with open(leaderboard_file_path, 'w') as json_file:
+        with open(leaderboard_file_path, "w") as json_file:
             initial_data = {"leaderboard": []}
             json.dump(initial_data, json_file, indent=4)
 
-    with open(leaderboard_file_path, 'r+') as json_file:
+    with open(leaderboard_file_path, "r+") as json_file:
         leaderboard = json.load(json_file)
-        leaderboard['leaderboard'].append({"name": player_name, "score": ship_score, "difficulty": difficulty})
-        leaderboard['leaderboard'] = sorted(leaderboard['leaderboard'], key=lambda x: x['score'], reverse=True)
+        leaderboard["leaderboard"].append(
+            {"name": player_name, "score": ship_score, "difficulty": difficulty}
+        )
+        leaderboard["leaderboard"] = sorted(
+            leaderboard["leaderboard"], key=lambda x: x["score"], reverse=True
+        )
         json_file.seek(0)
         json.dump(leaderboard, json_file, indent=4)
         json_file.truncate()
