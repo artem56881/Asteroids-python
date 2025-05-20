@@ -1,18 +1,18 @@
-from random import randint, choice
+from random import randint
 import pygame
 import pygame_gui
 from enum import Enum, auto
 
 from time import time
-from settings import *
-from entities.ship import Ship
-from entities.shot import Shot
-from entities.booster import Booster
-from entities.asteroid import Asteroid
-from render.game_render import GameView
-from entities.zone import Zone, ZoneType
-from logic.teammate_logic import update_teammate
-from utils.math_utils import (
+from asteroids.settings import *
+from asteroids.entities.ship import Ship
+from asteroids.entities.shot import Shot
+from asteroids.entities.booster import Booster
+from asteroids.entities.asteroid import Asteroid
+from asteroids.render.game_render import GameView
+from asteroids.entities.zone import Zone, ZoneType
+from asteroids.logic.teammate_logic import update_teammate
+from asteroids.utils.math_utils import (
     calculate_ship_points,
     save_score_to_leaderboard,
     polygon_collision,

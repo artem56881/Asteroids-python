@@ -1,6 +1,6 @@
 import pygame
 
-from settings import (
+from asteroids.settings import (
     DEBUG,
     primary_color,
     enemy_color,

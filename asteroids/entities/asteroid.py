@@ -1,8 +1,8 @@
 import random
 import pygame
 import math
-from utils.math_utils import angle_to_coords
-from settings import (
+from asteroids.utils.math_utils import angle_to_coords
+from asteroids.settings import (
     primary_color,
     asteroid_min_speed,
     asteroid_max_speed,

@@ -1,5 +1,5 @@
 import pygame
-from settings import booster_color
+from asteroids.settings import booster_color
 
 
 class Booster:

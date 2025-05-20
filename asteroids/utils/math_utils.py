@@ -4,7 +4,7 @@ from typing import Tuple, List
 import json
 import pygame
 
-from settings import leaderboard_file_path
+from asteroids.settings import leaderboard_file_path
 
 
 def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:

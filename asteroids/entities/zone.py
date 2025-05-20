@@ -1,8 +1,8 @@
 from random import randint, choice
 from enum import Enum, auto
 
-from entities.asteroid import Asteroid
-from entities.saucer import Saucer
+from asteroids.entities.asteroid import Asteroid
+from asteroids.entities.saucer import Saucer
 
 
 class ZoneType(Enum):

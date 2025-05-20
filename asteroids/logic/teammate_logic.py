@@ -1,6 +1,6 @@
 import math
-from entities.ship import Ship
-from utils.math_utils import find_range, angle_to_coords
+from asteroids.entities.ship import Ship
+from asteroids.utils.math_utils import find_range, angle_to_coords
 
 
 def update_teammate(ship: Ship, asteroids, saucers, player):

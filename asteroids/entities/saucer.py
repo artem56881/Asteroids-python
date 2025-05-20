@@ -1,9 +1,9 @@
 import pygame
 import random
 import math
-from settings import game_field_size
-from entities.asteroid import Asteroid
-from utils.math_utils import calculate_saucer_points, find_range
+from asteroids.settings import game_field_size
+from asteroids.entities.asteroid import Asteroid
+from asteroids.utils.math_utils import calculate_saucer_points, find_range
 
 
 class Saucer:

@@ -5,14 +5,14 @@ import json
 import pygame_gui
 from pygame_gui.elements import UIButton
 
-from settings import (
+from asteroids.settings import (
     DEBUG,
     leaderboard_file_path,
     background_color,
     ScreenSize,
     game_field_size,
 )
-from utils.draw_utils import (
+from asteroids.utils.draw_utils import (
     draw_asteroids,
     draw_bullets,
     draw_ships,

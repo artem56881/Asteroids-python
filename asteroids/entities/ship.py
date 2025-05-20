@@ -1,8 +1,7 @@
 import pygame
-from pygame.examples.cursors import image
 
-from utils.math_utils import angle_to_coords, calculate_ship_points
-from settings import friction
+from asteroids.utils.math_utils import angle_to_coords
+from asteroids.settings import friction
 
 
 class Ship:
@@ -32,7 +31,7 @@ class Ship:
         # self.original_image = img_sprite
         self.sprites = [
             pygame.image.load(
-                f"../sprites/ship_sprite_{n}.png"
+                f"../asteroids/sprites/ship_sprite_{n}.png"
             ).convert_alpha()
             for n in range(1, 9)
         ]
