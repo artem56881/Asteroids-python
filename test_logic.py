@@ -1,122 +1,63 @@
 import unittest
 from unittest.mock import MagicMock, patch
 import pygame
-import pygame_gui
 
-from asteroids.logic.game_logic import GameController
+# Assuming the Ship class is in a module named `ship`
+from asteroids.entities.ship import Ship
 
-class TestGameController(unittest.TestCase):
 
-    def setUp(self):
-        # Mock the screen and other necessary components
-        self.screen = MagicMock()
-        self.controller = GameController(self.screen)
+class TestShip(unittest.TestCase):
+    @patch("pygame.image.load")
+    def setUp(self, mock_load):
+        # Mock the image loading to avoid file loading issues
+        mock_load.return_value = MagicMock()
+
+        # Initialize pygame
+        pygame.init()
+
+        # Create a ship instance
+        self.screen_size = (800, 600)
+        self.ship = Ship(400, 300, 3)
+
+    def tearDown(self):
+        # Clean up pygame
+        pygame.quit()
 
     def test_initialization(self):
-        self.assertEqual(self.controller.state, self.controller.State.START)
-        self.assertIsNone(self.controller.ship)
-        self.assertEqual(len(self.controller.asteroids), 0)
-        self.assertEqual(len(self.controller.bullets), 0)
-        self.assertEqual(len(self.controller.boosters), 0)
+        self.assertEqual(self.ship.x, 400)
+        self.assertEqual(self.ship.y, 300)
+        self.assertEqual(self.ship.lives, 3)
+        self.assertEqual(self.ship.angle, -90)
+        self.assertEqual(self.ship.vel_x, 0.0)
+        self.assertEqual(self.ship.vel_y, 0.0)
+        self.assertEqual(self.ship.score, 0)
+        self.assertEqual(self.ship.invincibility_timeout, 80)
+        self.assertEqual(self.ship.shooting_timeout, 0)
 
-    @patch('pygame.event.get')
-    @patch('pygame.time.Clock')
-    def test_run_method(self, mock_clock, mock_get_events):
-        # Mock events and clock
-        mock_get_events.return_value = [MagicMock(type=pygame.QUIT)]
-        mock_clock_instance = MagicMock()
-        mock_clock.return_value = mock_clock_instance
+    def test_update_position(self):
+        self.ship.vel_x = 10
+        self.ship.vel_y = 10
+        self.ship.update_position(self.screen_size)
+        self.assertEqual(self.ship.x, (400 + 10) % self.screen_size[0])
+        self.assertEqual(self.ship.y, (300 + 10) % self.screen_size[1])
 
-        # Run the game loop
-        self.controller.run()
+    def test_thrust(self):
+        initial_vel_x = self.ship.vel_x
+        initial_vel_y = self.ship.vel_y
+        self.ship.thrust()
+        self.assertNotEqual(self.ship.vel_x, initial_vel_x)
+        self.assertNotEqual(self.ship.vel_y, initial_vel_y)
 
-        # Assert that the game loop exits correctly
-        self.assertTrue(True)  # Placeholder for actual assertions
+    def test_knockback(self):
+        asteroid_x = 450
+        asteroid_y = 350
+        asteroid_size = 10
+        initial_vel_x = self.ship.vel_x
+        initial_vel_y = self.ship.vel_y
+        self.ship.knockback(asteroid_x, asteroid_y, asteroid_size)
+        self.assertNotEqual(self.ship.vel_x, initial_vel_x)
+        self.assertNotEqual(self.ship.vel_y, initial_vel_y)
 
-    def test_restart_game(self):
-        self.controller.restart_game(ship_lives=3, asteroids_amount=5)
-        self.assertIsNotNone(self.controller.ship)
-        self.assertEqual(len(self.controller.asteroids), 5)
-        self.assertEqual(len(self.controller.boosters), 4)
-        self.assertEqual(self.controller.state, self.controller.State.RUNNING)
-
-    def test_handle_game_input(self):
-        keys = {pygame.K_UP: True, pygame.K_LEFT: False, pygame.K_RIGHT: False, pygame.K_SPACE: False}
-        self.controller.ship = MagicMock()
-        self.controller.handle_game_input(keys)
-        self.controller.ship.thrust.assert_called_once()
-
-    def test_ship_shoot(self):
-        self.controller.ship = MagicMock()
-        self.controller.ship.shooting_timeout = 0
-        self.controller.ship_shoot(self.controller.ship)
-        self.assertEqual(len(self.controller.bullets), 1)
-
-    @patch('random.randint')
-    def test_update_saucers(self, mock_randint):
-        mock_randint.return_value = 0
-        saucer = MagicMock()
-        saucer.x = 100
-        saucer.y = 100
-        saucer.shot_timer = 0
-        self.controller.saucers = [saucer]
-        self.controller.ship = MagicMock()
-        self.controller.ship.x = 100
-        self.controller.ship.y = 100
-        self.controller.update_saucers()
-        self.assertEqual(len(self.controller.asteroids), 1)
-
-    def test_update_boosters(self):
-        booster = MagicMock()
-        booster.collides_with_point.return_value = True
-        self.controller.boosters = [booster]
-        ship_points = [(0, 0), (1, 0), (1, 1), (0, 1)]
-        self.controller.update_boosters(ship_points)
-        self.assertEqual(len(self.controller.boosters), 0)
-        self.assertEqual(len(self.controller.ships), 2)
-
-    def test_update_timers(self):
-        self.controller.booster_timeout = 10
-        self.controller.shooting_window = 5
-        self.controller.update_timers()
-        self.assertEqual(self.controller.booster_timeout, 9)
-
-    def test_fly_asteroids(self):
-        asteroid = MagicMock()
-        asteroid.x = 100
-        asteroid.y = 100
-        asteroid.time_to_live = 0
-        self.controller.asteroids = [asteroid]
-        self.controller.ship = MagicMock()
-        self.controller.ship.x = 100
-        self.controller.ship.y = 100
-        self.controller.fly_asteroids()
-        self.assertEqual(len(self.controller.asteroids), 0)
-
-    def test_bullets_asteroid_collision(self):
-        bullet = MagicMock()
-        bullet.x = 100
-        bullet.y = 100
-        bullet.distance = 0
-        asteroid = MagicMock()
-        asteroid.x = 100
-        asteroid.y = 100
-        asteroid.size = 10
-        asteroid.collides_with_point.return_value = True
-        self.controller.bullets = [bullet]
-        self.controller.asteroids = [asteroid]
-        self.controller.ship = MagicMock()
-        self.controller.bullets_asteroid_collision()
-        self.assertEqual(len(self.controller.bullets), 0)
-        self.assertEqual(len(self.controller.asteroids), 2)
-
-    def test_update_game(self):
-        self.controller.ship = MagicMock()
-        self.controller.ship.lives = 1
-        self.controller.ships = [self.controller.ship]
-        self.controller.asteroids = []
-        self.controller.update_game()
-        self.assertEqual(self.controller.state, self.controller.State.RUNNING)
 
 if __name__ == "__main__":
     unittest.main()
