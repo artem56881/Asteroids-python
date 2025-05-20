@@ -4,7 +4,7 @@ from typing import Tuple, List
 import json
 import pygame
 
-from settings import leaderboard_file_path
+from asteroids.settings import leaderboard_file_path
 
 
 def angle_to_coords(angle: float, length=1) -> Tuple[float, float]:
@@ -93,10 +93,16 @@ def save_score_to_leaderboard(player_name, ship_score, difficulty):
     with open(leaderboard_file_path, "r+") as json_file:
         leaderboard = json.load(json_file)
         leaderboard["leaderboard"].append(
-            {"name": player_name, "score": ship_score, "difficulty": difficulty}
+            {
+                "name": player_name,
+                "score": ship_score,
+                "difficulty": difficulty,
+            }
         )
         leaderboard["leaderboard"] = sorted(
-            leaderboard["leaderboard"], key=lambda x: x["score"], reverse=True
+            leaderboard["leaderboard"],
+            key=lambda x: x["score"],
+            reverse=True,
         )
         json_file.seek(0)
         json.dump(leaderboard, json_file, indent=4)

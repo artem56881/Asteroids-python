@@ -1,9 +1,9 @@
 import pygame
 import random
 import math
-from settings import game_field_size
-from entities.asteroid import Asteroid
-from utils.math_utils import calculate_saucer_points, find_range
+from asteroids.settings import game_field_size
+from asteroids.entities.asteroid import Asteroid
+from asteroids.utils.math_utils import calculate_saucer_points, find_range
 
 
 class Saucer:
@@ -22,9 +22,7 @@ class Saucer:
         self.zone = zone
 
     def fly(self):
-        if (
-            400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300
-        ):  # не работает--💔
+        if 400 > find_range(self.x, self.y, self.zone.x, self.zone.y) > 300:
             self.direction *= -1
         self.x += self.speed * self.direction
         self.x %= game_field_size[0]
@@ -37,7 +35,9 @@ class Saucer:
 
     def collides_with_point(self, point):
         px, py = point
-        return (self.x - px) ** 2 + (self.y - py) ** 2 <= (self.size / 2) ** 2
+        return (self.x - px) ** 2 + (self.y - py) ** 2 <= (
+            self.size / 2
+        ) ** 2
 
     def draw(self, screen, color, camera_offset):
         pygame.draw.polygon(
@@ -50,9 +50,12 @@ class Saucer:
         )
 
     def shoot(self, ship):
-        # Calculate the direction towards the player
         angle = math.atan2(ship.y - self.y, ship.x - self.x)
-        # Spawn an asteroid at the saucer's position, flying towards the player
         return Asteroid(
-            self.x, self.y, 7, math.degrees(angle), speed=25, time_to_live=130
+            self.x,
+            self.y,
+            7,
+            math.degrees(angle),
+            speed=25,
+            time_to_live=130,
         )

@@ -1,21 +1,24 @@
 import pygame
 
-from settings import (
+from asteroids.settings import (
     DEBUG,
     primary_color,
     enemy_color,
     ScreenSize,
     game_field_size,
 )
-# from utils.math_utils import calculate_ship_points, calculate_saucer_points
 
 
 def draw_asteroids(screen, font, asteroids, camera_offset):
     for a in asteroids:
         a.draw(screen, camera_offset)
         if DEBUG:
-            text_size = font.render(f"{a.time_to_live}", False, (100, 255, 255))
-            screen.blit(text_size, (a.x - camera_offset.x, a.y - camera_offset.y))
+            text_size = font.render(
+                f"{a.time_to_live}", False, (100, 255, 255)
+            )
+            screen.blit(
+                text_size, (a.x - camera_offset.x, a.y - camera_offset.y)
+            )
 
 
 def draw_booster(screen, boosters, camera_offset):
@@ -40,14 +43,20 @@ def draw_ships(screen, font, ships, camera_offset):
             ship.draw(screen, camera_offset)
         name_text = font.render(f"{ship.name}", False, (255, 255, 255))
         screen.blit(
-            name_text, (ship.x - 26 - camera_offset.x, ship.y - 55 - camera_offset.y)
+            name_text,
+            (ship.x - 26 - camera_offset.x, ship.y - 55 - camera_offset.y),
         )
         if DEBUG:
             text_size = font.render(f"{ship.lives}", False, (100, 255, 255))
-            screen.blit(text_size, (ship.x - camera_offset.x, ship.y - camera_offset.y))
+            screen.blit(
+                text_size,
+                (ship.x - camera_offset.x, ship.y - camera_offset.y),
+            )
 
 
-def draw_minimap(screen, asteroids, ships, bullets, saucers, boosters, padding, scale):
+def draw_minimap(
+    screen, asteroids, ships, bullets, saucers, boosters, padding, scale
+):
     minimap_width = game_field_size[0] // scale
     minimap_height = game_field_size[1] // scale
 
@@ -58,7 +67,10 @@ def draw_minimap(screen, asteroids, ships, bullets, saucers, boosters, padding, 
         minimap_surface, (50, 50, 50), (0, 0, minimap_width, minimap_height)
     )
     pygame.draw.rect(
-        minimap_surface, (100, 100, 100), (0, 0, minimap_width, minimap_height), width=5
+        minimap_surface,
+        (100, 100, 100),
+        (0, 0, minimap_width, minimap_height),
+        width=5,
     )
 
     def get_minimap_coords(coords):
@@ -74,12 +86,18 @@ def draw_minimap(screen, asteroids, ships, bullets, saucers, boosters, padding, 
 
     for ship in ships:
         pygame.draw.circle(
-            minimap_surface, ship.color, (get_minimap_coords((ship.x, ship.y))), 4
+            minimap_surface,
+            ship.color,
+            (get_minimap_coords((ship.x, ship.y))),
+            4,
         )
 
     for bullet in bullets:
         pygame.draw.circle(
-            minimap_surface, (255, 0, 0), (get_minimap_coords((bullet.x, bullet.y))), 2
+            minimap_surface,
+            (255, 0, 0),
+            (get_minimap_coords((bullet.x, bullet.y))),
+            2,
         )
 
     for saucer in saucers:
@@ -94,11 +112,17 @@ def draw_minimap(screen, asteroids, ships, bullets, saucers, boosters, padding, 
         pygame.draw.circle(
             minimap_surface,
             (50, 255, 0),
-            (get_minimap_coords((booster.x_coordinate, booster.y_coordinate))),
+            (
+                get_minimap_coords(
+                    (booster.x_coordinate, booster.y_coordinate)
+                )
+            ),
             3,
         )
 
-    screen.blit(minimap_surface, (ScreenSize[0] - minimap_width - padding, padding))
+    screen.blit(
+        minimap_surface, (ScreenSize[0] - minimap_width - padding, padding)
+    )
 
 
 def draw_osd(screen, font, score, lives_amount):
@@ -113,18 +137,26 @@ def draw_osd(screen, font, score, lives_amount):
 
 
 def draw_statistics(screen, font, score, screen_size):
-    text_1 = font.render(f"Вы проиграли. Очки: {score}", False, (255, 255, 255))
-    text_2 = font.render("Нажмите R чтобы начать заново", False, (255, 255, 255))
+    text_1 = font.render(
+        f"Вы проиграли. Очки: {score}", False, (255, 255, 255)
+    )
+    text_2 = font.render(
+        "Нажмите R чтобы начать заново", False, (255, 255, 255)
+    )
     text_3 = font.render("Q чтобы выйти в меню", False, (255, 255, 255))
 
     screen.blit(text_1, (screen_size[0] // 2 - 120, screen_size[1] // 2))
-    screen.blit(text_2, (screen_size[0] // 2 - 180, screen_size[1] // 2 + 35))
-    screen.blit(text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70))
+    screen.blit(
+        text_2, (screen_size[0] // 2 - 180, screen_size[1] // 2 + 35)
+    )
+    screen.blit(
+        text_3, (screen_size[0] // 2 - 120, screen_size[1] // 2 + 70)
+    )
 
 
 def draw_debug_info(screen, font, ship, asteroids, fps):
     text = font.render(
-        f"fps {fps:.2f}, asteroids: {len(asteroids)} ship vel x {ship.vel_x:.2f} vel y {ship.vel_y:.2f}",
+        f"fps{fps:.2f}{len(asteroids)} {ship.vel_x:.2f} {ship.vel_y:.2f}",
         True,
         (255, 255, 255),
     )

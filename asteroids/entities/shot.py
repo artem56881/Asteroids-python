@@ -1,5 +1,5 @@
 import pygame
-from utils.math_utils import angle_to_coords
+from asteroids.utils.math_utils import angle_to_coords
 
 
 class Shot:

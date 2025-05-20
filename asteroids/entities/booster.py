@@ -1,5 +1,5 @@
 import pygame
-from settings import booster_color
+from asteroids.settings import booster_color
 
 
 class Booster:
@@ -13,7 +13,9 @@ class Booster:
         self.size = 12
         diameter = self.size * 2
         self.image = pygame.Surface((diameter, diameter), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, booster_color, (self.size, self.size), self.size)
+        pygame.draw.circle(
+            self.image, booster_color, (self.size, self.size), self.size
+        )
         self.rect = self.image.get_rect(center=(x, y))
 
     def draw(self, screen, camera_offset):

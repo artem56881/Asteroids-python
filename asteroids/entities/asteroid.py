@@ -1,13 +1,12 @@
 import random
 import pygame
 import math
-from utils.math_utils import angle_to_coords
-from settings import (
+from asteroids.utils.math_utils import angle_to_coords
+from asteroids.settings import (
     primary_color,
     asteroid_min_speed,
     asteroid_max_speed,
     primary_color2,
-    game_field_size,
 )
 
 
@@ -49,25 +48,29 @@ class Asteroid:
         self.x = (self.x + dx * self.speed / 10) % screen_size[0]
         self.y = (self.y + dy * self.speed / 10) % screen_size[1]
 
-        # Update the vertices of the octagon
-        self.points = calculate_octagon_points(self.x, self.y, self.size, self.angle)
+        self.points = calculate_octagon_points(
+            self.x, self.y, self.size, self.angle
+        )
         self.rect.center = (self.x, self.y)
 
         if self.time_to_live != -1:
             self.time_to_live -= 1
 
     def draw(self, screen, camera_offset):
-        # Draw the octagon
         translated_points = [
-            (p[0] - camera_offset[0], p[1] - camera_offset[1]) for p in self.points
+            (p[0] - camera_offset[0], p[1] - camera_offset[1])
+            for p in self.points
         ]
         pygame.draw.polygon(screen, primary_color, translated_points)
-        pygame.draw.polygon(screen, primary_color2, translated_points, width=2)
+        pygame.draw.polygon(
+            screen, primary_color2, translated_points, width=2
+        )
 
     def collides_with_point(self, point):
-        # Check if the point is inside the octagon
         def sign(p1, p2, p3):
-            return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
+            return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (
+                p1[1] - p3[1]
+            )
 
         def point_in_triangle(pt, v1, v2, v3):
             d1 = sign(pt, v1, v2)
@@ -77,8 +80,7 @@ class Asteroid:
             has_pos = (d1 > 0) or (d2 > 0) or (d3 > 0)
             return not (has_neg and has_pos)
 
-        # Check if the point is inside any of the triangles formed by the octagon's vertices
-        for i in range(4):  # Only need to check 6 triangles for an octagon
+        for i in range(4):
             if point_in_triangle(
                 point, self.points[0], self.points[i + 1], self.points[i + 2]
             ):
